@@ -1,0 +1,162 @@
+[
+  {
+    "id": "corpus-drdo-scientist-b",
+    "domain": "drdo.gov.in",
+    "organisation": "Defence Research and Development Organisation (DRDO)",
+    "title": "Scientist 'B' in DRDO (Advt No. 147)",
+    "advertisementNumber": "Advt No. 147/RAC",
+    "sector": "Central Government",
+    "totalPosts": 62,
+    "payScale": "Pay Level 10 (7th CPC: ₹56,100 - ₹1,77,500)",
+    "dates": {
+      "publishedDate": "2026-03-01",
+      "closingDate": "2026-04-15"
+    },
+    "qualifications": [
+      "First Class Bachelor's Degree in Engineering or Technology in Computer Science & Engineering",
+      "Valid GATE Score in Computer Science & Information Technology (CS)"
+    ],
+    "ageLimit": {
+      "maxAgeUR": 28,
+      "maxAgeOBC": 31,
+      "maxAgeSCST": 33
+    },
+    "reservationBreakout": {
+      "UR": 25,
+      "EWS": 6,
+      "OBC": 17,
+      "SC": 9,
+      "ST": 5
+    },
+    "selectionProcess": "GATE Score Shortlisting followed by Personal Interview at RAC Delhi",
+    "verifiedAt": "2026-03-05T10:00:00.000Z",
+    "sourceCategory": "OFFICIAL_EMPLOYER"
+  },
+  {
+    "id": "corpus-cdac-project-engineer",
+    "domain": "cdac.in",
+    "organisation": "Centre for Development of Advanced Computing (C-DAC)",
+    "title": "Project Engineer (Cyber Security & Digital Forensics)",
+    "advertisementNumber": "C-DAC/PUN/2026/02",
+    "sector": "Autonomous Govt Institution",
+    "totalPosts": 28,
+    "payScale": "Consolidated ₹4.49 LPA to ₹7.11 LPA based on experience",
+    "dates": {
+      "publishedDate": "2026-03-10",
+      "closingDate": "2026-04-10"
+    },
+    "qualifications": [
+      "B.E. / B.Tech in Computer Science / IT / Electronics or MCA with minimum 60% marks",
+      "Experience or certification in DFIR, EnCase, Volatility, or Network Forensics preferred"
+    ],
+    "ageLimit": {
+      "maxAgeUR": 30,
+      "maxAgeOBC": 33,
+      "maxAgeSCST": 35
+    },
+    "reservationBreakout": {
+      "UR": 12,
+      "EWS": 3,
+      "OBC": 8,
+      "SC": 4,
+      "ST": 1
+    },
+    "selectionProcess": "Written Test / Technical Interview",
+    "verifiedAt": "2026-03-12T12:00:00.000Z",
+    "sourceCategory": "OFFICIAL_EMPLOYER"
+  },
+  {
+    "id": "corpus-nic-scientific-officer",
+    "domain": "nic.in",
+    "organisation": "National Informatics Centre (NIC / NIELIT)",
+    "title": "Scientist 'B' & Scientific/Technical Assistant 'A'",
+    "advertisementNumber": "NIELIT/NIC/2026/1",
+    "sector": "Central Government",
+    "totalPosts": 140,
+    "payScale": "Level 10 (Scientist B) / Level 6 (STA A)",
+    "dates": {
+      "publishedDate": "2026-02-15",
+      "closingDate": "2026-03-31"
+    },
+    "qualifications": [
+      "B.E / B.Tech in CS/IT/ECE or M.Sc in Computer Science or MCA",
+      "No prior experience mandatory for entry positions"
+    ],
+    "ageLimit": {
+      "maxAgeUR": 30,
+      "maxAgeOBC": 33,
+      "maxAgeSCST": 35
+    },
+    "reservationBreakout": {
+      "UR": 58,
+      "EWS": 14,
+      "OBC": 38,
+      "SC": 21,
+      "ST": 9
+    },
+    "selectionProcess": "Computer Based Examination (80% technical, 20% general)",
+    "verifiedAt": "2026-02-20T14:30:00.000Z",
+    "sourceCategory": "OFFICIAL_EMPLOYER"
+  },
+  {
+    "id": "corpus-cdac.in-1792399106003",
+    "domain": "cdac.in",
+    "organisation": "Centre for Development of Advanced Computing (C-DAC)",
+    "title": "C-DAC: Centre for Development of Advanced Computing, India",
+    "advertisementNumber": "",
+    "sector": "Central Government",
+    "totalPosts": 0,
+    "payScale": "",
+    "dates": {},
+    "qualifications": [],
+    "ageLimit": {},
+    "reservationBreakout": {},
+    "selectionProcess": "",
+    "verifiedAt": "2026-10-19T08:38:26.003Z",
+    "sourceCategory": "OFFICIAL_EMPLOYER"
+  },
+  {
+    "id": "corpus-careers.cdac.in-1792401022459",
+    "domain": "careers.cdac.in",
+    "organisation": "Centre for Development of Advanced Computing (C-DAC)",
+    "title": "Project Associate (Web & Mobile App Analysis)",
+    "advertisementNumber": "CORP/JIT/03/2026-HY",
+    "sector": "Autonomous Govt Institution",
+    "totalPosts": 6,
+    "payScale": "CTC - Rs. 4.5 LPA",
+    "dates": {
+      "closingDate": "2026-10-26",
+      "publishedDate": "2026-10-19"
+    },
+    "qualifications": [
+      "1) BE/B. Tech in CSE/ IT/ECE or Equivalent Degree OR 2) ME/M. Tech in CSE/ IT/ECE or Equivalent Degree OR 3) Post Graduate Degree in Science/Computer Application or in relevant Domain"
+    ],
+    "ageLimit": {},
+    "reservationBreakout": {},
+    "selectionProcess": "Online Application & Written/Technical Interview",
+    "verifiedAt": "2026-10-19T09:10:22.459Z",
+    "sourceCategory": "OFFICIAL_EMPLOYER"
+  },
+  {
+    "id": "corpus-careers.cdac.in-1792401031348",
+    "domain": "careers.cdac.in",
+    "organisation": "Centre for Development of Advanced Computing (C-DAC)",
+    "title": "Project Engineer (Fresher)",
+    "advertisementNumber": "C-DAC/KL/09/2026/5483",
+    "sector": "Autonomous Govt Institution",
+    "totalPosts": 4,
+    "payScale": "Min CTC - Rs. 4.49 LPA",
+    "dates": {
+      "closingDate": "2026-10-26",
+      "publishedDate": "2026-10-19"
+    },
+    "qualifications": [
+      "1) BE/B. Tech or Equivalent Degree with 60% or equivalent CGPA OR 2) ME/M. Tech/Equivalent Degree OR 3) Post Graduate Degree in Science/Computer Application or in relevant Domain with 60% or equivalent CGPA OR 4) PhD. in relevant discipline"
+    ],
+    "ageLimit": {},
+    "reservationBreakout": {},
+    "selectionProcess": "Online Application & Written/Technical Interview",
+    "verifiedAt": "2026-10-19T09:10:31.348Z",
+    "sourceCategory": "OFFICIAL_EMPLOYER"
+  }
+]

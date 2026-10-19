@@ -1,0 +1,31 @@
+{
+  "name": "vacancy-radar-india",
+  "version": "1.0.0",
+  "description": "Dynamic Vacancy Discovery and Verification Portal for Indian Technical Careers",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js",
+    "script:status": "clasp status",
+    "script:push": "clasp push --force",
+    "script:pull": "clasp pull",
+    "script:deploy": "clasp deploy -i AKfycbxb97jeHh4CIX7uMmqW7n0iuPOpuAxgSpP9XgNy-y8SMg_DTXNFiwB0wkEzTWdoQt0b1g -d \"Live Webhook Deployment\"",
+    "script:release": "clasp push --force && clasp deploy -i AKfycbxb97jeHh4CIX7uMmqW7n0iuPOpuAxgSpP9XgNy-y8SMg_DTXNFiwB0wkEzTWdoQt0b1g -d \"Live Production Release\""
+  },
+  "type": "module",
+  "keywords": [
+    "job-tracker",
+    "digital-forensics",
+    "vacancy-discovery",
+    "verification-radar"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@google/clasp": "^3.4.1"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "pdf-parse": "^2.4.5"
+  }
+}

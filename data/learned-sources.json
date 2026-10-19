@@ -1,0 +1,50 @@
+[
+  {
+    "domain": "drdo.gov.in",
+    "addedAt": "2026-03-01T00:00:00.000Z",
+    "firstDiscoveredFrom": "https://rac.gov.in",
+    "organisation": "Defence Research and Development Organisation (DRDO)",
+    "sourceType": "SEED_AUTHORITY",
+    "active": true
+  },
+  {
+    "domain": "cdac.in",
+    "addedAt": "2026-03-01T00:00:00.000Z",
+    "firstDiscoveredFrom": "https://www.cdac.in/index.aspx?id=careers",
+    "organisation": "Centre for Development of Advanced Computing (C-DAC)",
+    "sourceType": "SEED_AUTHORITY",
+    "active": true
+  },
+  {
+    "domain": "nic.in",
+    "addedAt": "2026-03-01T00:00:00.000Z",
+    "firstDiscoveredFrom": "https://www.nic.in/vacancies",
+    "organisation": "National Informatics Centre (NIC)",
+    "sourceType": "SEED_AUTHORITY",
+    "active": true
+  },
+  {
+    "domain": "barc.gov.in",
+    "addedAt": "2026-03-01T00:00:00.000Z",
+    "firstDiscoveredFrom": "https://www.barc.gov.in/careers",
+    "organisation": "Bhabha Atomic Research Centre (BARC)",
+    "sourceType": "SEED_AUTHORITY",
+    "active": true
+  },
+  {
+    "domain": "nfsu.ac.in",
+    "addedAt": "2026-03-01T00:00:00.000Z",
+    "firstDiscoveredFrom": "https://www.nfsu.ac.in/career",
+    "organisation": "National Forensic Sciences University (NFSU)",
+    "sourceType": "SEED_AUTHORITY",
+    "active": true
+  },
+  {
+    "domain": "careers.cdac.in",
+    "addedAt": "2026-10-19T09:10:22.459Z",
+    "firstDiscoveredFrom": "https://careers.cdac.in/post-details/85Y1CK",
+    "organisation": "Centre for Development of Advanced Computing (C-DAC)",
+    "sourceType": "USER_CONTRIBUTED",
+    "active": true
+  }
+]

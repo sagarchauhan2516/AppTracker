@@ -1,0 +1,45 @@
+name: Daily Vacancy Discovery & Sync
+
+on:
+  schedule:
+    # Runs twice daily: 04:00 UTC (09:30 AM IST) and 12:00 UTC (05:30 PM IST)
+    - cron: '0 4 * * *'
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+    # Allows manual trigger anytime from GitHub UI
+
+jobs:
+  run-deterministic-discovery:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Execute Deterministic Discovery & Webhook Sync
+        env:
+          GOOGLE_WEBHOOK_URL: ${{ secrets.GOOGLE_WEBHOOK_URL }}
+          WEBHOOK_SECRET_TOKEN: ${{ secrets.WEBHOOK_SECRET_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CDAC_CAREERS_KEY: ${{ secrets.CDAC_CAREERS_KEY }}
+        run: node scripts/run-scraper-cli.js
+
+      - name: Commit & Persist Portal Snapshots
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Radar Runner"
+          git add data/portal-snapshots.json data/pdf-cache/ || true
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(radar): update portal snapshots & PDF cache [skip ci]" && git push)

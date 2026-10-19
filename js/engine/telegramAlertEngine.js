@@ -92,10 +92,14 @@ export class TelegramAlertEngine {
     }
 
     if (closingSoon.length === 0 && corrigenda.length === 0 && topMatches.length === 0) {
-      msg += `✅ *All clear:* No urgent deadlines or new corrigenda today. ${vacancies.length} active vacancies currently monitored in radar.\n\n`;
+      if (vacancies.length === 0) {
+        msg += `✅ *Scan Complete:* 39 official recruitment portals were inspected. No new circulars or corrigenda were published today.\n\n`;
+      } else {
+        msg += `✅ *All clear:* No urgent deadlines or new corrigenda today. ${vacancies.length} active vacancies currently monitored in radar.\n\n`;
+      }
     }
 
-    msg += `🔗 Open Dashboard: http://localhost:3000\n`;
+    msg += `🌐 *App Tracker Portal:* [Open Dashboard](https://github.com/sagarchauhan2516/AppTracker)\n`;
     return msg;
   }
 

@@ -22,6 +22,7 @@ import { PageDiffEngine } from '../js/engine/pageDiffEngine.js';
 import { GovernmentPdfParser } from '../js/engine/pdfExtractionEngine.js';
 import { VacancyLifecycleEngine } from '../js/engine/vacancyLifecycleEngine.js';
 import { TelegramAlertEngine } from '../js/engine/telegramAlertEngine.js';
+import { defaultProfile } from '../js/data/defaultProfile.js';
 
 const require = createRequire(import.meta.url);
 const { PDFParse } = require('pdf-parse');
@@ -245,7 +246,8 @@ async function runDailyScraper() {
 
   if (botToken && rawChatIds.length > 0) {
     console.log(`📬 Formatting and dispatching Telegram Daily Digest to ${rawChatIds.length} target chat(s)...`);
-    const digestText = TelegramAlertEngine.formatDailyDigest(allDiscoveredVacancies, { name: 'Technical Careers Profile' });
+    const activeProfileName = defaultProfile.name || 'Digital Forensics & Incident Response (DFIR)';
+    const digestText = TelegramAlertEngine.formatDailyDigest(allDiscoveredVacancies, { name: activeProfileName });
     for (const targetId of rawChatIds) {
       try {
         const tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {

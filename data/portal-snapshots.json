@@ -1,6 +1,6 @@
 {
   "cdac_careers": {
-    "lastChecked": "2026-10-18T21:28:30.169Z",
+    "lastChecked": "2026-10-19T15:18:31.612Z",
     "eTag": "",
     "lastModified": "",
     "items": [
@@ -175,7 +175,7 @@
     ]
   },
   "drdo_recruitment": {
-    "lastChecked": "2026-10-18T21:28:45.725Z",
+    "lastChecked": "2026-10-19T15:18:32.525Z",
     "eTag": "",
     "lastModified": "",
     "items": [
@@ -314,9 +314,9 @@
     ]
   },
   "upsc_whats_new": {
-    "lastChecked": "2026-10-18T21:28:47.613Z",
+    "lastChecked": "2026-10-19T15:18:36.487Z",
     "eTag": "",
-    "lastModified": "Sun, 18 Oct 2026 21:21:24 GMT",
+    "lastModified": "Mon, 19 Oct 2026 15:00:40 GMT",
     "items": [
       {
         "url": "https://upsc.gov.in/",
@@ -397,6 +397,12 @@
         "isCorrigendum": false
       },
       {
+        "url": "https://upsc.gov.in/whats-new/04%20Posts%20of%20Homoeopathic%20Physician%20in%20NDMC/Notice",
+        "title": "Notice: 04 Posts of Homoeopathic Physician in NDMC",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
         "url": "https://upsc.gov.in/whats-new/Combined%20Geo-Scientist%20%28Main%29%20Examination%2C%202026/Final%20Result",
         "title": "Final Result: Combined Geo-Scientist (Main) Examination, 2026",
         "isPdf": false,
@@ -421,84 +427,6 @@
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/06%20Posts%20Deputy%20Central%20Intelligence%20Officer%20(DCIO)%20(Technical),%20Ministry%20of%20Home%20Affairs/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 06 Posts Deputy Central Intelligence Officer (DCIO) (Technical), Ministry of Home Affairs",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/09%20posts%20of%20Scientist-B%20(Instrumentation)%20in%20Ministry%20of%20Earth%20Sciences/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 09 posts of Scientist-B (Instrumentation) in Ministry of Earth Sciences",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/30%20posts%20of%20Scientist-B%20(General%20Meteorology)%20in%20Ministry%20of%20Earth%20Sciences/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 30 posts of Scientist-B (General Meteorology) in Ministry of Earth Sciences",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/07%20posts%20of%20Scientist-B%20(Atmospheric%20Sciences)%20in%20Ministry%20of%20Earth%20Sciences/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 07 posts of Scientist-B (Atmospheric Sciences) in Ministry of Earth Sciences",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/04%20posts%20of%20Assistant%20Director%20Grade-II%20(IEDS)%20(Leather%20&amp;%20Footwear)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 04 posts of Assistant Director Grade-II (IEDS) (Leather &amp; Footwear) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/04%20posts%20of%20Assistant%20Director%20Grade-II%20(IEDS)%20(Hosiery)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 04 posts of Assistant Director Grade-II (IEDS) (Hosiery) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/04%20posts%20of%20Assistant%20Director%20Grade-II%20(IEDS)%20(Food)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 04 posts of Assistant Director Grade-II (IEDS) (Food) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/03%20posts%20of%20Assistant%20Director%20Grade-II%20(IEDS)%20(Chemical)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 03 posts of Assistant Director Grade-II (IEDS) (Chemical) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/01%20post%20of%20Assistant%20Director%20Grade-I%20(IEDS)%20(Metal%20Finishing)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 01 post of Assistant Director Grade-I (IEDS) (Metal Finishing) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/03%20posts%20of%20Assistant%20Director%20Grade-I%20(IEDS)%20(Leather%20&amp;%20Footwear)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 03 posts of Assistant Director Grade-I (IEDS) (Leather &amp; Footwear) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/02%20posts%20of%20Assistant%20Director%20Grade-I%20(IEDS)%20(Hosiery)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 02 posts of Assistant Director Grade-I (IEDS) (Hosiery) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/03%20posts%20of%20Assistant%20Director%20Grade-I%20(IEDS)%20(Food)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 03 posts of Assistant Director Grade-I (IEDS) (Food) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/02%20posts%20of%20Assistant%20Director%20Grade-I%20(IEDS)%20(Chemical)%20in%20Ministry%20of%20MSME/Provisional%20Answer%20Key",
-        "title": "Provisional Answer Key: 02 posts of Assistant Director Grade-I (IEDS) (Chemical) in Ministry of MSME",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
         "url": "https://upsc.gov.in/whats-new/25%20Posts%20Company%20Prosecutor,%20Ministry%20of%20Corporate%20Affairs/Interview%20Details",
         "title": "Interview Details: 25 Posts Company Prosecutor, Ministry of Corporate Affairs",
         "isPdf": false,
@@ -517,12 +445,6 @@
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/12%20-%202026",
-        "title": "Advertisement No.12 - 2026",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
         "url": "https://upsc.gov.in/whats-new/74%20Posts%20of%20Assistant%20Provident%20Fund%20Commissioner,%20EPFO/Notice",
         "title": "Notice: 74 Posts of Assistant Provident Fund Commissioner, EPFO",
         "isPdf": false,
@@ -537,18 +459,6 @@
       {
         "url": "https://upsc.gov.in/whats-new/18%20Posts%20of%20Veterinary%20Assistant%20Surgeon,%20Government%20of%20Puducherry/Notice",
         "title": "Notice: 18 Posts of Veterinary Assistant Surgeon, Government of Puducherry",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/01%20Post%20of%20Data%20Processing%20Assistant,%20Ministry%20of%20Defence/Notice",
-        "title": "Notice: 01 Post of Data Processing Assistant, Ministry of Defence",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/Combined%20Section%20Officers%27%20%28Grade%20%27B%27%29%20LDCE-2025%20and%20Combined%20Stenographers%27%20%28Grade%20%27B%27-Grade-%27I%27%29%20LDCE-2019%2C%202020%20%26%202021/Marks%20of%20Recommended%20Candidates",
-        "title": "Marks of Recommended Candidates: Combined Section Officers&#039; (Grade &#039;B&#039;) LDCE-2025 and Combined Stenographers&#039; (Grade &#039;B&#039;-Grade-&#039;I&#039;) LDCE-2019, 2020 &amp; 2021",
         "isPdf": false,
         "isCorrigendum": false
       },
@@ -579,7 +489,7 @@
     ]
   },
   "nfsu_careers": {
-    "lastChecked": "2026-10-18T21:28:52.928Z",
+    "lastChecked": "2026-10-19T15:18:38.664Z",
     "eTag": "",
     "lastModified": "",
     "items": [
@@ -670,7 +580,7 @@
     ]
   },
   "certin_vacancies": {
-    "lastChecked": "2026-10-18T21:28:53.323Z",
+    "lastChecked": "2026-10-19T15:18:42.082Z",
     "eTag": "",
     "lastModified": "",
     "items": []

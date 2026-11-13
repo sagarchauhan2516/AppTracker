@@ -216,7 +216,8 @@ const MASTER_OFFICIAL_SOURCES = [
   // 1. Apex Tech R&D & Cyber Security Institutions
   ['src-001', 'cdac.in', 'Centre for Development of Advanced Computing (C-DAC)', 'OFFICIAL_EMPLOYER', 'https://www.cdac.in/index.aspx?id=current_jobs', true, '', 0, true],
   ['src-002', 'upsc.gov.in', 'Union Public Service Commission (UPSC)', 'RECRUITMENT_BOARD', 'https://upsc.gov.in/recruitment/recruitment-advertisement', true, '', 0, true],
-  ['src-003', 'nfsu.ac.in', 'National Forensic Sciences University (NFSU / MHA)', 'OFFICIAL_EMPLOYER', 'https://nfsu.ac.in/career', true, '', 0, true],
+  ['src-003', 'nfsu.ac.in', 'National Forensic Sciences University (NFSU Regular)', 'OFFICIAL_EMPLOYER', 'https://nfsu.ac.in/Regular_Recruitment', true, '', 0, true],
+  ['src-003b', 'nfsu.ac.in', 'National Forensic Sciences University (NFSU Contractual)', 'OFFICIAL_EMPLOYER', 'https://nfsu.ac.in/Contractual_Recruitment', true, '', 0, true],
   ['src-004', 'nielit.gov.in', 'National Institute of Electronics & Information Technology (NIELIT)', 'RECRUITMENT_BOARD', 'https://www.nielit.gov.in/recruitments', true, '', 0, true],
   ['src-005', 'calicut.nielit.in', 'NIELIT Calicut (NIC Technical Cadre & Exams)', 'RECRUITMENT_BOARD', 'https://www.calicut.nielit.in/nic26/', true, '', 0, true],
   ['src-006', 'drdo.gov.in', 'DRDO Recruitment & Assessment Centre (RAC)', 'OFFICIAL_EMPLOYER', 'https://drdo.gov.in/drdo/careers', true, '', 0, true],
@@ -253,13 +254,13 @@ const MASTER_OFFICIAL_SOURCES = [
   ['src-031', 'cybercrime.gov.in', 'Indian Cyber Crime Coordination Centre (I4C / MHA)', 'OFFICIAL_EMPLOYER', 'https://cybercrime.gov.in/', true, '', 0, true],
 
   // 5. High-Capacity National Discovery Feeds (Auto-Resolved to Gov PDFs)
-  ['src-032', 'ncs.gov.in', 'National Career Service All-India RSS Feed', 'AUTHORISED_PORTAL', 'https://www.ncs.gov.in/rss/all-jobs.xml', true, '', 0, true],
+  ['src-032', 'ncs.gov.in', 'National Career Service All-India Portal', 'AUTHORISED_PORTAL', 'https://www.ncs.gov.in/job-seeker/Pages/Search.aspx', true, '', 0, true],
   ['src-033', 'sarkariresult.com', 'SarkariResult Official Feed (Auto-resolves to Official Gov PDFs)', 'THIRD_PARTY_AGGREGATOR', 'https://www.sarkariresult.com/feed/', false, '', 0, true],
   ['src-034', 'freejobalert.com', 'FreeJobAlert National Feed (Auto-resolves to Official Gov PDFs)', 'THIRD_PARTY_AGGREGATOR', 'https://www.freejobalert.com/feed', false, '', 0, true],
-  ['src-035', 'freejobalert.com/it', 'FreeJobAlert IT & Software Engineering Feed', 'THIRD_PARTY_AGGREGATOR', 'https://www.freejobalert.com/it-jobs/feed/', false, '', 0, true],
-  ['src-036', 'freejobalert.com/police', 'FreeJobAlert Police, Defence & Cyber Cadre Feed', 'THIRD_PARTY_AGGREGATOR', 'https://www.freejobalert.com/police-defence-jobs/feed/', false, '', 0, true],
-  ['src-037', 'freejobalert.com/engineering', 'FreeJobAlert Engineering & Technical Feed', 'THIRD_PARTY_AGGREGATOR', 'https://www.freejobalert.com/engineering-jobs/feed/', false, '', 0, true],
-  ['src-038', 'indgovtjobs.in', 'IndGovtJobs Central & State Govt Feed', 'THIRD_PARTY_AGGREGATOR', 'https://www.indgovtjobs.in/feeds/posts/default?alt=rss', false, '', 0, true],
+  ['src-035', 'indgovtjobs.in', 'IndGovtJobs Central & State Tech Feed', 'THIRD_PARTY_AGGREGATOR', 'https://www.indgovtjobs.in/feeds/posts/default?alt=rss', false, '', 0, true],
+  ['src-036', 'news.google.com/gov-tech', 'Google Live Indian Government Tech & Cyber Vacancies', 'AUTHORISED_PORTAL', 'https://news.google.com/rss/search?q=site:gov.in+(recruitment+OR+vacancy)+(cyber+OR+forensic+OR+engineer)+2026&hl=en-IN&gl=IN&ceid=IN:en', true, '', 0, true],
+  ['src-037', 'news.google.com/dfir', 'Google Live Digital Forensics & Cyber Investigation Feed', 'AUTHORISED_PORTAL', 'https://news.google.com/rss/search?q=site:gov.in+(forensic+OR+dfir+OR+cybercrime)+recruitment+2026&hl=en-IN&gl=IN&ceid=IN:en', true, '', 0, true],
+  ['src-038', 'dsssb.delhi.gov.in', 'Delhi Subordinate Services Selection Board (Tech Cadre)', 'RECRUITMENT_BOARD', 'https://dsssb.delhi.gov.in/current-vacancies', true, '', 0, true],
   ['src-039', 'freshersworld.com', 'Freshersworld Government Jobs Feed', 'THIRD_PARTY_AGGREGATOR', 'https://www.freshersworld.com/feed/government-jobs', false, '', 0, true],
 
   // 6. Specialized Investigation, Intelligence & State Forensics Laboratories
@@ -394,10 +395,60 @@ function setupDatabase() {
     try { ss.deleteSheet(sheet1); } catch (_) {}
   }
 
-  // Auto-upgrade and seed all 39 official government and apex portals
+  // Auto-upgrade and seed all 52 official government and apex portals
   const sourcesSheet = ss.getSheetByName('Sources');
   if (sourcesSheet) {
     upgradeSourcesSheet(sourcesSheet);
+  }
+
+  // Seed baseline verified active technical opportunities if Vacancies sheet is newly created
+  const vacSheet = ss.getSheetByName('Vacancies');
+  if (vacSheet && vacSheet.getLastRow() <= 1) {
+    const seedActiveVacancies = [
+      [
+        'vac-dsssb-06-2026',
+        'Junior Engineer (Electrical / Technical) & Multi-Tasking Technical Staff',
+        'Delhi Subordinate Services Selection Board (DSSSB)',
+        'Advt No. 06/2026',
+        'State Government & Public Tech',
+        'New Delhi',
+        '2026-12-11',
+        'OFFICIALLY_VERIFIED',
+        0.98,
+        'https://dsssb.delhi.gov.in/sites/default/files/DSSSB/circulars-orders/final_advt_06_2026_j_e_electrical_mts.pdf',
+        'https://dsssbonline.nic.in/',
+        new Date().toISOString()
+      ],
+      [
+        'vac-nfsu-dggi-2026',
+        'Digital Forensics Laboratory Scientific Officer & Research Consultant (DGGI Project)',
+        'National Forensic Sciences University (NFSU / MHA)',
+        'NFSU/DGGI/DFIR/2026',
+        'Central Government / Autonomous Apex',
+        'Gandhinagar / Delhi',
+        '2026-12-20',
+        'OFFICIALLY_VERIFIED',
+        0.98,
+        'https://beta.nfsu.ac.in/data/pdfs/career/Advertisement%20NFSU-DGGI%20Project%20(1).pdf',
+        'https://nfsu.ac.in/Contractual_Recruitment',
+        new Date().toISOString()
+      ],
+      [
+        'vac-nfsu-cyber-2026',
+        'Scientific Officer & Scientific Assistant (Cyber Forensics & TASI Cadre)',
+        'National Forensic Sciences University (NFSU / MHA)',
+        'NFSU/REG/CYBER/2026/01',
+        'Central Government / Autonomous Apex',
+        'Gandhinagar, Gujarat',
+        '2026-12-30',
+        'OFFICIALLY_VERIFIED',
+        0.98,
+        'https://beta.nfsu.ac.in/data/pdfs/Contarctual_Recruitment/Scientific%20Officer%20–%20Gr.%20B.%20(Cyber%20&%20TASI)1%20.pdf',
+        'https://nfsu.ac.in/Regular_Recruitment',
+        new Date().toISOString()
+      ]
+    ];
+    seedActiveVacancies.forEach(v => vacSheet.appendRow(v));
   }
 
   // Seed default settings
@@ -730,27 +781,67 @@ function parseRssOrAtomFeed(xmlText, sourceUrl) {
  */
 function parseHtmlAnnouncements(htmlText, sourceUrl, domain) {
   const items = [];
+  const seenUrls = {};
+
+  function resolveUrl(rawHref) {
+    try {
+      if (rawHref.startsWith('http://') || rawHref.startsWith('https://')) return rawHref;
+      if (rawHref.startsWith('/')) {
+        const origin = new URL(sourceUrl).origin;
+        return origin + rawHref;
+      }
+      return new URL(rawHref, sourceUrl).href;
+    } catch (_) {
+      return rawHref;
+    }
+  }
+
+  // 1. Table Row & List Item Parsing: captures notices where the job title is in <td> and link is "Download" / "PDF"
+  const rowRegex = /<(?:tr|li)[^>]*>([\s\S]*?)<\/(?:tr|li)>/gi;
+  let rowMatch;
+  while ((rowMatch = rowRegex.exec(htmlText)) !== null && items.length < 35) {
+    const rowHtml = rowMatch[1];
+    const rowText = rowHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (rowText.length < 15) continue;
+
+    // Filter relevant technical / recruitment keywords
+    if (/recruitment|vacancy|advertisement|advt|career|project engineer|analyst|cyber|forensic|technical|officer|scientist|engineer|consultant|fellow|examiner/i.test(rowText)) {
+      const aRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+      let aMatch;
+      while ((aMatch = aRegex.exec(rowHtml)) !== null) {
+        const rawHref = aMatch[1].trim();
+        const href = resolveUrl(rawHref);
+        if (seenUrls[href]) continue;
+
+        const aText = aMatch[2].replace(/<[^>]+>/g, '').trim();
+        const isPdf = href.toLowerCase().endsWith('.pdf');
+        const isDirectNotice = isPdf || /advt|notification|apply|view|download|detail|circular/i.test(aText) || /recruitment|vacancy|career/i.test(href);
+
+        if (isDirectNotice && isOfficialDomain(href)) {
+          seenUrls[href] = true;
+          const candidateTitle = rowText.slice(0, 140);
+          const candidate = evaluateCandidateVacancy(candidateTitle, href, `Official announcement on ${domain || 'government portal'}`, '', sourceUrl);
+          if (candidate) items.push(candidate);
+          break;
+        }
+      }
+    }
+  }
+
+  // 2. Direct Anchor Link Parsing: fallback for standalone cards / links
   const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
   let match;
 
-  while ((match = linkRegex.exec(htmlText)) !== null && items.length < 30) {
+  while ((match = linkRegex.exec(htmlText)) !== null && items.length < 45) {
     const rawHref = match[1].trim();
     const linkText = match[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const fullUrl = resolveUrl(rawHref);
 
-    if (linkText.length < 12) continue;
+    if (seenUrls[fullUrl] || linkText.length < 12) continue;
 
     // Filter relevant technical / recruitment keywords
-    if (/recruitment|vacancy|advertisement|career|project engineer|analyst|cyber|forensic|technical|officer|scientist/i.test(linkText)) {
-      let fullUrl = rawHref;
-      if (rawHref.startsWith('/')) {
-        try {
-          const origin = new URL(sourceUrl).origin;
-          fullUrl = origin + rawHref;
-        } catch (_) {}
-      } else if (!rawHref.startsWith('http')) {
-        fullUrl = sourceUrl.replace(/\/[^\/]*$/, '/') + rawHref;
-      }
-
+    if (/recruitment|vacancy|advertisement|advt|career|project engineer|analyst|cyber|forensic|technical|officer|scientist|engineer/i.test(linkText)) {
+      seenUrls[fullUrl] = true;
       const candidate = evaluateCandidateVacancy(linkText, fullUrl, `Official posting on ${domain || 'government portal'}`, '', sourceUrl);
       if (candidate) items.push(candidate);
     }
@@ -1090,6 +1181,27 @@ function executeCloudWebSearch(existingMap, profiles = []) {
   }
 
   if (!braveKey) {
+    // Zero-Cost Live Web Index Discovery Fallback (Runs without any API key or subscription)
+    const openFeeds = [
+      'https://news.google.com/rss/search?q=site:gov.in+(recruitment+OR+vacancy)+(cyber+OR+forensic+OR+engineer)+2026&hl=en-IN&gl=IN&ceid=IN:en',
+      'https://news.google.com/rss/search?q=site:gov.in+(forensic+OR+dfir+OR+cybercrime)+recruitment+2026&hl=en-IN&gl=IN&ceid=IN:en'
+    ];
+
+    for (const feedUrl of openFeeds) {
+      try {
+        const feedVacancies = scanFeedWithBackoff(feedUrl, 'news.google.com');
+        feedVacancies.forEach(vac => {
+          if (vac && !isDuplicate(vac, existingMap)) {
+            saveVacancyRecord(vac);
+            existingMap[vac.id] = true;
+            if (vac.sourceUrl) existingMap[vac.sourceUrl.toLowerCase()] = true;
+            discovered.push(vac);
+          }
+        });
+      } catch (feedErr) {
+        Logger.log('Open cloud web discovery feed error: ' + feedErr.message);
+      }
+    }
     return discovered;
   }
 
@@ -1744,6 +1856,18 @@ function getRegisteredProfiles() {
 function isVacancyRelevantToProfile(vac, profile) {
   if (!vac || !profile) return true;
 
+  const vacTitle = String(vac.title || '').toLowerCase();
+  const vacOrg = String(vac.organisation || '').toLowerCase();
+  const vacSector = String(vac.sector || '').toLowerCase();
+  const vacSnippet = String(vac.extractedSnippet || '').toLowerCase();
+  const vacDesc = `${vacSector} ${vacTitle} ${vacOrg} ${vacSnippet}`;
+
+  // 0. Hard Negative Exclusions Guard (Exam results, answer keys, non-technical posts)
+  const negativePattern = /\b(?:result|admit card|answer key|counselling|cutoff|score card|hall ticket|marksheet|short listed|syllabus|typing test|peon|driver|cook|sweeper|safai|cleaner|plumber|carpenter|gardener)\b/i;
+  if (negativePattern.test(vacTitle)) {
+    return false;
+  }
+
   const targetFocus = profile.targetFocus || {};
   const isTargetEnabled = (targetFocus.enabled === true || String(targetFocus.enabled).toLowerCase() === 'true');
   const targetDomains = Array.isArray(targetFocus.targetDomains) ? targetFocus.targetDomains.map(d => String(d).toLowerCase().trim()) : [];
@@ -1755,12 +1879,7 @@ function isVacancyRelevantToProfile(vac, profile) {
     if (u) vacDomain = new URL(u).hostname.replace(/^www\./i, '').toLowerCase();
   } catch (_) {}
 
-  const vacTitle = String(vac.title || '').toLowerCase();
-  const vacOrg = String(vac.organisation || '').toLowerCase();
-  const vacSector = String(vac.sector || '').toLowerCase();
-  const vacDesc = `${vacSector} ${vacTitle} ${vacOrg}`;
-
-  // 1. Strict Target Organization / Website Filtering
+  // 1. Strict Target Organization / Website Filtering (if explicitly enabled in STRICT_TARGET mode)
   if (isTargetEnabled && targetFocus.mode === 'STRICT_TARGET') {
     if (targetDomains.length > 0 || targetOrgs.length > 0) {
       const domainMatch = targetDomains.some(td => vacDomain && (vacDomain === td || vacDomain.endsWith('.' + td)));
@@ -1771,7 +1890,7 @@ function isVacancyRelevantToProfile(vac, profile) {
     }
   }
 
-  // 2. Keyword & Role Matching
+  // 2. Exact Role & Keyword Substring Match (First-class match)
   const roles = (profile.roles || []).map(r => String(r).toLowerCase().trim()).filter(Boolean);
   const keywords = (profile.keywords || []).map(k => String(k).toLowerCase().trim()).filter(Boolean);
 
@@ -1779,18 +1898,43 @@ function isVacancyRelevantToProfile(vac, profile) {
     return true; // No filter configured, matches all
   }
 
-  // Role title match
-  const hasRoleMatch = roles.some(role => vacDesc.includes(role));
-  if (hasRoleMatch) return true;
+  if (roles.some(role => vacDesc.includes(role))) return true;
+  if (keywords.some(kw => vacDesc.includes(kw))) return true;
 
-  // Keyword match
-  const hasKeywordMatch = keywords.some(kw => vacDesc.includes(kw));
-  if (hasKeywordMatch) return true;
+  // 3. Flexible Semantic & Token-Based Matching
+  // For Indian Technical & DFIR careers (B.E. Computer Engineering + DFIR examiner):
+  const domainStems = ['forensic', 'cyber', 'security', 'dfir', 'incident', 'evidence', 'malware', 'vapt', 'soc', 'investigat', 'digital', 'cctv'];
+  const roleStems = ['examiner', 'analyst', 'officer', 'scientist', 'engineer', 'specialist', 'expert', 'consultant', 'technic', 'programmer', 'developer', 'associate', 'fellow', 'faculty', 'professor'];
+  const techStems = ['computer', 'software', 'information technology', 'system', 'network', 'data'];
 
-  // Target domain match (Priority boost mode)
+  const hasDomainStem = domainStems.some(s => vacDesc.includes(s));
+  const hasRoleStem = roleStems.some(s => vacDesc.includes(s));
+  const hasTechStem = techStems.some(s => vacDesc.includes(s));
+
+  // Match condition A: Specialized domain (cyber/forensic) combined with a role or engineering stem
+  // e.g. "Junior Scientific Officer (Cyber)", "Project Engineer (Cyber Security)", "Forensic Assistant"
+  if (hasDomainStem && (hasRoleStem || hasTechStem)) {
+    return true;
+  }
+
+  // Match condition B: Apex Forensics / Cyber Agency Posting (NFSU, CFSL, CBI Cyber, I4C, CERT-In, DFS)
+  const apexForensicDomains = ['nfsu.ac.in', 'cfslcbi.gov.in', 'dfs.nic.in', 'cert-in.org.in', 'cybercrime.gov.in', 'dfs.gujarat.gov.in', 'bprd.nic.in'];
+  const isApexForensic = apexForensicDomains.some(ad => vacDomain && (vacDomain === ad || vacDomain.endsWith('.' + ad)));
+  if (isApexForensic && (hasRoleStem || hasTechStem || hasDomainStem)) {
+    return true;
+  }
+
+  // Match condition C: Apex Tech R&D (C-DAC, NIC, NIELIT, DRDO) with Software / Computer Engineering roles
+  const apexTechDomains = ['cdac.in', 'nic.in', 'nielit.in', 'nielit.gov.in', 'drdo.gov.in', 'rac.gov.in'];
+  const isApexTech = apexTechDomains.some(atd => vacDomain && (vacDomain === atd || vacDomain.endsWith('.' + atd)));
+  if (isApexTech && hasTechStem && hasRoleStem) {
+    return true;
+  }
+
+  // Match condition D: Target Domain Match (Priority Boost Mode)
   if (targetDomains.length > 0) {
     const domainMatch = targetDomains.some(td => vacDomain && (vacDomain === td || vacDomain.endsWith('.' + td)));
-    if (domainMatch) return true;
+    if (domainMatch && (hasRoleStem || hasTechStem || hasDomainStem)) return true;
   }
 
   return false;

@@ -175,7 +175,7 @@
     ]
   },
   "drdo_recruitment": {
-    "lastChecked": "2026-10-19T15:18:32.525Z",
+    "lastChecked": "2026-11-13T11:58:37.613Z",
     "eTag": "",
     "lastModified": "",
     "items": [
@@ -240,7 +240,7 @@
         "isCorrigendum": false
       },
       {
-        "url": "https://rac.gov.in/download/advt_157_calendar02.pdf",
+        "url": "https://rac.gov.in/download/advt_157_calendar03.pdf",
         "title": "Tentative Schedule",
         "isPdf": true,
         "isCorrigendum": false
@@ -300,6 +300,12 @@
         "isCorrigendum": false
       },
       {
+        "url": "https://rac.gov.in/download/advt_157_calendar02.pdf",
+        "title": "Tentative Schedule",
+        "isPdf": true,
+        "isCorrigendum": false
+      },
+      {
         "url": "https://rac.gov.in/download/GATEpublicNotice2027.pdf",
         "title": "Requirement of Valid GATE Score for Direct Recruitment of Scientist 'B' (Group A Gazetted) post in Defence Research & Development Service (DRDS) cadre of DRDO",
         "isPdf": true,
@@ -314,9 +320,9 @@
     ]
   },
   "upsc_whats_new": {
-    "lastChecked": "2026-10-19T15:18:36.487Z",
+    "lastChecked": "2026-11-13T11:57:12.004Z",
     "eTag": "",
-    "lastModified": "Mon, 19 Oct 2026 15:00:40 GMT",
+    "lastModified": "Fri, 13 Nov 2026 11:30:36 GMT",
     "items": [
       {
         "url": "https://upsc.gov.in/",
@@ -385,20 +391,164 @@
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/sites/default/files/NoticeCancellation-06-Posts-Advt-13-25-Engl-200826.pdf",
-        "title": "Notice regarding change in recruitment process for six (06) posts advertised vide Advt. No. 13-2025",
-        "isPdf": true,
-        "isCorrigendum": false
-      },
-      {
         "url": "https://upsc.gov.in/sites/default/files/AssttPublProseGNCTD-Notice-Engl-170926Rev.pdf",
         "title": "Clarification for the post of Assistant Public Prosecutor in Delhi, vide Advt. No. 11 - 2026",
         "isPdf": true,
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/04%20Posts%20of%20Homoeopathic%20Physician%20in%20NDMC/Notice",
-        "title": "Notice: 04 Posts of Homoeopathic Physician in NDMC",
+        "url": "https://upsc.gov.in/whats-new/19%20Posts%20of%20Assistant%20Public%20Prosecutor%20in%20CBI/Interview%20Details",
+        "title": "Interview Details: 19 Posts of Assistant Public Prosecutor in CBI",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/Engineering%20Services%20%28Preliminary%29%20Examination%2C%202027/Examination%20Time%20Table",
+        "title": "Examination Time Table: Engineering Services (Preliminary) Examination, 2027",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/Combined%20Section%20Officers%27%20%28Grade%20%27B%27%29%20LDCE-2025%20and%20Combined%20Stenographers%27%20%28Grade%20%27B%27-Grade-%27I%27%29%20LDCE-2019%2C%202020%20%26%202021/Final%20Result",
+        "title": "Final Result: Combined Section Officers&#039; (Grade &#039;B&#039;) LDCE-2025 and Combined Stenographers&#039; (Grade &#039;B&#039;-Grade-&#039;I&#039;) LDCE-2019, 2020 &amp; 2021",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/32%20Posts%20of%20Accounts%20Officer,%20Administration%20of%20Union%20Territory%20of%20Ladakh/Written%20Result",
+        "title": "Written Result: 32 Posts of Accounts Officer, Administration of Union Territory of Ladakh",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/80%20Posts%20of%20Assistant%20Public%20Prosecutor,%20GNCTD/Final%20Result",
+        "title": "Final Result: 80 Posts of Assistant Public Prosecutor, GNCTD",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/Combined%20Geo-Scientist%20%28Main%29%20Examination%2C%202026/Marks%20of%20Recommended%20Candidates",
+        "title": "Marks of Recommended Candidates: Combined Geo-Scientist (Main) Examination, 2026",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/74%20Posts%20of%20Assistant%20Provident%20Fund%20Commissioner,%20EPFO/Interview%20Details",
+        "title": "Interview Details: 74 Posts of Assistant Provident Fund Commissioner, EPFO",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/03%20Posts%20of%20Law%20Officer,%20Government%20of%20NCT%20of%20Delhi/Addendum%20Notice",
+        "title": "Addendum Notice: 03 Posts of Law Officer, Government of NCT of Delhi",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/140%20Posts%20of%20Assistant%20Public%20Prosecutor,%20Government%20of%20NCT%20of%20Delhi/Addendum%20Notice",
+        "title": "Addendum Notice: 140 Posts of Assistant Public Prosecutor, Government of NCT of Delhi",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/05%20Posts%20of%20Assistant%20Public%20Prosecutor%20in%20Central%20Bureau%20of%20Investigation/Addendum%20Notice",
+        "title": "Addendum Notice: 05 Posts of Assistant Public Prosecutor in Central Bureau of Investigation",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/01%20Post%20of%20Superintendent%20(Legal),%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 01 Post of Superintendent (Legal), Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/05%20Posts%20of%20Assistant%20Public%20Prosecutor,%20Government%20of%20Puducherry/Addendum%20Notice",
+        "title": "Addendum Notice: 05 Posts of Assistant Public Prosecutor, Government of Puducherry",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/12%20Posts%20of%20Legal%20Officer,%20Ministry%20of%20Civil%20Aviation/Addendum%20Notice",
+        "title": "Addendum Notice: 12 Posts of Legal Officer, Ministry of Civil Aviation",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/18%20Posts%20of%20Company%20Prosecutor,%20Ministry%20of%20Corporate%20Affairs/Addendum%20Notice",
+        "title": "Addendum Notice: 18 Posts of Company Prosecutor, Ministry of Corporate Affairs",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/12%20Posts%20of%20Assistant%20Legal%20Adviser,%20Ministry%20of%20Finance/Addendum%20Notice",
+        "title": "Addendum Notice: 12 Posts of Assistant Legal Adviser, Ministry of Finance",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/01%20Post%20of%20Prosecutor%20in%20Serious%20Fraud%20Investigation%20Office%20(SFIO)/Addendum%20Notice",
+        "title": "Addendum Notice: 01 Post of Prosecutor in Serious Fraud Investigation Office (SFIO)",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/100%20Posts%20of%20Examiner%20of%20Trade%20Marks%20&amp;%20Geographical%20Indications/Addendum%20Notice",
+        "title": "Addendum Notice: 100 Posts of Examiner of Trade Marks &amp; Geographical Indications",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/02%20Posts%20of%20Deputy%20Government%20Advocate,%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 02 Posts of Deputy Government Advocate, Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/01%20Post%20of%20Assistant%20Government%20Advocate,%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 01 Post of Assistant Government Advocate, Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/05%20Posts%20of%20Additional%20Government%20Advocate,%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 05 Posts of Additional Government Advocate, Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/12%20Posts%20of%20Deputy%20Legal%20Adviser,%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 12 Posts of Deputy Legal Adviser, Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/16%20Posts%20of%20Assistant%20Legal%20Adviser,%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 16 Posts of Assistant Legal Adviser, Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/02%20Post%20of%20Additional%20Legal%20Adviser,%20Ministry%20of%20Law%20and%20Justice/Addendum%20Notice",
+        "title": "Addendum Notice: 02 Post of Additional Legal Adviser, Ministry of Law and Justice",
+        "isPdf": false,
+        "isCorrigendum": true
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/Combined%20Geo-Scientist%20%28Preliminary%29%20Examination%2C%202027/Examination%20Time%20Table",
+        "title": "Examination Time Table: Combined Geo-Scientist (Preliminary) Examination, 2027",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/08%20Posts%20of%20Administrative%20Officer%20Grade%20-%20I,%20Ministry%20of%20Defence/Written%20Result",
+        "title": "Written Result: 08 Posts of Administrative Officer Grade - I, Ministry of Defence",
+        "isPdf": false,
+        "isCorrigendum": false
+      },
+      {
+        "url": "https://upsc.gov.in/whats-new/19%20Posts%20of%20Manager%20Grade%20-%20I%20-%20Section%20Officer,%20Ministry%20of%20Defence/Written%20Result",
+        "title": "Written Result: 19 Posts of Manager Grade - I - Section Officer, Ministry of Defence",
         "isPdf": false,
         "isCorrigendum": false
       },
@@ -409,8 +559,8 @@
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/704%20Posts%20of%20Vice-Principal%20in%20Education%20department,%20GNCTD/Notice",
-        "title": "Notice: 704 Posts of Vice-Principal in Education department, GNCTD",
+        "url": "https://upsc.gov.in/whats-new/704%20Posts%20of%20Vice-Principal%20in%20Education%20Department,%20GNCTD/Notice",
+        "title": "Notice: 704 Posts of Vice-Principal in Education Department, GNCTD",
         "isPdf": false,
         "isCorrigendum": false
       },
@@ -421,50 +571,32 @@
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/Indian%20Economic%20Service%20-%20Indian%20Statistical%20Service%20Examination%2C%202026/Interview%20Schedule",
-        "title": "Interview Schedule: Indian Economic Service - Indian Statistical Service Examination, 2026",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/25%20Posts%20Company%20Prosecutor,%20Ministry%20of%20Corporate%20Affairs/Interview%20Details",
-        "title": "Interview Details: 25 Posts Company Prosecutor, Ministry of Corporate Affairs",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
-        "url": "https://upsc.gov.in/whats-new/363%20Posts%20of%20Principal%20in%20Education%20Department,%20GNCTD/Final%20Result",
-        "title": "Final Result: 363 Posts of Principal in Education Department, GNCTD",
-        "isPdf": false,
-        "isCorrigendum": false
-      },
-      {
         "url": "https://upsc.gov.in/whats-new/Combined%20Medical%20Services%20Examination%2C%202026/Interview%20Schedule",
         "title": "Interview Schedule: Combined Medical Services Examination, 2026",
         "isPdf": false,
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/74%20Posts%20of%20Assistant%20Provident%20Fund%20Commissioner,%20EPFO/Notice",
-        "title": "Notice: 74 Posts of Assistant Provident Fund Commissioner, EPFO",
+        "url": "https://upsc.gov.in/content/scm-prepare-select-list-2025-selection-non-scs-officers-ias-tamil-nadu-cadre",
+        "title": "SCM to prepare the Select List of 2025 for selection of Non-SCS officers to IAS of Tamil Nadu Cadre",
         "isPdf": false,
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/16%20Posts%20of%20Senior%20Veterinary%20Officer,%20Andaman%20and%20Nicobar%20Administration/Notice",
-        "title": "Notice: 16 Posts of Senior Veterinary Officer, Andaman and Nicobar Administration",
+        "url": "https://upsc.gov.in/content/review-scm-consider-name-dr-b-sri-krishna-veni-nscs-officer-andhra-pradesh-cadre-select-list",
+        "title": "Review SCM to consider name of Dr. B. Sri Krishna Veni, NSCS officer of Andhra Pradesh Cadre for Select List-2013",
         "isPdf": false,
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/18%20Posts%20of%20Veterinary%20Assistant%20Surgeon,%20Government%20of%20Puducherry/Notice",
-        "title": "Notice: 18 Posts of Veterinary Assistant Surgeon, Government of Puducherry",
+        "url": "https://upsc.gov.in/content/scm-prepare-select-list-2025-selection-non-scs-officers-ias-kerala-cadre",
+        "title": "SCM to prepare the Select List of 2025 for selection of Non-SCS officers to IAS of Kerala Cadre",
         "isPdf": false,
         "isCorrigendum": false
       },
       {
-        "url": "https://upsc.gov.in/whats-new/Engineering%20Services%20%28Main%29%20Examination%2C%202026/Interview%20Schedule",
-        "title": "Interview Schedule: Engineering Services (Main) Examination, 2026",
+        "url": "https://upsc.gov.in/content/scm-scheduled-13112026-select-list-2025-nscs-officers-ias-assam-segment-assam-meghalaya",
+        "title": "SCM scheduled for 13.11.2026 for Select List-2025, NSCS officers to the IAS of Assam Segment of Assam Meghalaya Joint Cadre",
         "isPdf": false,
         "isCorrigendum": false
       },
@@ -489,7 +621,7 @@
     ]
   },
   "nfsu_careers": {
-    "lastChecked": "2026-10-19T15:18:38.664Z",
+    "lastChecked": "2026-11-13T11:58:39.574Z",
     "eTag": "",
     "lastModified": "",
     "items": [
@@ -580,9 +712,15 @@
     ]
   },
   "certin_vacancies": {
-    "lastChecked": "2026-10-19T15:18:42.082Z",
+    "lastChecked": "2026-11-13T11:58:39.951Z",
     "eTag": "",
     "lastModified": "",
+    "items": []
+  },
+  "nielit_recruitments": {
+    "lastChecked": "2026-11-13T11:58:39.209Z",
+    "eTag": "\"6af2d8db-961\"",
+    "lastModified": "Tue, 10 Nov 2026 08:42:03 GMT",
     "items": []
   }
 }

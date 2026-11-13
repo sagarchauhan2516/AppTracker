@@ -44,10 +44,24 @@ export class PageDiffEngine {
       },
       {
         id: 'nfsu_careers',
-        name: 'National Forensic Sciences University (NFSU)',
+        name: 'National Forensic Sciences University (NFSU Regular)',
         domain: 'nfsu.ac.in',
-        url: 'https://www.nfsu.ac.in/career',
+        url: 'https://nfsu.ac.in/Regular_Recruitment',
         category: 'OFFICIAL_EMPLOYER'
+      },
+      {
+        id: 'nfsu_contractual',
+        name: 'National Forensic Sciences University (NFSU Contractual)',
+        domain: 'nfsu.ac.in',
+        url: 'https://nfsu.ac.in/Contractual_Recruitment',
+        category: 'OFFICIAL_EMPLOYER'
+      },
+      {
+        id: 'upsc_advt',
+        name: 'Union Public Service Commission (UPSC Advertisements)',
+        domain: 'upsc.gov.in',
+        url: 'https://upsc.gov.in/recruitment/recruitment-advertisement',
+        category: 'RECRUITMENT_BOARD'
       },
       {
         id: 'certin_vacancies',

@@ -24,6 +24,11 @@ import { VacancyLifecycleEngine } from '../js/engine/vacancyLifecycleEngine.js';
 import { TelegramAlertEngine } from '../js/engine/telegramAlertEngine.js';
 import { defaultProfile } from '../js/data/defaultProfile.js';
 
+// Relax TLS rejection for Indian National PKI / Government departmental certificates (.gov.in, .nic.in)
+if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 const require = createRequire(import.meta.url);
 const { PDFParse } = require('pdf-parse');
 

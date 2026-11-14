@@ -1905,27 +1905,32 @@ function getGeminiApiKey() {
 function callGeminiAiInAppsScript(prompt, apiKey = null) {
   const key = apiKey || getGeminiApiKey();
   if (!key) return null;
-  const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(key);
-  const payload = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: {
-      temperature: 0.1,
-      maxOutputTokens: 500
+  const candidateModels = ['gemini-3.1-flash-lite-preview', 'gemini-3-flash-preview', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash'];
+  for (const model of candidateModels) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=` + encodeURIComponent(key);
+      const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 500
+        }
+      };
+      const res = UrlFetchApp.fetch(endpoint, {
+        method: 'post',
+        contentType: 'application/json',
+        payload: JSON.stringify(payload),
+        muteHttpExceptions: true
+      });
+      if (res.getResponseCode() === 200) {
+        const json = JSON.parse(res.getContentText());
+        return json?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+      } else {
+        Logger.log(`Gemini ${model} returned HTTP ${res.getResponseCode()}. Trying next candidate...`);
+      }
+    } catch (err) {
+      Logger.log(`Gemini ${model} call in Apps Script failed: ` + err.message);
     }
-  };
-  try {
-    const res = UrlFetchApp.fetch(endpoint, {
-      method: 'post',
-      contentType: 'application/json',
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
-    });
-    if (res.getResponseCode() === 200) {
-      const json = JSON.parse(res.getContentText());
-      return json?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-    }
-  } catch (err) {
-    Logger.log('Gemini AI call in Apps Script failed: ' + err.message);
   }
   return null;
 }

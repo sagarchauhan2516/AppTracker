@@ -126,10 +126,16 @@ export const CREDENTIALS_FILE = path.join(ROOT_DIR, 'data', 'credentials.json');
 export function loadStoredCredentials() {
   try {
     if (fs.existsSync(CREDENTIALS_FILE)) {
-      return JSON.parse(fs.readFileSync(CREDENTIALS_FILE, 'utf8') || '{}');
+      const creds = JSON.parse(fs.readFileSync(CREDENTIALS_FILE, 'utf8') || '{}');
+      if (!creds.notificationEmail) creds.notificationEmail = 'sagarmc2516@gmail.com';
+      if (!creds.telegramChatId) creds.telegramChatId = '5451190370';
+      return creds;
     }
   } catch (_) {}
-  return {};
+  return {
+    notificationEmail: 'sagarmc2516@gmail.com',
+    telegramChatId: '5451190370'
+  };
 }
 
 export function saveStoredCredentials(creds) {

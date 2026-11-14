@@ -15,12 +15,13 @@ import { GovernmentPdfParser } from '../../js/engine/pdfExtractionEngine.js';
 
 export async function callGeminiApi(apiKey, promptText) {
   const candidateModels = [
+    'gemini-3.1-flash-lite-preview',
+    'gemini-3-flash-preview',
+    'gemini-3.1-flash-lite',
     'gemini-3.8-flash',
-    'gemini-flash-latest',
-    'gemini-2.5-flash',
-    'gemini-2.5-flash-lite',
-    'gemini-2.5-pro',
-    'gemini-1.5-flash'
+    'gemini-3.7-flash',
+    'gemini-3.5-flash',
+    'gemini-flash-latest'
   ];
   let lastErr = null;
 
@@ -37,14 +38,15 @@ export async function callGeminiApi(apiKey, promptText) {
             maxOutputTokens: 2048
           }
         }),
-        signal: AbortSignal.timeout(18000)
+        signal: AbortSignal.timeout(8000)
       });
 
       if (!response.ok) {
         const errText = await response.text();
         lastErr = new Error(`Gemini API HTTP ${response.status} (${model}): ${errText.slice(0, 160)}`);
-        if (response.status === 404) continue;
-        throw lastErr;
+        // On 503 (high demand), 429 (rate limit), 404 (not found), or 500, failover to next candidate model
+        console.warn(`[Gemini Failover] Model ${model} returned HTTP ${response.status}. Trying next candidate model...`);
+        continue;
       }
 
       const data = await response.json();
@@ -56,12 +58,12 @@ export async function callGeminiApi(apiKey, promptText) {
       };
     } catch (e) {
       lastErr = e;
-      if (e.message && e.message.includes('404')) continue;
-      throw e;
+      console.warn(`[Gemini Failover] Error on model ${model}: ${e.message}. Trying next candidate model...`);
+      continue;
     }
   }
 
-  throw lastErr || new Error('No compatible Gemini model endpoint found.');
+  throw lastErr || new Error('No compatible Gemini model endpoint succeeded.');
 }
 
 export async function getAiProfileRecommendation(apiKey, roleQuery) {
@@ -346,7 +348,7 @@ export async function handleAiRoutes(req, res, reqPath) {
       const result = await callGeminiApi(apiKey, prompt);
       const latencyMs = Date.now() - t0;
       const text = typeof result === 'string' ? result : result.text;
-      const model = (typeof result === 'object' && result.model) ? result.model : 'gemini-3.8-flash';
+      const model = (typeof result === 'object' && result.model) ? result.model : 'gemini-2.5-flash';
 
       sendJson(res, 200, {
         ok: true,
@@ -722,7 +724,7 @@ export async function handleAiRoutes(req, res, reqPath) {
     sendJson(res, 200, {
       success: true,
       provider: 'GOOGLE_GEMINI_SERVERLESS',
-      model: 'gemini-1.5-flash / gemini-3.8-flash',
+      model: 'gemini-2.5-flash / gemini-1.5-flash',
       hostingMode: '24/7 Cloud Serverless',
       tier: 'FREE_TIER',
       cost: 'Standard Cloud Tier',

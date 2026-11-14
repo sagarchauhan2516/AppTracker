@@ -4,7 +4,7 @@
     "name": "Software Engineering & Full Stack Developer",
     "isActive": false,
     "createdAt": "2026-10-15T12:00:00Z",
-    "updatedAt": "2026-10-15T12:00:00Z",
+    "updatedAt": "2026-11-14T05:56:20.725Z",
     "roles": [
       "Software Engineer",
       "Full Stack Developer",
@@ -36,8 +36,8 @@
         "Information Technology",
         "Electronics & Telecommunication"
       ],
-      "aggregateMarksPct": 60.0,
-      "cgpa": 7.0
+      "aggregateMarksPct": 60,
+      "cgpa": 7
     },
     "experience": {
       "minYears": 0,
@@ -107,21 +107,20 @@
       ]
     },
     "scheduleSettings": {
+      "preset": "THRICE_DAILY",
+      "hours": [
+        "08:00",
+        "14:00",
+        "20:00"
+      ],
       "emailAddress": "sagarmc2516@gmail.com",
       "notificationEmails": [
         "sagarmc2516@gmail.com"
       ],
       "emailAlertsEnabled": true,
-      "telegramChatId": "5451190370",
-      "telegramAlertsEnabled": true,
       "deadlineLeadDays": 7,
-      "preset": "DAILY_THRICE",
-      "hours": [
-        8,
-        14,
-        20
-      ],
-      "autoSyncGoogleSheets": true
+      "telegramChatId": "5451190370",
+      "telegramAlertsEnabled": true
     }
   },
   {
@@ -158,7 +157,7 @@
         "Artificial Intelligence & Data Science",
         "Mathematics & Computing"
       ],
-      "aggregateMarksPct": 65.0,
+      "aggregateMarksPct": 65,
       "cgpa": 7.2
     },
     "experience": {
@@ -247,7 +246,7 @@
     "name": "Digital Forensics & Incident Response (DFIR)",
     "isActive": true,
     "createdAt": "2026-10-15T12:00:00Z",
-    "updatedAt": "2026-10-15T12:00:00Z",
+    "updatedAt": "2026-11-14T06:02:50.842Z",
     "roles": [
       "Digital Forensics Examiner",
       "Cyber Forensics Analyst",
@@ -285,20 +284,13 @@
         "Information Technology",
         "Cyber Security",
         "Digital Forensics & Information Security"
-      ],
-      "aggregateMarksPct": 70.0,
-      "cgpa": 7.5
+      ]
     },
     "experience": {
-      "minYears": 1,
-      "maxYears": 4,
-      "currentRole": "Digital Forensics Evidence Examiner",
-      "priorExperienceMonths": 24
+      "minYears": 1
     },
     "demographics": {
-      "age": 26,
-      "category": "General / Unreserved",
-      "applicableAgeRelaxations": false
+      "category": "UR"
     },
     "sectors": [
       "Central Government",
@@ -346,7 +338,7 @@
       1
     ],
     "targetFocus": {
-      "enabled": false,
+      "enabled": true,
       "mode": "PRIORITY_BOOST",
       "targetDomains": [
         "cdac.in",
@@ -377,7 +369,28 @@
         20
       ],
       "autoSyncGoogleSheets": true
-    }
+    },
+    "customFields": [
+      {
+        "key": "Notice Period",
+        "value": "Immediate / 15 Days"
+      },
+      {
+        "key": "Preferred Directorate",
+        "value": "CFSL / State Cyber Police"
+      },
+      {
+        "key": "Target Pay Band",
+        "value": "Pay Level 7 to 10 (7th CPC)"
+      }
+    ],
+    "negativeKeywords": [
+      "Unpaid Internship",
+      "Walk-in Only",
+      "Non-Technical Data Entry"
+    ],
+    "candidateName": "Sagar Chauhan",
+    "emailRecipient": "sagarmc2516@gmail.com"
   },
   {
     "id": "profile-cloud-devops",
@@ -411,7 +424,7 @@
         "Information Technology",
         "Electronics"
       ],
-      "aggregateMarksPct": 60.0,
+      "aggregateMarksPct": 60,
       "cgpa": 6.8
     },
     "experience": {
@@ -522,8 +535,8 @@
         "Information Security",
         "Information Technology"
       ],
-      "aggregateMarksPct": 65.0,
-      "cgpa": 7.0
+      "aggregateMarksPct": 65,
+      "cgpa": 7
     },
     "experience": {
       "minYears": 1,

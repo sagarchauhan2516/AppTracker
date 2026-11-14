@@ -143,7 +143,13 @@ export function saveStoredCredentials(creds) {
     const dir = path.dirname(CREDENTIALS_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const current = loadStoredCredentials();
-    const merged = { ...current, ...creds, updatedAt: new Date().toISOString() };
+    const cleaned = {};
+    for (const [k, v] of Object.entries(creds || {})) {
+      if (v !== undefined && v !== null && v !== '') {
+        cleaned[k] = typeof v === 'string' ? v.trim() : v;
+      }
+    }
+    const merged = { ...current, ...cleaned, updatedAt: new Date().toISOString() };
     fs.writeFileSync(CREDENTIALS_FILE, JSON.stringify(merged, null, 2), 'utf8');
     return merged;
   } catch (err) {

@@ -27,6 +27,31 @@ export async function hydratePersistentCredentials(app) {
           modified = true;
         }
 
+        if (creds.telegramBotToken && creds.telegramBotToken !== pConfig.telegramBotToken) {
+          pConfig.telegramBotToken = creds.telegramBotToken;
+          modified = true;
+        }
+
+        if (creds.telegramChatId && creds.telegramChatId !== pConfig.telegramChatId) {
+          pConfig.telegramChatId = creds.telegramChatId;
+          modified = true;
+        }
+
+        if (creds.notificationEmail && creds.notificationEmail !== pConfig.notificationEmail) {
+          pConfig.notificationEmail = creds.notificationEmail;
+          modified = true;
+        }
+
+        if (creds.braveApiKey && creds.braveApiKey !== pConfig.braveApiKey) {
+          pConfig.braveApiKey = creds.braveApiKey;
+          modified = true;
+        }
+
+        if (creds.serpApiKey && creds.serpApiKey !== pConfig.serpApiKey) {
+          pConfig.serpApiKey = creds.serpApiKey;
+          modified = true;
+        }
+
         if (modified) {
           storageService.saveProviderConfig(pConfig);
         }
@@ -47,6 +72,29 @@ export async function hydratePersistentCredentials(app) {
             serp.apiKey = creds.serpApiKey;
             serp.isEnabled = true;
             storageService.saveSearchProvider(serp);
+          }
+        }
+
+        // Ensure active profile has telegramChatId and notificationEmail populated from disk if empty or default
+        const activeProfile = storageService.getActiveProfile();
+        if (activeProfile) {
+          let profileChanged = false;
+          if (!activeProfile.scheduleSettings) {
+            activeProfile.scheduleSettings = {};
+            profileChanged = true;
+          }
+          if (creds.telegramChatId && (!activeProfile.scheduleSettings.telegramChatId || activeProfile.scheduleSettings.telegramChatId === '')) {
+            activeProfile.scheduleSettings.telegramChatId = creds.telegramChatId;
+            activeProfile.scheduleSettings.telegramAlertsEnabled = true;
+            profileChanged = true;
+          }
+          if (creds.notificationEmail && (!activeProfile.scheduleSettings.emailAddress || activeProfile.scheduleSettings.emailAddress === 'candidate@dfir-india.org')) {
+            activeProfile.scheduleSettings.emailAddress = creds.notificationEmail;
+            activeProfile.scheduleSettings.notificationEmails = [creds.notificationEmail];
+            profileChanged = true;
+          }
+          if (profileChanged) {
+            storageService.saveProfile(activeProfile);
           }
         }
       }

@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 import { MatchingEngine } from '../js/engine/matchingEngine.js';
 import { defaultProfile } from '../js/data/defaultProfile.js';
+import { loadStoredCredentials, saveStoredCredentials } from '../server/context.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -106,6 +107,36 @@ test('⚡ RUNNING PROFILE SEGREGATION & SETTINGS PANEL ACCEPTANCE SUITE', async 
     assert.ok(htmlContent.includes('id="dashboardModal"'), 'Must have #dashboardModal container');
 
     console.log('✅ [PASS] 3. Dedicated HTML elements verified for two distinct panels and profile segregation bar');
+  });
+
+  await t.test('4. Telegram Bot API Token & All Credentials persist permanently to disk without data loss', () => {
+    // 1. Save Telegram Bot Token and verify it merges cleanly into data/credentials.json
+    const testToken = '8846559143:AAEqSPXMqF6ZY-pUM4NpgT9zT8KmMlf-adg';
+    const updated = saveStoredCredentials({ telegramBotToken: testToken });
+    assert.equal(updated.telegramBotToken, testToken);
+
+    // 2. Load stored credentials and verify all essential fields are preserved
+    const reloaded = loadStoredCredentials();
+    assert.equal(reloaded.telegramBotToken, testToken);
+    assert.equal(reloaded.notificationEmail, 'sagarmc2516@gmail.com');
+    assert.equal(reloaded.telegramChatId, '5451190370');
+
+    // 3. Ensure passing empty or blank fields does not wipe existing saved tokens
+    const mergedWithBlank = saveStoredCredentials({ emptyKey: '', telegramBotToken: '' });
+    assert.equal(mergedWithBlank.telegramBotToken, testToken, 'Blank values must not overwrite existing valid credentials');
+
+    // 4. Verify UI templates contain the required input IDs for Telegram Bot Token in both Credentials and Settings tabs
+    const credsTabPath = path.join(__dirname, '..', 'js', 'ui', 'dashboard', 'credentialsTab.js');
+    const settingsTabPath = path.join(__dirname, '..', 'js', 'ui', 'dashboard', 'settingsTab.js');
+
+    const credsTabContent = fs.readFileSync(credsTabPath, 'utf8');
+    const settingsTabContent = fs.readFileSync(settingsTabPath, 'utf8');
+
+    assert.ok(credsTabContent.includes('inputTelegramBotTokenCredentials'), 'Credentials tab must have inputTelegramBotTokenCredentials');
+    assert.ok(settingsTabContent.includes('inputTelegramBotToken'), 'Settings tab must have inputTelegramBotToken');
+    assert.ok(settingsTabContent.includes('inputTelegramChatId'), 'Settings tab must have inputTelegramChatId');
+
+    console.log('✅ [PASS] 4. Telegram Bot API Token & Credentials persistence verified across disk & UI components');
   });
 
 });

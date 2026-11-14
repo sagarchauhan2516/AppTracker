@@ -343,7 +343,7 @@ export function renderCredentialsTab(providers, providerConfig) {
               </div>
             </div>
             <span class="meta-pill" style="font-size: 0.75rem; background: ${providerConfig.telegramBotToken ? 'rgba(16, 185, 129, 0.15)' : 'rgba(56, 189, 248, 0.15)'}; color: ${providerConfig.telegramBotToken ? '#34d399' : '#38bdf8'}; font-weight: 600;">
-              ${providerConfig.telegramBotToken ? 'Bot Configured' : 'Ready'}
+              ${providerConfig.telegramBotToken ? 'Bot Configured &amp; Saved' : 'Ready'}
             </span>
           </div>
 
@@ -354,9 +354,28 @@ export function renderCredentialsTab(providers, providerConfig) {
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: #38bdf8;">
               <span>✅ Zero SMS or Gateway Fees</span>
               <span>✅ Instant Mobile Notifications</span>
-              <span>✅ 1-Click Auto-Detect Chat ID</span>
+              <span>✅ Auto-Saved to Disk (data/credentials.json)</span>
               <span>✅ Daily Morning Digests</span>
             </div>
+          </div>
+
+          <div style="margin-bottom: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+              <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">
+                Telegram Bot API Token (from @BotFather)
+              </label>
+              <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" style="font-size: 0.72rem; color: #38bdf8; text-decoration: underline;">
+                Open @BotFather ↗
+              </a>
+            </div>
+            <div style="display: flex; gap: 0.4rem;">
+              <input type="password" id="inputTelegramBotTokenCredentials" class="search-input" value="${escapeHtml(providerConfig.telegramBotToken || '')}" placeholder="e.g. 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ..." style="flex: 1; font-family: var(--font-mono); font-size: 0.8rem;">
+              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputTelegramBotTokenCredentials" title="Toggle visibility">👁️</button>
+              <button type="button" id="btnTestTelegramCredentials" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+                ⚡ Test Bot Connection
+              </button>
+            </div>
+            <div id="statusTelegramCredentials" style="display: none; margin-top: 0.5rem;"></div>
           </div>
 
           <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
@@ -453,6 +472,77 @@ export function bindCredentialsTabEvents(container, ctx) {
       persistCredentials('geminiApiKey', key);
     });
 
+    // Telegram Bot Token inputs & test
+    const tgCredsInput = document.getElementById('inputTelegramBotTokenCredentials');
+    tgCredsInput?.addEventListener('input', (e) => {
+      const key = e.target.value.trim();
+      persistCredentials('telegramBotToken', key);
+    });
+    tgCredsInput?.addEventListener('change', (e) => {
+      const key = e.target.value.trim();
+      persistCredentials('telegramBotToken', key);
+    });
+
+    document.getElementById('btnTestTelegramCredentials')?.addEventListener('click', async () => {
+      const btn = document.getElementById('btnTestTelegramCredentials');
+      const statusDiv = document.getElementById('statusTelegramCredentials');
+      const token = document.getElementById('inputTelegramBotTokenCredentials')?.value.trim();
+
+      if (!token) {
+        if (statusDiv) {
+          statusDiv.style.display = 'block';
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Telegram Bot Token first.</div>`;
+        }
+        return;
+      }
+
+      btn.disabled = true;
+      const origText = btn.innerHTML;
+      btn.innerHTML = '⏳ Testing...';
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">⏳ Connecting to Telegram Bot API...</div>`;
+      }
+
+      try {
+        const res = await fetch('/api/test-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ botToken: token })
+        });
+        const data = await res.json();
+        if (statusDiv) {
+          if (data.success) {
+            statusDiv.innerHTML = `
+              <div class="alert-box alert-box-success">
+                ✅ <strong>Bot @${data.botUser?.username || 'Valid'} Connected!</strong> Token saved permanently to disk.<br>
+                <span style="font-size: 0.76rem; color: var(--text-secondary);">Click "Open Telegram Settings &amp; Auto-Detect ID" below to link your personal chat!</span>
+              </div>
+            `;
+          } else {
+            statusDiv.innerHTML = `
+              <div class="alert-box alert-box-error">
+                ❌ <strong>Telegram Error:</strong> ${data.error || 'Failed to authenticate bot token'}
+              </div>
+            `;
+          }
+        }
+      } catch (err) {
+        if (statusDiv) {
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network error: ${err.message}</div>`;
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    });
+
+    document.getElementById('btnJumpToTelegramSettings')?.addEventListener('click', () => {
+      const settingsTabBtn = document.querySelector('.nav-tab-btn[data-tab="settings"]');
+      if (settingsTabBtn) {
+        settingsTabBtn.click();
+      }
+    });
 
     // Save Credentials with real-time feedback
     document.getElementById('btnSaveCredentials')?.addEventListener('click', async () => {
@@ -463,6 +553,7 @@ export function bindCredentialsTabEvents(container, ctx) {
       const braveKey = document.getElementById('inputBraveApiKey')?.value.trim() || '';
       const serpKey = document.getElementById('inputSerpApiKey')?.value.trim() || '';
       const geminiKey = document.getElementById('inputGeminiApiKey')?.value.trim() || '';
+      const tgToken = document.getElementById('inputTelegramBotTokenCredentials')?.value.trim() || document.getElementById('inputTelegramBotToken')?.value.trim() || '';
       const searxEndpoint = document.getElementById('inputSearxEndpoint')?.value.trim() || 'https://etsi.me';
 
       const providers = storageService.getSearchProviders();
@@ -514,21 +605,36 @@ export function bindCredentialsTabEvents(container, ctx) {
       pConfig.googleCustomSearchEngineId = googleCx;
       pConfig.googleAppsScriptWebhookUrl = webhookUrl;
       pConfig.geminiApiKey = geminiKey;
-      pConfig.apiKeyConfigured = Boolean(googleApiKey || bingKey || serpKey || braveKey || geminiKey);
+      if (tgToken) pConfig.telegramBotToken = tgToken;
+      pConfig.apiKeyConfigured = Boolean(googleApiKey || bingKey || serpKey || braveKey || geminiKey || tgToken);
       storageService.saveProviderConfig(pConfig);
-      persistCredentials('geminiApiKey', geminiKey);
+
+      // Persist full credentials object to server disk
+      const credPayload = {};
+      if (geminiKey) credPayload.geminiApiKey = geminiKey;
+      if (webhookUrl) credPayload.googleAppsScriptWebhookUrl = webhookUrl;
+      if (braveKey) credPayload.braveApiKey = braveKey;
+      if (serpKey) credPayload.serpApiKey = serpKey;
+      if (tgToken) credPayload.telegramBotToken = tgToken;
+      if (Object.keys(credPayload).length > 0) {
+        fetch('/api/credentials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(credPayload)
+        }).catch(() => {});
+      }
 
       const banner = document.getElementById('saveFeedbackBanner');
       if (banner) {
         banner.style.display = 'block';
         banner.innerHTML = `
           <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; padding: 0.85rem 1rem; color: #34d399; font-size: 0.85rem;">
-            ✅ <strong>Credentials &amp; Search Engine Endpoints Successfully Saved!</strong> Adapters re-configured. Triggering live connectivity tests...
+            ✅ <strong>Credentials &amp; Search Engine Endpoints Successfully Saved!</strong> Stored permanently to disk and browser. Triggering live connectivity tests...
           </div>
         `;
       }
 
-      showConfirmationBanner('Credentials Saved', 'API credentials & search endpoints updated.', 'success', 2800);
+      showConfirmationBanner('Credentials Saved', 'All API credentials saved permanently to disk and browser.', 'success', 2800);
       if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
 
       // Automatically trigger live tests for configured services
@@ -538,6 +644,8 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (geminiKey) document.getElementById('btnTestGemini')?.click();
       if (webhookUrl) document.getElementById('btnTestWebhookPing')?.click();
       if (googleApiKey) document.getElementById('btnTestGoogleApi')?.click();
+      if (tgToken) document.getElementById('btnTestTelegramCredentials')?.click();
+    });
     });
 
     // Test Google Custom Search API Live

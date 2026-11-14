@@ -11,6 +11,9 @@ export function renderSettingsTab(profile) {
       deadlineLeadDays: 7
     };
     const creds = storageService.getProviderConfig() || {};
+    const emailVal = schedule.emailAddress && schedule.emailAddress !== 'candidate@dfir-india.org'
+      ? schedule.emailAddress
+      : (creds.notificationEmail || schedule.emailAddress || 'sagarmc2516@gmail.com');
 
     return `
       <div class="dash-panel-card">
@@ -126,7 +129,7 @@ export function renderSettingsTab(profile) {
             <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
               Email Alert Recipient(s) for "${escapeHtml(profile.name)}" (Supports Multiple)
             </label>
-            <input type="text" id="dashScheduleEmail" class="search-input" value="${escapeHtml(schedule.emailAddress)}" placeholder="e.g. user1@gmail.com, alerts@org.in" style="width: 100%; margin-bottom: 0.35rem; font-weight: 500;">
+            <input type="text" id="dashScheduleEmail" class="search-input" value="${escapeHtml(emailVal)}" placeholder="e.g. user1@gmail.com, alerts@org.in" style="width: 100%; margin-bottom: 0.35rem; font-weight: 500;">
             <small style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.75rem;">
               Configured separately per profile. Enter multiple comma-separated emails.
             </small>
@@ -178,12 +181,26 @@ export function renderSettingsTab(profile) {
 }
 
 export function bindSettingsTabEvents(container, ctx) {
+    // Persistent credentials synchronization to both browser storage and disk
+    const persistCredentials = (key, val) => {
+      if (!key) return;
+      const cfg = storageService.getProviderConfig();
+      cfg[key] = val;
+      storageService.saveProviderConfig(cfg);
+      fetch('/api/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [key]: val })
+      }).catch(() => {});
+    };
+
     // Save Schedule & System Settings
     document.getElementById('btnSaveScheduleAndSettings')?.addEventListener('click', () => {
       const preset = document.getElementById('dashSchedulePreset')?.value || 'THRICE_DAILY';
       const email = document.getElementById('dashScheduleEmail')?.value.trim() || '';
       const emailAlerts = document.getElementById('dashScheduleEmailAlerts')?.checked || false;
       const deadlineDays = parseInt(document.getElementById('dashScheduleDeadlineDays')?.value || '7', 10);
+      const tgToken = document.getElementById('inputTelegramBotToken')?.value.trim() || '';
       const tgChatId = document.getElementById('inputTelegramChatId')?.value.trim() || '';
 
       const hours = preset === 'THRICE_DAILY' ? ['08:00', '14:00', '20:00']
@@ -207,11 +224,20 @@ export function bindSettingsTabEvents(container, ctx) {
       };
 
       storageService.saveProfile(ctx.currentProfile);
+
+      // Persist all tokens permanently
+      const credPayload = {};
+      if (tgToken) {
+        persistCredentials('telegramBotToken', tgToken);
+        credPayload.telegramBotToken = tgToken;
+      }
       if (tgChatId) {
         persistCredentials('telegramChatId', tgChatId);
+        credPayload.telegramChatId = tgChatId;
       }
       if (email && email.includes('@')) {
         persistCredentials('notificationEmail', email);
+        credPayload.notificationEmail = email;
         const webhookUrl = storageService.getProviderConfig()?.googleAppsScriptWebhookUrl?.trim();
         if (webhookUrl) {
           fetch('/api/sync-webhook', {
@@ -222,11 +248,19 @@ export function bindSettingsTabEvents(container, ctx) {
         }
       }
 
+      if (Object.keys(credPayload).length > 0) {
+        fetch('/api/credentials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(credPayload)
+        }).catch(() => {});
+      }
+
       showConfirmationBanner(
-        'Schedule & Alerts Saved',
-        `Automation schedule and alert recipients saved for profile "${ctx.currentProfile.name}".`,
+        'Automation & API Credentials Saved',
+        `Schedule, Telegram Bot Token, Chat ID, and Email saved permanently to disk and browser.`,
         'success',
-        2800
+        3000
       );
       if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
       ctx.render();

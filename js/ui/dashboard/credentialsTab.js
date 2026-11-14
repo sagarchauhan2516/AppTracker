@@ -18,8 +18,9 @@ export function renderCredentialsTab(providers, providerConfig) {
 
         <!-- Section Intro -->
         <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
-          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-main); margin: 0 0 0.4rem 0;">
-            🔑 Credentials &amp; API Integration Hub
+          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-main); margin: 0 0 0.4rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="key" class="icon icon-md" style="color: var(--accent-primary);"></i>
+            <span>Credentials &amp; API Integration Hub</span>
           </h3>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
             Configure search engines and cloud endpoints. Search order: <strong>1. Direct Feeds (Primary)</strong> &rarr; <strong>2. SearXNG Metasearch</strong> &rarr; <strong>3. Brave Search API (2,000/mo)</strong> &rarr; <strong>4. SerpApi (Backup)</strong>.
@@ -27,14 +28,14 @@ export function renderCredentialsTab(providers, providerConfig) {
         </div>
 
         <!-- 1. Self-Reliable Direct Engine (Priority 1) -->
-        <div class="credential-card" style="background: var(--bg-surface); border: 2px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 3px solid #10b981; border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.4rem;">🛡️</span>
+              <span style="color: #34d399; display: flex; align-items: center;"><i data-lucide="shield-check" class="icon icon-lg"></i></span>
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">Direct Official &amp; Enterprise Feeds (Direct Autonomous Engine)</strong>
                 <span class="badge-test-flag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3); margin-left: 0.5rem;">
-                  ⭐ PRIORITY #1 (PRIMARY SEARCH)
+                  PRIORITY #1 (PRIMARY SEARCH)
                 </span>
               </div>
             </div>
@@ -42,25 +43,25 @@ export function renderCredentialsTab(providers, providerConfig) {
           </div>
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
             <p style="margin: 0 0 0.5rem 0;">
-              <strong>Always works without any third-party API key, credit card, or payment.</strong> Scans National Career Service (NCS), Central/State Government gazettes, C-DAC, UPSC, NFSU, and enterprise career portals directly.
+              Scans National Career Service (NCS), Central/State Government gazettes, C-DAC, UPSC, NFSU, and enterprise career portals directly.
             </p>
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: #34d399;">
-              <span>✅ Zero API Quota Consumption</span>
-              <span>✅ No Credit Card Ever Required</span>
-              <span>✅ Dynamic Vacancies for Any Role</span>
+              <span>Zero API Quota Consumption</span>
+              <span>No Credentials Required</span>
+              <span>Dynamic Vacancies for Any Role</span>
             </div>
           </div>
         </div>
 
         <!-- 2. SearXNG Metasearch Engine (Priority 2) -->
-        <div class="credential-card" style="background: var(--bg-surface); border: 2px solid rgba(99, 102, 241, 0.35); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 3px solid #6366f1; border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.4rem;">🌐</span>
+              <span style="color: #818cf8; display: flex; align-items: center;"><i data-lucide="globe" class="icon icon-lg"></i></span>
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">SearXNG Metasearch Engine (24+ Mirror Auto-Failover Pool)</strong>
                 <span class="badge-test-flag" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border-color: rgba(99, 102, 241, 0.3); margin-left: 0.5rem;">
-                  ⭐ PRIORITY #2 (WEB METASEARCH)
+                  PRIORITY #2 (WEB METASEARCH)
                 </span>
               </div>
             </div>
@@ -69,7 +70,7 @@ export function renderCredentialsTab(providers, providerConfig) {
 
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
             <p style="margin: 0 0 0.5rem 0;">
-              Aggregates results simultaneously across <strong>Google, Bing, DuckDuckGo, Yahoo, and Startpage</strong>. If any single public instance is busy or rate-limited, the system <strong>automatically shifts to the next live mirror</strong> from a pool of 24+ global nodes!
+              Aggregates results simultaneously across multiple search providers. If any single public instance is busy or rate-limited, the system automatically rotates to the next live mirror.
             </p>
           </div>
 
@@ -80,48 +81,45 @@ export function renderCredentialsTab(providers, providerConfig) {
             <div style="display: flex; gap: 0.4rem;">
               <input type="url" id="inputSearxEndpoint" class="search-input" value="${escapeHtml(searxProv.endpoint || 'https://www.isci.si')}" placeholder="https://www.isci.si" style="flex: 1; font-family: var(--font-mono); font-size: 0.8rem;">
               <button type="button" id="btnTestSearxng" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: rgba(99, 102, 241, 0.4); color: #818cf8;">
-                🧪 Test &amp; Auto-Shift Pool
+                <i data-lucide="refresh-cw" class="icon icon-sm"></i> Test &amp; Auto-Shift Pool
               </button>
             </div>
             <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
-              <label style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;">⚡ Fast Mirror Presets:</label>
+              <label style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;">Fast Mirror Presets:</label>
               <select id="selectSearxMirrorPreset" class="filter-select" style="font-size: 0.75rem; padding: 0.35rem 0.6rem; flex: 1;">
-                <option value="https://www.isci.si" selected>🚀 https://www.isci.si (Verified High-Speed • 60+ Results)</option>
-                <option value="https://etsi.me">🌐 https://etsi.me (Verified Mirror • Multi-Engine)</option>
-                <option value="https://searx.perennialte.ch">🛡️ https://searx.perennialte.ch (Verified Working Mirror)</option>
-                <option value="https://search.lumy.live">⚡ https://search.lumy.live (Active European Node)</option>
-                <option value="https://searx.dresden.network">🛡️ https://searx.dresden.network (German Node)</option>
-                <option value="http://localhost:8080">🐳 http://localhost:8080 (Local Docker Instance)</option>
+                <option value="https://www.isci.si" selected>https://www.isci.si (Verified High-Speed • 60+ Results)</option>
+                <option value="https://etsi.me">https://etsi.me (Verified Mirror • Multi-Engine)</option>
+                <option value="https://searx.perennialte.ch">https://searx.perennialte.ch (Verified Working Mirror)</option>
+                <option value="https://search.lumy.live">https://search.lumy.live (Active European Node)</option>
+                <option value="https://searx.dresden.network">https://searx.dresden.network (German Node)</option>
+                <option value="http://localhost:8080">http://localhost:8080 (Local Docker Instance)</option>
               </select>
             </div>
           </div>
           <div id="statusSearxng" style="display: none; margin-bottom: 0.75rem;"></div>
 
           <details style="font-size: 0.75rem; color: var(--text-secondary);">
-            <summary style="cursor: pointer; color: #818cf8;">ℹ️ How Auto-Shifting Works Across 24+ Mirrors</summary>
+            <summary style="cursor: pointer; color: #818cf8;">How Auto-Shifting Works Across Mirrors</summary>
             <div style="margin: 0.5rem 0 0 0; line-height: 1.5;">
               <p style="margin: 0 0 0.3rem 0;">
-                &bull; <strong>Zero Interruption:</strong> If an instance returns HTTP 429 (rate-limited) or fails, the proxy immediately tries the next mirror in milliseconds until a valid result is returned.
-              </p>
-              <p style="margin: 0 0 0.3rem 0;">
-                &bull; <strong>Does my computer need to stay on?</strong> <span style="color: #34d399; font-weight: 600;">NO.</span> All public mirrors run 24/7 in cloud data centers around the world.
+                &bull; <strong>Failover:</strong> If an instance returns HTTP 429 (rate-limited) or fails, the proxy immediately tries the next mirror until a valid result is returned.
               </p>
               <p style="margin: 0;">
-                &bull; <strong>Ultimate Failover:</strong> If all public mirrors ever experience temporary web maintenance, the engine seamlessly fails over to <strong>Priority 3 (Brave Search)</strong> and <strong>Priority 4 (SerpApi)</strong>.
+                &bull; <strong>Backup:</strong> If public mirrors are temporarily unreachable, the engine seamlessly fails over to <strong>Priority 3 (Brave Search)</strong> and <strong>Priority 4 (SerpApi)</strong>.
               </p>
             </div>
           </details>
         </div>
 
         <!-- 3. Brave Search API (Priority 3 Option - Free 2,000/Month) -->
-        <div class="credential-card" style="background: var(--bg-surface); border: 2px solid rgba(249, 115, 22, 0.35); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 3px solid #f97316; border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.4rem;">🦁</span>
+              <span style="color: #fb923c; display: flex; align-items: center;"><i data-lucide="search" class="icon icon-lg"></i></span>
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">Brave Search API</strong>
                 <span class="badge-test-flag" style="background: rgba(249, 115, 22, 0.15); color: #fb923c; border-color: rgba(249, 115, 22, 0.3); margin-left: 0.5rem;">
-                  ⭐ PRIORITY #3 (FREE 2,000 SEARCHES / MONTH)
+                  PRIORITY #3 (FREE 2,000 SEARCHES / MONTH)
                 </span>
               </div>
             </div>
@@ -132,7 +130,7 @@ export function renderCredentialsTab(providers, providerConfig) {
 
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
             <p style="margin: 0 0 0.5rem 0;">
-              Independent index with zero tracking. The <strong>Free Data for Search plan</strong> grants <strong>2,000 searches/month completely free</strong> (1 QPS rate limit) with no credit card required. Only ~90–270 credits needed per month for 3 daily scans!
+              Independent index with zero tracking. The Free Data for Search plan grants 2,000 searches per month with high privacy and accuracy.
             </p>
           </div>
 
@@ -142,16 +140,16 @@ export function renderCredentialsTab(providers, providerConfig) {
             </label>
             <div style="display: flex; gap: 0.4rem;">
               <input type="password" id="inputBraveApiKey" class="search-input" value="${escapeHtml(braveProv.apiKey || '')}" placeholder="e.g. BSAk..." style="flex: 1; font-family: var(--font-mono); font-size: 0.8rem;">
-              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputBraveApiKey">👁️</button>
+              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputBraveApiKey"><i data-lucide="eye" class="icon icon-xs"></i></button>
               <button type="button" id="btnTestBrave" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: rgba(249, 115, 22, 0.4); color: #fb923c;">
-                🧪 Test Connection
+                <i data-lucide="play" class="icon icon-sm"></i> Test Connection
               </button>
             </div>
           </div>
           <div id="statusBraveApi" style="display: none; margin-bottom: 0.75rem;"></div>
 
           <details style="font-size: 0.75rem; color: var(--text-secondary);">
-            <summary style="cursor: pointer; color: #fb923c;">ℹ️ How to get your Free 2,000/month Brave API Key</summary>
+            <summary style="cursor: pointer; color: #fb923c;">How to get your Free 2,000/month Brave API Key</summary>
             <div style="margin: 0.5rem 0 0 0; line-height: 1.5;">
               <p style="margin: 0 0 0.3rem 0;">
                 1. Visit <a href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline;">https://brave.com/search/api/</a> and click <strong>Get started for free</strong>.
@@ -170,7 +168,7 @@ export function renderCredentialsTab(providers, providerConfig) {
         <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.3rem;">⚡</span>
+              <span style="color: #fbbf24; display: flex; align-items: center;"><i data-lucide="zap" class="icon icon-lg"></i></span>
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">SerpApi Google Jobs API</strong>
                 <span class="badge-test-flag" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); margin-left: 0.5rem;">
@@ -185,17 +183,17 @@ export function renderCredentialsTab(providers, providerConfig) {
             <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">SerpApi Private Key</label>
             <div style="display: flex; gap: 0.4rem;">
               <input type="password" id="inputSerpApiKey" class="search-input" value="${escapeHtml(serpProv.apiKey || '')}" placeholder="e.g. 84b52e..." style="flex: 1; font-family: var(--font-mono); font-size: 0.8rem;">
-              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputSerpApiKey">👁️</button>
-              <button type="button" id="btnTestSerpApi" class="btn btn-outline btn-sm" style="font-weight: 600;">🧪 Test &amp; Verify Key</button>
+              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputSerpApiKey"><i data-lucide="eye" class="icon icon-xs"></i></button>
+              <button type="button" id="btnTestSerpApi" class="btn btn-outline btn-sm" style="font-weight: 600;"><i data-lucide="play" class="icon icon-sm"></i> Test &amp; Verify Key</button>
             </div>
           </div>
-          <div style="margin-top: 0.6rem; padding: 0.6rem 0.85rem; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: var(--radius-md); font-size: 0.78rem; display: flex; align-items: center; gap: 0.5rem;">
-            <span style="font-size: 1.1rem;">🛡️</span>
-            <span style="color: #fbbf24;"><strong>Permission Guard Active:</strong> The system will <em>always ask you for confirmation first</em> before executing any search through SerpApi, protecting your 250 free monthly queries.</span>
+          <div style="margin-top: 0.6rem; padding: 0.6rem 0.85rem; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-md); font-size: 0.78rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="shield-check" class="icon icon-sm" style="color: #34d399;"></i>
+            <span style="color: #fbbf24;"><strong>Permission Guard Active:</strong> Confirmation required before executing any search through SerpApi, protecting your monthly queries.</span>
           </div>
           <details style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.6rem;">
-            <summary style="cursor: pointer; color: #60a5fa;">About SerpApi (No Credit Card • Prompted On-Demand)</summary>
-            <p style="margin: 0.4rem 0 0 0;">SerpApi grants 250 free Google Jobs searches every month upon registration without entering a credit card. It acts as secondary fallback behind Direct Feeds, SearXNG, and Brave Search.</p>
+            <summary style="cursor: pointer; color: #60a5fa;">About SerpApi</summary>
+            <p style="margin: 0.4rem 0 0 0;">SerpApi provides 250 free searches every month. Acts as secondary fallback behind Direct Feeds, SearXNG, and Brave Search.</p>
           </details>
         </div>
 
@@ -203,7 +201,7 @@ export function renderCredentialsTab(providers, providerConfig) {
         <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.3rem;">📊</span>
+              <span style="color: #10b981; display: flex; align-items: center;"><i data-lucide="sheet" class="icon icon-lg"></i></span>
               <strong style="font-size: 1.05rem; color: var(--text-main);">Google Sheets / Google Apps Script Webhook Sync</strong>
             </div>
             <span id="badgeWebhookStatus" class="badge-test-flag" style="background: ${providerConfig.googleAppsScriptWebhookUrl ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)'}; color: ${providerConfig.googleAppsScriptWebhookUrl ? '#34d399' : '#fbbf24'}; border-color: rgba(16, 185, 129, 0.3);">
@@ -217,31 +215,31 @@ export function renderCredentialsTab(providers, providerConfig) {
             </label>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem;">
               <input type="url" id="inputGoogleWebhookUrl" class="search-input" value="${escapeHtml(providerConfig.googleAppsScriptWebhookUrl || '')}" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" style="flex: 1; min-width: 280px; font-family: var(--font-mono); font-size: 0.8rem;">
-              <button type="button" id="btnTestWebhookPing" class="btn btn-outline btn-sm" style="font-weight: 600;">📡 Test Ping</button>
-              <button type="button" id="btnSyncAllToSheets" class="btn btn-primary btn-sm" style="font-weight: 600; background: #059669; border-color: #059669;">🔄 Sync All to Sheets</button>
-              <button type="button" id="btnPullFromSheets" class="btn btn-primary btn-sm" style="font-weight: 600; background: #2563eb; border-color: #2563eb;">📥 Pull Real Vacancies from Sheets</button>
+              <button type="button" id="btnTestWebhookPing" class="btn btn-outline btn-sm" style="font-weight: 600;"><i data-lucide="radio" class="icon icon-sm"></i> Test Ping</button>
+              <button type="button" id="btnSyncAllToSheets" class="btn btn-primary btn-sm" style="font-weight: 600; background: #059669; border-color: #059669;"><i data-lucide="refresh-cw" class="icon icon-sm"></i> Sync All to Sheets</button>
+              <button type="button" id="btnPullFromSheets" class="btn btn-primary btn-sm" style="font-weight: 600; background: #2563eb; border-color: #2563eb;"><i data-lucide="download" class="icon icon-sm"></i> Pull Real Vacancies from Sheets</button>
             </div>
             <div style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem;">
-              <span>💾</span> <strong>Auto-Saved Permanently:</strong> Webhook URL &amp; credentials persist directly on your local server disk across all reloads.
+              <i data-lucide="save" class="icon icon-xs"></i> <strong>Auto-Saved:</strong> Webhook URL &amp; credentials persist directly on your local server disk across all reloads.
             </div>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" id="btnTestWebhookEmail" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: #60a5fa; color: #60a5fa;">📧 Test Email Delivery</button>
-              <button type="button" id="btnTriggerCloudScan" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: #34d399; color: #34d399;">⚡ Run Cloud Scan Now</button>
-              <button type="button" id="btnFetchCloudLogs" class="btn btn-outline btn-sm" style="font-weight: 600;">📋 View Cloud Execution Logs</button>
+              <button type="button" id="btnTestWebhookEmail" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: #60a5fa; color: #60a5fa;"><i data-lucide="mail" class="icon icon-sm"></i> Test Email Delivery</button>
+              <button type="button" id="btnTriggerCloudScan" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: #34d399; color: #34d399;"><i data-lucide="zap" class="icon icon-sm"></i> Run Cloud Scan Now</button>
+              <button type="button" id="btnFetchCloudLogs" class="btn btn-outline btn-sm" style="font-weight: 600;"><i data-lucide="file-text" class="icon icon-sm"></i> View Cloud Execution Logs</button>
             </div>
           </div>
           <div id="statusWebhookPing" style="display: none; margin-bottom: 1rem;"></div>
         </div>
 
         <!-- 5. Google Gemini AI Engine (100% Free Regular Google Account - 1,500 RPD) -->
-        <div class="credential-card" style="background: var(--bg-surface); border: 2px solid rgba(168, 85, 247, 0.4); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 3px solid #a855f7; border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.4rem;">🤖</span>
+              <span style="color: #c084fc; display: flex; align-items: center;"><i data-lucide="cpu" class="icon icon-lg"></i></span>
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">Google Gemini AI Studio (Free Tier AI Strategist)</strong>
                 <span class="badge-test-flag" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.35); margin-left: 0.5rem;">
-                  ⭐ FREE TIER &bull; 1,500 REQUESTS/DAY
+                  FREE TIER &bull; 1,500 REQUESTS/DAY
                 </span>
               </div>
             </div>
@@ -252,13 +250,13 @@ export function renderCredentialsTab(providers, providerConfig) {
 
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
             <p style="margin: 0 0 0.5rem 0;">
-              Powers <strong>AI Profile Generation</strong> (for Software Developer, Data Science, etc.), <strong>Entire Web Search Strategist</strong> (decides which sites to search and query syntax), <strong>Notification Date/Fact Extractor</strong>, and <strong>AI System Health Watchdog</strong>.
+              Powers AI Profile Generation, search strategy orchestration, fact extraction from notices, and scraper validation.
             </p>
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: #c084fc;">
-              <span>✅ 1,500 Requests/Day (High Quota)</span>
-              <span>✅ 15 Requests/Min (1M Context)</span>
-              <span>✅ Compatible with Google Account</span>
-              <span>✅ Auto-Saved to Disk</span>
+              <span>1,500 Requests/Day</span>
+              <span>15 Requests/Min</span>
+              <span>Standard Google Account</span>
+              <span>Auto-Saved to Disk</span>
             </div>
           </div>
 
@@ -268,54 +266,51 @@ export function renderCredentialsTab(providers, providerConfig) {
             </label>
             <div style="display: flex; gap: 0.4rem;">
               <input type="password" id="inputGeminiApiKey" class="search-input" value="${escapeHtml(geminiApiKey)}" placeholder="AIzaSy..." style="flex: 1; font-family: var(--font-mono); font-size: 0.8rem;">
-              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputGeminiApiKey">👁️</button>
+              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputGeminiApiKey"><i data-lucide="eye" class="icon icon-xs"></i></button>
               <button type="button" id="btnTestGemini" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
-                ⚡ Test &amp; Verify Gemini AI
+                <i data-lucide="play" class="icon icon-sm"></i> Test &amp; Verify Gemini AI
               </button>
             </div>
           </div>
           <div id="statusGeminiApi" style="display: none; margin-bottom: 0.75rem;"></div>
 
           <details style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.85rem;">
-            <summary style="cursor: pointer; color: #c084fc;">ℹ️ How to get your 100% Free Google Gemini API Key in 60 seconds</summary>
+            <summary style="cursor: pointer; color: #c084fc;">How to get your Free Google Gemini API Key</summary>
             <div style="margin: 0.5rem 0 0 0; line-height: 1.5;">
               <p style="margin: 0 0 0.3rem 0;">
                 1. Open <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline;">https://aistudio.google.com/app/apikey</a> and sign in with any standard Google account.
               </p>
               <p style="margin: 0 0 0.3rem 0;">
-                2. Click <strong>"Create API Key"</strong> &mdash; <strong>No credit card or billing account is required</strong>.
+                2. Click <strong>"Create API Key"</strong>.
               </p>
-              <p style="margin: 0 0 0.3rem 0;">
-                3. Paste the key above and click <strong>Test &amp; Verify</strong>. The key is automatically verified against <code>gemini-1.5-flash</code> and saved permanently to disk in <code>data/credentials.json</code>.
-              </p>
-              <p style="margin: 0; color: #34d399;">
-                &bull; <strong>Note:</strong> Even without an API key, our built-in offline expert catalog provides instant recommendations for Software Developer and Tech roles!
+              <p style="margin: 0;">
+                3. Paste the key above and click <strong>Test &amp; Verify</strong>. The key is automatically verified and saved permanently to disk in <code>data/credentials.json</code>.
               </p>
             </div>
           </details>
 
           <!-- Continuous Learning Cloud Brain Panel (Automated Cloud Updates) -->
-          <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: var(--radius-md); padding: 0.85rem;">
+          <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: var(--radius-md); padding: 0.85rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem; flex-wrap: wrap; gap: 0.4rem;">
               <div style="display: flex; align-items: center; gap: 0.45rem;">
-                <span style="font-size: 1rem;">🧠</span>
+                <i data-lucide="brain" class="icon icon-sm" style="color: #c084fc;"></i>
                 <strong style="font-size: 0.82rem; color: #c084fc;">Continuous Learning Cloud Brain</strong>
                 <span class="badge-test-flag" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border-color: rgba(52, 211, 153, 0.35); font-size: 0.65rem;">
                   AUTO-UPDATES ACTIVE
                 </span>
               </div>
               <button type="button" id="btnSyncKnowledgeBrain" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 3px 8px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
-                🔄 Sync Knowledge Brain
+                <i data-lucide="refresh-cw" class="icon icon-xs"></i> Sync Knowledge Brain
               </button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; font-size: 0.74rem;">
               <div class="dash-card-compact">
                 <div style="color: var(--text-muted); font-size: 0.68rem;">Hosting Mode</div>
-                <div style="color: #34d399; font-weight: 700;">24/7 Cloud Serverless</div>
+                <div style="color: #34d399; font-weight: 600;">Cloud Serverless</div>
               </div>
               <div class="dash-card-compact">
                 <div style="color: var(--text-muted); font-size: 0.68rem;">Monthly Cloud Cost</div>
-                <div style="color: #38bdf8; font-weight: 700;">Standard Cloud</div>
+                <div style="color: #38bdf8; font-weight: 600;">Standard Cloud</div>
               </div>
               <div class="dash-card-compact">
                 <div style="color: var(--text-muted); font-size: 0.68rem;">Offline Model</div>
@@ -323,7 +318,7 @@ export function renderCredentialsTab(providers, providerConfig) {
               </div>
               <div class="dash-card-compact">
                 <div style="color: var(--text-muted); font-size: 0.68rem;">Continuous Learning</div>
-                <div id="statAiLearnedCount" style="color: #c084fc; font-weight: 700;">Active In-Context</div>
+                <div id="statAiLearnedCount" style="color: #c084fc; font-weight: 600;">Active In-Context</div>
               </div>
             </div>
             <div id="statusKnowledgeSync" style="display: none; font-size: 0.74rem; margin-top: 0.5rem; padding: 0.4rem 0.6rem; border-radius: var(--radius-sm);"></div>
@@ -331,14 +326,14 @@ export function renderCredentialsTab(providers, providerConfig) {
         </div>
 
         <!-- 6. Telegram Instant Mobile Alert & Push Bot -->
-        <div class="credential-card" style="background: var(--bg-surface); border: 2px solid rgba(56, 189, 248, 0.4); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div class="credential-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 3px solid #0284c7; border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.4rem;">✈️</span>
+              <span style="color: #38bdf8; display: flex; align-items: center;"><i data-lucide="send" class="icon icon-lg"></i></span>
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">Telegram Instant Mobile Alert Channel</strong>
                 <span class="badge-test-flag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35); margin-left: 0.5rem;">
-                  ⭐ INSTANT PUSH ALERTS
+                  INSTANT PUSH ALERTS
                 </span>
               </div>
             </div>
@@ -349,13 +344,13 @@ export function renderCredentialsTab(providers, providerConfig) {
 
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.85rem;">
             <p style="margin: 0 0 0.5rem 0;">
-              Delivers live instant push notifications for new verified government vacancies, closing deadline alerts (&lt;48h), and official corrigenda directly to your phone.
+              Delivers instant push notifications for new verified government vacancies, closing deadline alerts (&lt;48h), and official corrigenda directly to your phone.
             </p>
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: #38bdf8;">
-              <span>✅ Zero SMS or Gateway Fees</span>
-              <span>✅ Instant Mobile Notifications</span>
-              <span>✅ Auto-Saved to Disk (data/credentials.json)</span>
-              <span>✅ Daily Morning Digests</span>
+              <span>Zero Gateway Fees</span>
+              <span>Instant Mobile Notifications</span>
+              <span>Auto-Saved to Disk (data/credentials.json)</span>
+              <span>Daily Morning Digests</span>
             </div>
           </div>
 
@@ -370,9 +365,9 @@ export function renderCredentialsTab(providers, providerConfig) {
             </div>
             <div style="display: flex; gap: 0.4rem;">
               <input type="password" id="inputTelegramBotTokenCredentials" class="search-input" value="${escapeHtml(providerConfig.telegramBotToken || '')}" placeholder="e.g. 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ..." style="flex: 1; font-family: var(--font-mono); font-size: 0.8rem;">
-              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputTelegramBotTokenCredentials" title="Toggle visibility">👁️</button>
+              <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputTelegramBotTokenCredentials" title="Toggle visibility"><i data-lucide="eye" class="icon icon-xs"></i></button>
               <button type="button" id="btnTestTelegramCredentials" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
-                ⚡ Test Bot Connection
+                <i data-lucide="send" class="icon icon-sm"></i> Test Bot Connection
               </button>
             </div>
             <div id="statusTelegramCredentials" style="display: none; margin-top: 0.5rem;"></div>
@@ -380,10 +375,10 @@ export function renderCredentialsTab(providers, providerConfig) {
 
           <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
             <a href="https://t.me/vacancy_radar1_bot" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.5); text-decoration: none; font-weight: 600;">
-              ✈️ Open @vacancy_radar1_bot in Telegram ↗
+              Open @vacancy_radar1_bot in Telegram ↗
             </a>
             <button type="button" id="btnJumpToTelegramSettings" class="btn btn-primary btn-sm" style="background: #0284c7; border-color: #0284c7; font-weight: 600;">
-              ⚙️ Open Telegram Settings &amp; Auto-Detect ID &rarr;
+              <i data-lucide="settings" class="icon icon-xs"></i> Open Telegram Settings &rarr;
             </button>
           </div>
         </div>
@@ -391,14 +386,14 @@ export function renderCredentialsTab(providers, providerConfig) {
         <!-- 4. Deprecated / Disabled Provider Notice (Google & Bing) -->
         <details style="background: var(--bg-surface-elevated); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; font-size: 0.8rem;">
           <summary style="cursor: pointer; font-weight: 600; color: var(--text-muted);">
-            ⚙️ Disabled Services: Google Custom Search &amp; Microsoft Azure Bing
+            Disabled Services: Google Custom Search &amp; Microsoft Azure Bing
           </summary>
           <div style="margin-top: 0.75rem; color: var(--text-secondary); line-height: 1.6;">
             <div style="margin-bottom: 0.75rem;">
               <strong style="color: #f87171;">Google Custom Search API (Disabled):</strong> Google has closed new project signups for the legacy Custom Search JSON API with HTTP 403. This provider is deactivated to prevent query delays.
             </div>
             <div>
-              <strong style="color: #fbbf24;">Bing Web Search (Removed):</strong> Azure requires credit card verification for API keys. It has been deactivated so your application runs 100% free with zero payment cards.
+              <strong style="color: #fbbf24;">Bing Web Search (Removed):</strong> Azure requires credit card verification for API keys. It has been deactivated to ensure zero-cost operation.
             </div>
           </div>
         </details>
@@ -408,10 +403,13 @@ export function renderCredentialsTab(providers, providerConfig) {
           <div id="saveFeedbackBanner" style="display: none;"></div>
           <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
             <button type="button" id="btnSaveCredentials" class="btn btn-primary" style="font-weight: 600;">
-              💾 Save API Credentials &amp; Revalidate Adapters
+              <i data-lucide="save" class="icon icon-sm"></i> Save API Credentials &amp; Revalidate Adapters
             </button>
           </div>
         </div>
+
+      </div>
+    `;
 
       </div>
     `;
@@ -491,17 +489,20 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (!token) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Telegram Bot Token first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter your Telegram Bot Token first.</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Testing...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Testing...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">⏳ Connecting to Telegram Bot API...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Connecting to Telegram Bot API...</div>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -515,25 +516,28 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Bot @${data.botUser?.username || 'Valid'} Connected!</strong> Token saved permanently to disk.<br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Bot @${data.botUser?.username || 'Valid'} Connected!</strong> Token saved permanently to disk.<br>
                 <span style="font-size: 0.76rem; color: var(--text-secondary);">Click "Open Telegram Settings &amp; Auto-Detect ID" below to link your personal chat!</span>
               </div>
             `;
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Telegram Error:</strong> ${data.error || 'Failed to authenticate bot token'}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Telegram Error:</strong> ${data.error || 'Failed to authenticate bot token'}
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Network error: ${err.message}</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -628,10 +632,11 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (banner) {
         banner.style.display = 'block';
         banner.innerHTML = `
-          <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; padding: 0.85rem 1rem; color: #34d399; font-size: 0.85rem;">
-            ✅ <strong>Credentials &amp; Search Engine Endpoints Successfully Saved!</strong> Stored permanently to disk and browser. Triggering live connectivity tests...
+          <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 6px; padding: 0.85rem 1rem; color: #34d399; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> <span><strong>Credentials &amp; Search Engine Endpoints Successfully Saved!</strong> Stored permanently to disk and browser. Triggering live connectivity tests...</span>
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       showConfirmationBanner('Credentials Saved', 'All API credentials saved permanently to disk and browser.', 'success', 2800);
@@ -660,24 +665,27 @@ export function bindCredentialsTabEvents(container, ctx) {
           statusDiv.style.display = 'block';
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ⚠️ Please provide both a Google API Key and Search Engine ID (CX) before testing.
+              <i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please provide both a Google API Key and Search Engine ID (CX) before testing.
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Validating API...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Validating API...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.innerHTML = `
           <div class="alert-box alert-box-info">
-            ⏳ Connecting to Google Custom Search JSON API endpoint...
+            <i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Connecting to Google Custom Search JSON API endpoint...
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -692,7 +700,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Google Custom Search Verified!</strong><br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Google Custom Search Verified!</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">${data.message} | Sample lead: <em>"${data.sampleTitle}"</em></span>
               </div>
             `;
@@ -700,26 +708,26 @@ export function bindCredentialsTabEvents(container, ctx) {
             statusDiv.innerHTML = `
               <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 6px; padding: 1rem; font-size: 0.82rem; color: #fbbf24;">
                 <div style="font-weight: 700; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
-                  <span>ℹ️</span> <span>Google Cloud Policy Notice: API Closed to New Customers</span>
+                  <i data-lucide="info" class="icon-xs text-amber"></i> <span>Google Cloud Policy Notice: API Closed to New Customers</span>
                 </div>
                 <div style="color: var(--text-main); margin-bottom: 0.65rem; line-height: 1.5;">
                   You have enabled the API in your Google Cloud Console correctly. However, <strong>Google has officially closed the legacy Custom Search JSON API to all new projects and new sign-ups</strong>. Google rejects calls with <code>403 PERMISSION_DENIED: This project does not have the access to Custom Search JSON API</code>.
                 </div>
-                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 4px; padding: 0.65rem; color: #34d399; font-size: 0.78rem;">
-                  🚀 <strong>Zero Impact on Discovery:</strong> Your connected <strong>SerpApi (Free 250 searches/month)</strong> and Direct RSS feeds are active. The rotation engine automatically uses SerpApi to retrieve real vacancies.
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 4px; padding: 0.65rem; color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <i data-lucide="shield-check" class="icon-xs text-emerald"></i> <span><strong>Zero Impact on Discovery:</strong> Your connected <strong>SerpApi</strong> and Direct RSS feeds are active. The rotation engine automatically uses SerpApi to retrieve real vacancies.</span>
                 </div>
               </div>
             `;
           } else if (data.errorType === 'API_NOT_ENABLED' || data.status === 403) {
             statusDiv.innerHTML = `
               <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 6px; padding: 0.9rem; font-size: 0.82rem; color: #fbbf24;">
-                <div style="font-weight: 700; margin-bottom: 0.35rem;">⚠️ One Step Needed in Google Cloud Console:</div>
+                <div style="font-weight: 700; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> One Step Needed in Google Cloud Console:</div>
                 <div style="color: var(--text-main); margin-bottom: 0.65rem; line-height: 1.5;">
-                  Your API Key and CX are recognized, but <strong>"Custom Search API" is NOT enabled</strong> in this Google Cloud project. Google blocks queries until this free API is enabled.
+                  Your API Key and CX are recognized, but <strong>"Custom Search API" is NOT enabled</strong> in this Google Cloud project. Google blocks queries until this API is enabled.
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                   <a href="${data.enableUrl || 'https://console.cloud.google.com/apis/library/customsearch.googleapis.com'}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="font-weight: 600; text-decoration: none;">
-                    👉 Click Here to Enable Custom Search API (Free) ↗
+                    Click Here to Enable Custom Search API <i data-lucide="external-link" class="icon-xs"></i>
                   </a>
                   <span style="font-size: 0.75rem; color: var(--text-muted);">After clicking "Enable" on Google Cloud, click "Test & Validate" again.</span>
                 </div>
@@ -728,22 +736,25 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Google API Error (HTTP ${data.status}):</strong> ${data.message}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Google API Error (HTTP ${data.status}):</strong> ${data.message}
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not reach local test proxy: ${err.message}
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not reach local test proxy: ${err.message}
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -765,15 +776,17 @@ export function bindCredentialsTabEvents(container, ctx) {
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Testing &amp; Checking Pool...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Testing &amp; Checking Pool...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.innerHTML = `
-          <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; padding: 0.75rem; color: #818cf8; font-size: 0.8rem;">
-            ⏳ Connecting to SearXNG mirror pool starting with <code>${escapeHtml(endpoint)}</code>...
+          <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 6px; padding: 0.75rem; color: #818cf8; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+            <i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> <span>Connecting to SearXNG mirror pool starting with <code>${escapeHtml(endpoint)}</code>...</span>
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -800,7 +813,7 @@ export function bindCredentialsTabEvents(container, ctx) {
 
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ${data.wasShifted ? '🔄 <strong>Auto-Shifted to Active Mirror!</strong>' : '✅ <strong>SearXNG Connected &amp; Operational!</strong>'} (${data.latencyMs}ms latency)<br>
+                ${data.wasShifted ? '<i data-lucide="refresh-cw" class="icon-xs text-amber"></i> <strong>Auto-Shifted to Active Mirror!</strong>' : '<i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>SearXNG Connected &amp; Operational!</strong>'} (${data.latencyMs}ms latency)<br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">
                   Active Mirror: <strong>${escapeHtml(data.endpoint)}</strong><br>
                   ${data.wasShifted ? `<em style="color: #fbbf24;">(Shifted from ${escapeHtml(data.originalEndpoint)} which was rate-limited)</em><br>` : ''}
@@ -817,7 +830,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>SearXNG Check Notice:</strong> ${data.message}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>SearXNG Check Notice:</strong> ${data.message}
               </div>
             `;
             if (badge) {
@@ -826,18 +839,21 @@ export function bindCredentialsTabEvents(container, ctx) {
               badge.style.color = '#f87171';
             }
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not reach local test proxy: ${err.message}
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not reach local test proxy: ${err.message}
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -853,24 +869,27 @@ export function bindCredentialsTabEvents(container, ctx) {
           statusDiv.style.display = 'block';
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ⚠️ Please provide a Brave Search API Key first.
+              <i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please provide a Brave Search API Key first.
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Testing...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Testing...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.innerHTML = `
-          <div style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 6px; padding: 0.75rem; color: #fb923c; font-size: 0.8rem;">
-            ⏳ Querying Brave Search endpoint...
+          <div style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 6px; padding: 0.75rem; color: #fb923c; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+            <i data-lucide="loader-2" class="icon-xs icon-spin text-amber"></i> <span>Querying Brave Search endpoint...</span>
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -885,7 +904,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Brave Search API Connected &amp; Verified!</strong><br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Brave Search API Connected &amp; Verified!</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">${data.message}</span>
               </div>
             `;
@@ -903,22 +922,25 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Brave API Test Failed:</strong> ${data.message}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Brave API Test Failed:</strong> ${data.message}
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not reach test proxy: ${err.message}
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not reach test proxy: ${err.message}
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -934,24 +956,27 @@ export function bindCredentialsTabEvents(container, ctx) {
           statusDiv.style.display = 'block';
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ⚠️ Please provide a SerpApi Private Key first.
+              <i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please provide a SerpApi Private Key first.
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Checking...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Checking...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.innerHTML = `
           <div class="alert-box alert-box-info">
-            ⏳ Querying SerpApi account endpoint...
+            <i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Querying SerpApi account endpoint...
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -966,7 +991,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>SerpApi Connected &amp; Ready!</strong><br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>SerpApi Connected &amp; Ready!</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">Account: <strong>${data.accountEmail}</strong> (${data.planName})<br>Quota Remaining: <strong>${data.searchesLeft} / ${data.searchesPerMonth} searches</strong></span>
               </div>
             `;
@@ -978,22 +1003,25 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>SerpApi Error:</strong> ${data.message}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>SerpApi Error:</strong> ${data.message}
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not reach test proxy: ${err.message}
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not reach test proxy: ${err.message}
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1006,15 +1034,17 @@ export function bindCredentialsTabEvents(container, ctx) {
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Testing Gemini AI...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Testing Gemini AI...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.innerHTML = `
-          <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 6px; padding: 0.75rem; color: #c084fc; font-size: 0.8rem;">
-            ⏳ Connecting to Google Gemini API (gemini-1.5-flash)...
+          <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 6px; padding: 0.75rem; color: #c084fc; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+            <i data-lucide="loader-2" class="icon-xs icon-spin text-purple"></i> <span>Connecting to Google Gemini API (gemini-1.5-flash)...</span>
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1029,7 +1059,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.ok) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Google Gemini AI Connected &amp; Operational!</strong><br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Google Gemini AI Connected &amp; Operational!</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">
                   Model: <strong>${data.model || 'gemini-1.5-flash'}</strong> &bull; Free Quota: <strong>1,500 Requests/Day (15 RPM)</strong><br>
                   AI Test Echo: "<em>${escapeHtml(data.message || 'OK')}</em>"<br>
@@ -1045,7 +1075,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Gemini Test Notice:</strong> ${data.error || data.message || 'Connection failed'}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Gemini Test Notice:</strong> ${data.error || data.message || 'Connection failed'}
               </div>
             `;
             if (badge) {
@@ -1054,18 +1084,21 @@ export function bindCredentialsTabEvents(container, ctx) {
               badge.style.color = '#f87171';
             }
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not reach local test proxy: ${err.message}
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not reach local test proxy: ${err.message}
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1077,13 +1110,15 @@ export function bindCredentialsTabEvents(container, ctx) {
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Syncing Brain...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Syncing Brain...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.style.background = 'rgba(168, 85, 247, 0.1)';
         statusDiv.style.color = '#c084fc';
-        statusDiv.innerHTML = '⏳ Syncing training specimens and validating live cloud model...';
+        statusDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="loader-2" class="icon-xs icon-spin text-purple"></i> <span>Syncing training specimens and validating live cloud model...</span></div>';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1093,7 +1128,8 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
             statusDiv.style.color = '#34d399';
-            statusDiv.innerHTML = `✅ <strong>Brain Synchronized!</strong> ${data.stats?.trainingSpecimens || 0} specimens &bull; ${data.stats?.learnedSources || 0} learned sources &bull; Cloud: Standard Tier`;
+            statusDiv.innerHTML = `<i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Brain Synchronized!</strong> ${data.stats?.trainingSpecimens || 0} specimens &bull; ${data.stats?.learnedSources || 0} learned sources &bull; Cloud: Standard Tier`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           }
           if (countStat) {
             countStat.textContent = `${data.stats?.learnedSources || 0} Sources (${data.stats?.trainingSpecimens || 0} Specs)`;
@@ -1102,18 +1138,21 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
             statusDiv.style.color = '#f87171';
-            statusDiv.innerHTML = `⚠️ Sync notice: ${data.error || 'Failed to sync knowledge'}`;
+            statusDiv.innerHTML = `<i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Sync notice: ${data.error || 'Failed to sync knowledge'}`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           }
         }
       } catch (e) {
         if (statusDiv) {
           statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
           statusDiv.style.color = '#f87171';
-          statusDiv.innerHTML = `❌ Error: ${e.message}`;
+          statusDiv.innerHTML = `<i data-lucide="x-circle" class="icon-xs text-rose"></i> Error: ${e.message}`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1129,24 +1168,27 @@ export function bindCredentialsTabEvents(container, ctx) {
           statusDiv.style.display = 'block';
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ⚠️ Please enter a Google Apps Script Webhook URL first.
+              <i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter a Google Apps Script Webhook URL first.
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Pinging...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Pinging...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.innerHTML = `
           <div class="alert-box alert-box-info">
-            ⏳ Sending live ping request to Google Apps Script cloud deployment...
+            <i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Sending live ping request to Google Apps Script cloud deployment...
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1161,7 +1203,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Google Apps Script Connected! (Latency: ${data.latencyMs}ms)</strong><br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Google Apps Script Connected! (Latency: ${data.latencyMs}ms)</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">
                   Message: "${data.data?.message || data.message}"<br>
                   Database Status: <strong>Google Sheets sync is online and active.</strong>
@@ -1176,25 +1218,28 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Webhook Ping Failed (HTTP ${data.status || 'Error'}):</strong> ${data.error || data.message || 'Cannot reach script URL'}<br>
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Webhook Ping Failed (HTTP ${data.status || 'Error'}):</strong> ${data.error || data.message || 'Cannot reach script URL'}<br>
                 <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">
                   Tip: Ensure your Google Apps Script deployment is configured as: <strong>Who has access: "Anyone"</strong>.
                 </span>
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not reach test proxy: ${err.message}
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not reach test proxy: ${err.message}
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1207,16 +1252,19 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (!url) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Webhook URL first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter your Webhook URL first.</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '⏳ Syncing All to Sheets...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Syncing All to Sheets...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-info">⏳ Uploading all vacancies and active profile to Google Sheets...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-info"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Uploading all vacancies and active profile to Google Sheets...</div>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1284,20 +1332,23 @@ export function bindCredentialsTabEvents(container, ctx) {
         if (statusDiv) {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-success">
-              ✅ <strong>Google Sheets Database Synchronized!</strong><br>
+              <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Google Sheets Database Synchronized!</strong><br>
               <span style="color: var(--text-secondary); font-size: 0.78rem;">
                 Successfully synced ${vacancies.length} vacancies, ${allProfiles.length} separate role profiles with individual recipients, 52+ official channels, and cloud search credentials into your Google Sheet.
               </span>
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Sync Error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Sync Error: ${err.message}</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '🔄 Sync All to Sheets Now';
+        btn.innerHTML = '<i data-lucide="refresh-cw" class="icon-xs"></i> Sync All to Sheets Now';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1310,7 +1361,8 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (!url) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Webhook URL first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter your Webhook URL first.</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
@@ -1320,10 +1372,12 @@ export function bindCredentialsTabEvents(container, ctx) {
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Pulling Vacancies...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Pulling Vacancies...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-info">⏳ Fetching official verified vacancies from Google Sheets database...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-info"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Fetching official verified vacancies from Google Sheets database...</div>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1341,9 +1395,9 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (liveVacancies.length === 0) {
             statusDiv.innerHTML = `
               <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 6px; padding: 0.85rem; color: #fbbf24; font-size: 0.82rem;">
-                ⚠️ <strong>Google Sheet Connected, but 0 vacancies found in the Vacancies tab yet.</strong><br>
+                <i data-lucide="alert-triangle" class="icon-xs text-amber"></i> <strong>Google Sheet Connected, but 0 vacancies found in the Vacancies tab yet.</strong><br>
                 <span style="font-size: 0.78rem; color: var(--text-secondary);">
-                  Click <strong>"⚡ Run Cloud Scan Now"</strong> or run a dynamic scan to discover real official opportunities.
+                  Click <strong>"Run Cloud Scan Now"</strong> or run a dynamic scan to discover real official opportunities.
                 </span>
               </div>
             `;
@@ -1360,32 +1414,36 @@ export function bindCredentialsTabEvents(container, ctx) {
 
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Successfully Pulled ${savedCount} Real Vacancies from Google Sheets!</strong><br>
+                <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>Successfully Pulled ${savedCount} Real Vacancies from Google Sheets!</strong><br>
                 <span style="font-size: 0.78rem; color: var(--text-secondary);">
-                  Initial test data has been replaced. Your vacancies feed now displays 100% real verified government posts from your cloud database.
+                  Initial test data has been replaced. Your vacancies feed now displays verified government posts from your cloud database.
                 </span>
               </div>
             `;
 
             if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         } else {
           statusDiv.innerHTML = `
             <div class="alert-box alert-box-error">
-              ❌ Could not pull vacancies from Google Sheet: ${sheetData.error || result.error || 'Ensure Web App has Who has access: Anyone'}<br>
+              <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not pull vacancies from Google Sheet: ${sheetData.error || result.error || 'Ensure Web App has Who has access: Anyone'}<br>
               <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">
                 Tip: Copy the updated Code.gs to your Apps Script and click "Deploy > New deployment".
               </span>
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Pull Error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Pull Error: ${err.message}</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1400,16 +1458,19 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (!url) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Webhook URL first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter your Webhook URL first.</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '⏳ Sending Test Email...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Sending Test Email...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-info">⏳ Dispatching test Gmail alert via Google Apps Script...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-info"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Dispatching test Gmail alert via Google Apps Script...</div>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1428,31 +1489,34 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success && payloadData.status === 'SUCCESS') {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                📧 <strong>Test Email Dispatched Successfully!</strong><br>
+                <i data-lucide="mail" class="icon-xs text-emerald"></i> <strong>Test Email Dispatched Successfully!</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">
                   Recipient: <strong>${escapeHtml(payloadData.recipient || email || 'Script Owner')}</strong><br>
-                  Check your Gmail inbox/spam folder for the "📡 Vacancy Radar Alert" sample email.
+                  Check your Gmail inbox/spam folder for the "Vacancy Radar Alert" sample email.
                 </span>
               </div>
             `;
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Email Test Notice:</strong> ${payloadData.error || data.error || 'Failed to dispatch email'}<br>
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Email Test Notice:</strong> ${payloadData.error || data.error || 'Failed to dispatch email'}<br>
                 <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">
                   Ensure your Google Apps Script has been authorized with Gmail send permissions in script.google.com.
                 </span>
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network Error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Network Error: ${err.message}</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '📧 Test Email Delivery';
+        btn.innerHTML = '<i data-lucide="mail" class="icon-xs"></i> Test Email Delivery';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1465,16 +1529,19 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (!url) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Webhook URL first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter your Webhook URL first.</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '⏳ Scanning Cloud Feeds...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Scanning Cloud Feeds...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-info">⏳ Executing 24/7 cloud scan on Google Apps Script and checking registered feeds...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-info"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Executing 24/7 cloud scan on Google Apps Script and checking registered feeds...</div>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1494,7 +1561,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success && payloadData.status === 'SUCCESS') {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ⚡ <strong>Cloud Scan Completed!</strong><br>
+                <i data-lucide="zap" class="icon-xs text-amber"></i> <strong>Cloud Scan Completed!</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem;">
                   Sources Checked: <strong>${scanRes.sourcesChecked || 0}</strong> | 
                   Discovered: <strong>+${scanRes.newVacanciesFound || 0} new</strong> | 
@@ -1506,18 +1573,21 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ <strong>Scan Execution Error:</strong> ${payloadData.error || data.error || 'Cloud execution error'}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> <strong>Scan Execution Error:</strong> ${payloadData.error || data.error || 'Cloud execution error'}
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network Error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Network Error: ${err.message}</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '⚡ Run Cloud Scan Now';
+        btn.innerHTML = '<i data-lucide="zap" class="icon-xs"></i> Run Cloud Scan Now';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -1530,16 +1600,19 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (!url) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Webhook URL first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please enter your Webhook URL first.</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '⏳ Fetching Logs...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Fetching Logs...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-info">⏳ Loading execution logs from Google Sheets (ExecutionLogs tab)...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-info"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Loading execution logs from Google Sheets (ExecutionLogs tab)...</div>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -1559,16 +1632,15 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (data.success && payloadData.status === 'SUCCESS') {
             if (logs.length === 0) {
               statusDiv.innerHTML = `
-                <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; font-size: 0.82rem; color: var(--text-secondary);">
-                  📋 <strong>Cloud Execution Logs (0 entries):</strong><br>
-                  No scan jobs recorded in the Google Sheet yet. Run a scan or setup triggers to start logging.
+                <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; font-size: 0.82rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem;">
+                  <i data-lucide="file-text" class="icon-xs"></i> <span><strong>Cloud Execution Logs (0 entries):</strong> No scan jobs recorded in the Google Sheet yet. Run a scan or setup triggers to start logging.</span>
                 </div>
               `;
             } else {
               statusDiv.innerHTML = `
                 <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; max-height: 280px; overflow-y: auto;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                    <strong style="color: var(--text-main); font-size: 0.85rem;">📋 Cloud Execution Logs (${logs.length} most recent)</strong>
+                    <strong style="color: var(--text-main); font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="file-text" class="icon-xs"></i> Cloud Execution Logs (${logs.length} most recent)</strong>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">From Google Sheet ExecutionLogs tab</span>
                   </div>
                   <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -1600,19 +1672,27 @@ export function bindCredentialsTabEvents(container, ctx) {
           } else {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-error">
-                ❌ Could not fetch cloud logs: ${payloadData.error || data.error || 'Server error'}
+                <i data-lucide="x-circle" class="icon-xs text-rose"></i> Could not fetch cloud logs: ${payloadData.error || data.error || 'Server error'}
               </div>
             `;
           }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network Error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Network Error: ${err.message}</div>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '📋 View Cloud Execution Logs';
+        btn.innerHTML = '<i data-lucide="file-text" class="icon-xs"></i> View Cloud Execution Logs';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
+  }
 
 }

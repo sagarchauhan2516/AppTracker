@@ -37,7 +37,7 @@ export class SearchProviderDashboardUI {
         <!-- Zero Spending Banner -->
         <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 0.9rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.5rem;">🛡️</span>
+            <i data-lucide="shield-check" class="icon-lg text-emerald"></i>
             <div>
               <strong style="font-size: 0.88rem; color: #34d399;">Active Gateway Safeguard Enforced</strong>
               <div style="font-size: 0.78rem; color: var(--text-secondary);">
@@ -91,11 +91,11 @@ export class SearchProviderDashboardUI {
             Configured Provider Registry &amp; Priority Order
           </h4>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button id="btnDryRunRotation" class="btn btn-outline btn-sm" title="Simulate failover chain without consuming real search credits">
-              <span>🧪</span> Dry-Run Rotation Test
+            <button id="btnDryRunRotation" class="btn btn-outline btn-sm" title="Simulate failover chain without consuming real search credits" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="flask-conical" class="icon-xs"></i> Dry-Run Rotation Test
             </button>
-            <button id="btnAddProviderModal" class="btn btn-primary btn-sm">
-              <span>+</span> Add Provider
+            <button id="btnAddProviderModal" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="plus" class="icon-xs"></i> Add Provider
             </button>
           </div>
         </div>
@@ -193,11 +193,11 @@ export class SearchProviderDashboardUI {
             <span style="font-size: 0.7rem; font-weight: 700; color: ${badgeColor}; background: ${badgeBg}; padding: 0.2rem 0.55rem; border-radius: var(--radius-pill); border: 1px solid ${badgeColor}40;">
               ● ${badgeText}
             </span>
-            <button class="btn btn-outline btn-sm btn-test-provider" data-id="${p.id}" style="padding: 0.25rem 0.6rem; font-size: 0.72rem;" title="Test provider connection">
-              🩺 Test
+            <button class="btn btn-outline btn-sm btn-test-provider" data-id="${p.id}" style="padding: 0.25rem 0.6rem; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.25rem;" title="Test provider connection">
+              <i data-lucide="activity" class="icon-xs"></i> Test
             </button>
-            <button class="btn btn-outline btn-sm btn-edit-provider" data-id="${p.id}" style="padding: 0.25rem 0.6rem; font-size: 0.72rem;" title="Edit provider parameters">
-              ⚙️ Edit
+            <button class="btn btn-outline btn-sm btn-edit-provider" data-id="${p.id}" style="padding: 0.25rem 0.6rem; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.25rem;" title="Edit provider parameters">
+              <i data-lucide="sliders" class="icon-xs"></i> Edit
             </button>
             <button class="btn btn-outline btn-sm btn-toggle-provider" data-id="${p.id}" style="padding: 0.25rem 0.6rem; font-size: 0.72rem; color: ${p.isEnabled ? '#f87171' : '#34d399'};" title="${p.isEnabled ? 'Disable Provider' : 'Enable Provider'}">
               ${p.isEnabled ? 'Disable' : 'Enable'}
@@ -268,19 +268,21 @@ export class SearchProviderDashboardUI {
         const p = providers.find(item => item.id === id);
         if (!p) return;
 
-        btn.innerText = 'Testing...';
+        btn.innerHTML = '<i data-lucide="loader" class="icon-xs icon-spin"></i> Testing...';
         btn.disabled = true;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
         const adapter = AdapterFactory.create(p);
         const result = await adapter.testConnection();
 
         btn.disabled = false;
-        btn.innerText = '🩺 Test';
+        btn.innerHTML = '<i data-lucide="activity" class="icon-xs"></i> Test';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
         if (result.isHealthy) {
-          showConfirmationBanner('Provider Verified', `✅ ${p.name} connected (${result.latencyMs}ms latency)`, 'success', 3000);
+          showConfirmationBanner('Provider Verified', `${p.name} connected (${result.latencyMs}ms latency)`, 'success', 3000);
         } else {
-          showConfirmationBanner('Connection Failed', `❌ ${p.name}: ${result.message}`, 'error', 3500);
+          showConfirmationBanner('Connection Failed', `${p.name}: ${result.message}`, 'error', 3500);
         }
       };
     });
@@ -323,13 +325,15 @@ export class SearchProviderDashboardUI {
     const btnDryRun = container.querySelector('#btnDryRunRotation');
     if (btnDryRun) {
       btnDryRun.onclick = async () => {
-        btnDryRun.innerText = 'Running Simulation...';
+        btnDryRun.innerHTML = '<i data-lucide="loader" class="icon-xs icon-spin"></i> Running Simulation...';
         btnDryRun.disabled = true;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
         const simResult = await searchOrchestrationEngine.simulateRotationTest();
 
-        btnDryRun.innerText = '🧪 Dry-Run Rotation Test';
+        btnDryRun.innerHTML = '<i data-lucide="flask-conical" class="icon-xs"></i> Dry-Run Rotation Test';
         btnDryRun.disabled = false;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
         showConfirmationBanner(
           'Rotation Test Complete',
@@ -348,6 +352,8 @@ export class SearchProviderDashboardUI {
         this.render();
       };
     }
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
   showEditModal(provider, isNew = false) {
@@ -357,8 +363,8 @@ export class SearchProviderDashboardUI {
     container.innerHTML = `
       <div style="padding: 0.5rem 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-          <h4 style="font-family: var(--font-heading); font-size: 1.15rem; margin: 0;">
-            ${isNew ? '+ Register New Search Provider' : `⚙️ Configure ${this.escape(provider.name)}`}
+          <h4 style="font-family: var(--font-heading); font-size: 1.15rem; margin: 0; display: inline-flex; align-items: center; gap: 0.35rem;">
+            ${isNew ? '<i data-lucide="plus" class="icon-sm"></i> Register New Search Provider' : `<i data-lucide="sliders" class="icon-sm"></i> Configure ${this.escape(provider.name)}`}
           </h4>
           <button id="btnCancelEditProvider" class="btn btn-outline btn-sm">Cancel</button>
         </div>
@@ -473,6 +479,8 @@ export class SearchProviderDashboardUI {
       );
       this.render();
     };
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
   escape(str) {

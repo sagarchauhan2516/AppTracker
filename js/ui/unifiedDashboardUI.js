@@ -66,13 +66,13 @@ export class UnifiedDashboardUI {
       <div class="unified-dashboard-wrapper" style="display: flex; flex-direction: column; gap: 1.5rem;">
         
         <!-- Dashboard Master Header -->
-        <div class="filter-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-left: 4px solid #38bdf8;">
+        <div class="filter-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-left: 4px solid var(--accent-primary);">
           <div>
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <span style="font-size: 1.6rem;">🎛️</span>
+              <span style="display: flex; align-items: center; color: var(--accent-primary);"><i data-lucide="sliders" class="icon icon-lg"></i></span>
               <div>
                 <h2 style="font-family: var(--font-heading); font-size: 1.35rem; color: var(--text-main); margin: 0;">
-                  🛠️ Main Settings &amp; System Control
+                  Main Settings &amp; System Control
                 </h2>
                 <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">
                   Global system configuration for Search Providers (Brave, SerpApi, SearXNG), Free Gemini AI, Google Sheets Webhook, Master Bot &amp; Database Backups.
@@ -84,14 +84,14 @@ export class UnifiedDashboardUI {
           <!-- Quick Actions & Reset -->
           <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
             <button id="btnDashboardBackupDb" class="btn btn-outline btn-sm" title="Download entire database as JSON backup">
-              📥 Export JSON Backup
+              <i data-lucide="download" class="icon icon-sm"></i> Export JSON Backup
             </button>
             <button id="btnDashboardRestoreDb" class="btn btn-outline btn-sm" title="Restore database from JSON file">
-              📤 Import Backup
+              <i data-lucide="upload" class="icon icon-sm"></i> Import Backup
             </button>
             <input type="file" id="fileRestoreDb" accept=".json" style="display: none;">
             <button id="btnDashboardResetFactory" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);" title="Reset all data to initial defaults">
-              ⚠️ Reset Factory Data
+              <i data-lucide="alert-triangle" class="icon icon-sm"></i> Reset Factory Data
             </button>
           </div>
         </div>
@@ -118,29 +118,29 @@ export class UnifiedDashboardUI {
             <span class="kpi-value" style="color: #f59e0b; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               ${escapeHtml(this.currentProfile.name)}
             </span>
-            <span class="kpi-sub">${this.currentProfile.targetFocus?.enabled ? '🎯 Whitelist Target Focus ON' : '🌐 All Web Sources'}</span>
+            <span class="kpi-sub">${this.currentProfile.targetFocus?.enabled ? 'Whitelist Target Focus ON' : 'All Web Sources'}</span>
           </div>
         </div>
 
         <!-- Dashboard Navigation Tabs -->
         <div style="display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.25rem; flex-wrap: wrap;">
           <button class="nav-tab-btn btn-dash-tab ${this.activeTab === 'credits' ? 'active' : ''}" data-tab="credits" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; font-weight: 600;">
-            💳 Credits &amp; Quota Governance
+            <i data-lucide="gauge" class="icon icon-sm"></i> Credits &amp; Quota Governance
           </button>
           <button class="nav-tab-btn btn-dash-tab ${this.activeTab === 'credentials' ? 'active' : ''}" data-tab="credentials" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; font-weight: 600;">
-            🔑 Credentials &amp; API Setup Guides
+            <i data-lucide="key" class="icon icon-sm"></i> Credentials &amp; API Setup Guides
           </button>
           <button class="nav-tab-btn btn-dash-tab ${this.activeTab === 'profiles' ? 'active' : ''}" data-tab="profiles" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; font-weight: 600;">
-            👤 Dynamic Profiles &amp; Custom Fields
+            <i data-lucide="user" class="icon icon-sm"></i> Dynamic Profiles &amp; Custom Fields
           </button>
           <button class="nav-tab-btn btn-dash-tab ${this.activeTab === 'health' ? 'active' : ''}" data-tab="health" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; font-weight: 600;">
-            🩺 Source Health &amp; Silent Failures
+            <i data-lucide="activity" class="icon icon-sm"></i> Source Health &amp; Silent Failures
           </button>
           <button class="nav-tab-btn btn-dash-tab ${this.activeTab === 'settings' ? 'active' : ''}" data-tab="settings" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; font-weight: 600;">
-            ⏰ Automated Schedule &amp; Alerts
+            <i data-lucide="clock" class="icon icon-sm"></i> Automated Schedule &amp; Alerts
           </button>
           <button class="nav-tab-btn btn-dash-tab ${this.activeTab === 'trash' ? 'active' : ''}" data-tab="trash" style="padding: 0.6rem 1.1rem; font-size: 0.85rem; font-weight: 600; color: #f87171;">
-            🗑️ Trash (${trashVacancies.length})
+            <i data-lucide="trash-2" class="icon icon-sm"></i> Trash (${trashVacancies.length})
           </button>
         </div>
 
@@ -181,6 +181,9 @@ export class UnifiedDashboardUI {
   }
 
   bindEvents() {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
     // Tab switching
     this.container.querySelectorAll('.btn-dash-tab').forEach(btn => {
       btn.addEventListener('click', () => {

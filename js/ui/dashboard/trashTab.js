@@ -8,7 +8,7 @@ export function renderTrashTab(trashVacancies = []) {
         <div class="dash-header-bar">
           <div>
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-size: 1.4rem;">🗑️</span>
+              <span style="display: flex; align-items: center; color: var(--accent-primary);"><i data-lucide="trash-2" class="icon icon-md"></i></span>
               <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-main); margin: 0;">
                 Deleted Vacancies &amp; Trash Recovery (${trashVacancies.length})
               </h3>
@@ -19,17 +19,17 @@ export function renderTrashTab(trashVacancies = []) {
           </div>
           ${trashVacancies.length > 0 ? `
             <button type="button" id="btnEmptyTrashDash" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);">
-              ⚠️ Empty Trash Permanently
+              <i data-lucide="trash-2" class="icon icon-sm"></i> Empty Trash Permanently
             </button>
           ` : ''}
         </div>
 
         ${trashVacancies.length === 0 ? `
           <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); background: var(--bg-surface-elevated); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
-            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🗑️</div>
+            <div style="margin-bottom: 0.5rem; display: flex; justify-content: center;"><i data-lucide="trash-2" class="icon icon-xl text-secondary" style="width: 36px; height: 36px;"></i></div>
             <strong style="color: var(--text-main); font-size: 1rem;">Trash folder is empty</strong>
             <p style="font-size: 0.82rem; margin-top: 0.35rem;">
-              When you delete a vacancy from the feed using the "🗑️ Delete" button on its card, it will be safely placed here so upcoming scans never re-add it.
+              When you delete a vacancy from the feed using the "Delete" button on its card, it will be safely placed here so upcoming scans never re-add it.
             </p>
           </div>
         ` : `
@@ -41,18 +41,18 @@ export function renderTrashTab(trashVacancies = []) {
                     <strong style="font-size: 0.95rem; color: var(--text-main);">${escapeHtml(v.title)}</strong>
                     <span class="meta-pill" style="font-size: 0.7rem; background: rgba(239, 68, 68, 0.15); color: #f87171;">TRASHED</span>
                   </div>
-                  <div style="font-size: 0.78rem; color: var(--text-secondary);">
-                    <span>🏢 ${escapeHtml(v.organisation || 'Apex Authority')}</span>
+                  <div style="font-size: 0.78rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                    <span style="display: inline-flex; align-items: center; gap: 0.3rem;"><i data-lucide="building-2" class="icon icon-xs"></i> ${escapeHtml(v.organisation || 'Apex Authority')}</span>
                     ${v.advertisementNumber ? ` &bull; <code>${escapeHtml(v.advertisementNumber)}</code>` : ''}
                     ${v.trashedAt ? ` &bull; Deleted on ${new Date(v.trashedAt).toLocaleDateString()}` : ''}
                   </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                   <button type="button" class="btn btn-primary btn-sm btn-dash-restore-vac" data-id="${v.id}" style="font-weight: 600;">
-                    ♻️ Recover to Feed
+                    <i data-lucide="rotate-ccw" class="icon icon-sm"></i> Recover to Feed
                   </button>
                   <button type="button" class="btn btn-outline btn-sm btn-dash-perm-delete-vac" data-id="${v.id}" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35);">
-                    ❌ Delete Forever
+                    <i data-lucide="trash-2" class="icon icon-sm"></i> Delete Forever
                   </button>
                 </div>
               </div>
@@ -64,6 +64,9 @@ export function renderTrashTab(trashVacancies = []) {
 }
 
 export function bindTrashTabEvents(container, ctx) {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
     // Trash Panel: Recover to Feed
     container.querySelectorAll('.btn-dash-restore-vac').forEach(btn => {
       btn.addEventListener('click', () => {

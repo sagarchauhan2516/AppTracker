@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/style.css?v=3.0">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <!-- Global Form Confirmation Overlay Banner Container -->
@@ -19,12 +20,14 @@
     <!-- Top Bar -->
     <header class="top-header">
       <div class="brand-section">
-        <div class="radar-logo" title="Vacancy Radar India">📡</div>
+        <div class="radar-logo" title="Vacancy Radar India">
+          <i data-lucide="radio" class="icon icon-md"></i>
+        </div>
         <div>
           <div class="brand-title-wrap">
             <h1 class="brand-title">Vacancy Radar</h1>
             <span class="brand-live-pill" id="headerStatusPill">
-              <span style="font-size: 0.65rem;">●</span> Live Sync
+              <span class="live-dot">●</span> Live Sync
             </span>
           </div>
           <p class="brand-subtitle">Apex Technical &amp; Scientific Vacancies • Official Portals &amp; Direct Feeds</p>
@@ -34,36 +37,40 @@
       <div class="header-actions">
         <!-- Active Profile Selector -->
         <div class="profile-selector-box" title="Select or create a target search profile">
-          <span style="font-size: 0.85rem;">👤</span>
+          <i data-lucide="user" class="icon icon-sm text-secondary"></i>
           <select id="profileSelect" class="profile-select" aria-label="Active Search Profile"></select>
-          <button id="btnHeaderNewProfile" class="btn btn-outline btn-sm" title="Create a new role search profile" style="padding: 0.25rem 0.55rem; font-weight: 700;">
+          <button id="btnHeaderNewProfile" class="btn btn-outline btn-sm btn-new-profile" title="Create a new role search profile">
             + New
           </button>
         </div>
 
         <!-- Dark / Bright Mode Switcher -->
         <button id="btnThemeToggle" class="btn-theme-toggle" title="Switch between Dark and Bright mode" aria-label="Toggle theme">
-          <span class="theme-icon" id="themeIcon">☀️</span>
+          <i data-lucide="sun" id="themeIcon" class="icon"></i>
           <span class="theme-text" id="themeText">Bright</span>
         </button>
 
         <!-- Google Sheets 1-Click Sync -->
         <button id="btnHeaderPullSheets" class="btn btn-outline" title="Pull latest verified vacancies from Google Sheets Webhook">
-          <span>📥</span> Sync Sheets
+          <i data-lucide="download" class="icon"></i>
+          <span>Sync Sheets</span>
         </button>
 
         <!-- Scan Now Action -->
         <button id="btnManualScan" class="btn btn-primary" title="Trigger scan across registered public sources">
-          <span>🔄</span> Scan Now
+          <i data-lucide="refresh-cw" class="icon"></i>
+          <span>Scan Now</span>
         </button>
 
         <!-- Separate Settings Triggers: Profile Settings vs Main Settings -->
-        <button id="btnHeaderProfileSettings" class="btn btn-outline" title="Edit candidate details, keywords, whitelist sites, alert email & telegram for this profile" style="font-weight: 600;">
-          <span>👤</span> Profile Settings
+        <button id="btnHeaderProfileSettings" class="btn btn-outline font-semibold" title="Edit candidate details, keywords, whitelist sites, alert email & telegram for this profile">
+          <i data-lucide="user" class="icon"></i>
+          <span>Profile Settings</span>
         </button>
 
-        <button id="btnHeaderMainSettings" class="btn btn-outline" title="Global search APIs, Gemini key, Google Sheets webhook, bot token & database" style="font-weight: 600;">
-          <span>🛠️</span> Main Settings
+        <button id="btnHeaderMainSettings" class="btn btn-outline font-semibold" title="Global search APIs, Gemini key, Google Sheets webhook, bot token & database">
+          <i data-lucide="settings" class="icon"></i>
+          <span>Main Settings</span>
         </button>
 
         <!-- Hidden backward-compatibility alias for Unified Dashboard button -->
@@ -78,47 +85,47 @@
     <nav class="main-nav-bar" aria-label="Portal Views">
       <div class="nav-tabs-wrapper">
         <button class="nav-tab-btn active" data-tab="vacancies" title="View all discovered vacancies">
-          <span class="nav-tab-icon">📡</span>
+          <span class="nav-tab-icon"><i data-lucide="radio" class="icon"></i></span>
           <span>All Vacancies</span>
           <span class="nav-badge" id="navCountTotal">0</span>
         </button>
         <button class="nav-tab-btn" data-tab="verified" title="Filter by officially verified vacancies">
-          <span class="nav-tab-icon">🛡️</span>
+          <span class="nav-tab-icon"><i data-lucide="shield-check" class="icon"></i></span>
           <span>Verified</span>
           <span class="nav-badge nav-badge-verified" id="navCountVerified">0</span>
         </button>
         <button class="nav-tab-btn" data-tab="closing" title="Filter by vacancies closing in ≤ 7 days">
-          <span class="nav-tab-icon">⏳</span>
+          <span class="nav-tab-icon"><i data-lucide="clock" class="icon"></i></span>
           <span>Closing Soon</span>
           <span class="nav-badge nav-badge-urgent" id="navCountClosing">0</span>
         </button>
         <button class="nav-tab-btn" data-tab="tracker" title="My Job Applications & Saved Opportunities">
-          <span class="nav-tab-icon">📑</span>
+          <span class="nav-tab-icon"><i data-lucide="file-text" class="icon"></i></span>
           <span>Applications</span>
           <span class="nav-badge" id="navCountApplied">0</span>
         </button>
         <button class="nav-tab-btn" data-tab="sources" title="Discovered Sources & Search Providers">
-          <span class="nav-tab-icon">🌐</span>
+          <span class="nav-tab-icon"><i data-lucide="globe" class="icon"></i></span>
           <span>Sources &amp; APIs</span>
         </button>
         <button class="nav-tab-btn" data-tab="profiles" title="Search Profile & Keyword Builder">
-          <span class="nav-tab-icon">🎯</span>
+          <span class="nav-tab-icon"><i data-lucide="crosshair" class="icon"></i></span>
           <span>Profile Builder</span>
         </button>
         <button class="nav-tab-btn" data-tab="logs" title="Discovery Logs & Health Monitoring">
-          <span class="nav-tab-icon">📜</span>
+          <span class="nav-tab-icon"><i data-lucide="scroll-text" class="icon"></i></span>
           <span>Logs</span>
         </button>
         <button class="nav-tab-btn" data-tab="trash" title="Trash & Suppressed Vacancies">
-          <span class="nav-tab-icon">🗑️</span>
+          <span class="nav-tab-icon"><i data-lucide="trash-2" class="icon"></i></span>
           <span>Trash</span>
-          <span class="nav-badge" id="navCountTrash" style="color: #f87171;">0</span>
+          <span class="nav-badge nav-badge-trash" id="navCountTrash">0</span>
         </button>
       </div>
     </nav>
 
     <!-- Portal Urgent Deadline Alert Banner (Dynamic) -->
-    <div id="portalDeadlineAlertBanner" style="display: none; margin-bottom: 1.25rem;"></div>
+    <div id="portalDeadlineAlertBanner" class="portal-deadline-banner" style="display: none;"></div>
 
     <!-- KPI Summary Row -->
     <section class="kpi-grid">
@@ -129,17 +136,17 @@
       </div>
       <div class="kpi-card" data-view="verified" title="Click to filter officially verified vacancies">
         <span class="kpi-label">Officially Verified</span>
-        <span class="kpi-value" style="color: var(--badge-verified-text);" id="kpiVerifiedCount">0</span>
+        <span class="kpi-value kpi-verified-val" id="kpiVerifiedCount">0</span>
         <span class="kpi-sub">Direct Notice Authenticated</span>
       </div>
       <div class="kpi-card" data-view="closing" title="Click to filter vacancies closing in ≤ 7 days">
         <span class="kpi-label">Closing in &le; 7 Days</span>
-        <span class="kpi-value" style="color: #f87171;" id="kpiClosingSoonCount">0</span>
+        <span class="kpi-value kpi-closing-val" id="kpiClosingSoonCount">0</span>
         <span class="kpi-sub">Immediate Action Required</span>
       </div>
       <div class="kpi-card" data-view="tracker" title="Click to open My Application Tracker">
         <span class="kpi-label">Tracked Applications</span>
-        <span class="kpi-value" style="color: #60a5fa;" id="kpiAppliedCount">0</span>
+        <span class="kpi-value kpi-applied-val" id="kpiAppliedCount">0</span>
         <span class="kpi-sub">Saved or In-Progress</span>
       </div>
     </section>
@@ -151,9 +158,9 @@
         <!-- Primary Row: Search Bar + Sector + Sort + Filters Toggle -->
         <div class="filter-primary-row">
           <div class="search-box-wrapper">
-            <span class="search-icon">🔍</span>
+            <span class="search-icon"><i data-lucide="search" class="icon"></i></span>
             <input type="text" id="searchInput" class="search-input" placeholder="Search by role, organisation, skills or advt number...">
-            <button id="btnSearchClear" class="search-clear-btn" title="Clear search">✕</button>
+            <button id="btnSearchClear" class="search-clear-btn" title="Clear search"><i data-lucide="x" class="icon-xs"></i></button>
           </div>
 
           <div class="filter-controls-group">
@@ -173,15 +180,16 @@
             </select>
 
             <button id="btnToggleFilters" class="btn btn-outline filter-toggle-btn" title="Toggle advanced filters (Location, Salary, Type, Status)">
-              <span>⚙️</span>
+              <i data-lucide="sliders-horizontal" class="icon"></i>
               <span id="btnToggleFiltersText">Filters</span>
             </button>
 
-            <button id="btnOpenAddVacancyModal" class="btn btn-outline" style="border-color: #38bdf8; color: #38bdf8; font-weight: 600;" title="Add a custom or external job finding to the portal">
-              <span>➕</span> Add Finding
+            <button id="btnOpenAddVacancyModal" class="btn btn-outline btn-add-finding" title="Add a custom or external job finding to the portal">
+              <i data-lucide="plus" class="icon"></i>
+              <span>Add Finding</span>
             </button>
 
-            <button id="btnResetFilters" class="btn btn-outline btn-sm" style="display: none; color: var(--text-muted);" title="Reset all filters to defaults">
+            <button id="btnResetFilters" class="btn btn-outline btn-sm btn-reset-filters" style="display: none;" title="Reset all filters to defaults">
               Reset
             </button>
           </div>
@@ -222,14 +230,14 @@
             <option value="VERIFICATION_FAILED">Verification Failed</option>
           </select>
 
-          <label style="font-size: 0.78rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text-secondary); background: var(--bg-surface-elevated); padding: 0.5rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); user-select: none;">
+          <label class="filter-checkbox-label">
             <input type="checkbox" id="chkDeduplicate" checked>
             <span>Merge Duplicates</span>
           </label>
 
-          <label id="lblTargetFocusQuickFilter" style="font-size: 0.78rem; display: none; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text-secondary); background: rgba(16, 185, 129, 0.12); padding: 0.5rem 0.75rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.35); user-select: none;" title="Toggle strict filtering for whitelisted websites/organisations">
+          <label id="lblTargetFocusQuickFilter" class="target-focus-quick-filter" style="display: none;" title="Toggle strict filtering for whitelisted websites/organisations">
             <input type="checkbox" id="chkStrictTargetFocus">
-            <span style="color: #34d399; font-weight: 600;">🎯 Focus Targets Only</span>
+            <span class="target-focus-text"><i data-lucide="crosshair" class="icon"></i> Focus Targets Only</span>
           </label>
 
           <!-- Hidden compatibility view switcher select for backward compatibility -->
@@ -248,42 +256,43 @@
       </div>
 
       <!-- Profile-Wise Feed Segregation Bar -->
-      <div id="profileFeedSegregationBar" class="profile-segregation-bar" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 0.9rem 1.25rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; box-shadow: var(--shadow-card);">
-        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 700;">
-            👤
+      <div id="profileFeedSegregationBar" class="segregation-bar profile-segregation-bar">
+        <div class="segregation-bar-left">
+          <div class="segregation-icon-wrap">
+            <i data-lucide="user" class="icon icon-md"></i>
           </div>
           <div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-              <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
-                Active Profile Feed:
-              </span>
-              <strong id="segregatedProfileName" style="color: #38bdf8; font-size: 0.95rem;">
+            <div class="segregation-title-row">
+              <span class="segregation-label">Active Profile Feed:</span>
+              <strong id="segregatedProfileName" class="segregation-profile-name">
                 Cyber Crime Investigation &amp; DFIR
               </strong>
-              <span id="badgeProfileVacCount" class="nav-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 700;">
+              <span id="badgeProfileVacCount" class="nav-badge segregation-badge">
                 0 Matches
               </span>
             </div>
-            <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.15rem 0 0 0;">
+            <p class="segregation-desc">
               Filtered strictly by this profile's designated roles, technical keywords, and target official websites.
             </p>
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <div class="segregation-bar-right">
           <!-- Segmented Toggle: Profile Relevant vs All Global -->
-          <div style="display: inline-flex; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); padding: 0.2rem; gap: 0.2rem;">
-            <button type="button" id="btnFeedProfileOnly" class="btn btn-sm btn-primary" style="border-radius: var(--radius-pill); font-size: 0.78rem; padding: 0.3rem 0.8rem; font-weight: 700;">
-              <span>🎯</span> Profile Matches (<span id="countProfileOnly">0</span>)
+          <div class="segregation-toggle-group">
+            <button type="button" id="btnFeedProfileOnly" class="btn btn-sm btn-primary segregation-toggle-btn">
+              <i data-lucide="crosshair" class="icon"></i>
+              <span>Profile Matches (<span id="countProfileOnly">0</span>)</span>
             </button>
-            <button type="button" id="btnFeedAllGlobal" class="btn btn-sm btn-ghost" style="border-radius: var(--radius-pill); font-size: 0.78rem; padding: 0.3rem 0.8rem; font-weight: 600; color: var(--text-secondary);">
-              <span>🌐</span> All Discovered (<span id="countAllGlobal">0</span>)
+            <button type="button" id="btnFeedAllGlobal" class="btn btn-sm btn-ghost segregation-toggle-btn">
+              <i data-lucide="globe" class="icon"></i>
+              <span>All Discovered (<span id="countAllGlobal">0</span>)</span>
             </button>
           </div>
 
-          <button type="button" id="btnEditProfileQuick" class="btn btn-outline btn-sm" title="Edit this profile's keywords, websites, email and telegram" style="font-size: 0.78rem; font-weight: 600;">
-            <span>⚙️</span> Edit Profile
+          <button type="button" id="btnEditProfileQuick" class="btn btn-outline btn-sm btn-edit-profile" title="Edit this profile's keywords, websites, email and telegram">
+            <i data-lucide="sliders-horizontal" class="icon"></i>
+            <span>Edit Profile</span>
           </button>
         </div>
       </div>
@@ -300,13 +309,13 @@
 
     <!-- SECTION: Application Tracker -->
     <section id="sectionTracker" class="view-section">
-      <div class="filter-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div class="filter-panel flex-between-wrap">
         <div>
-          <h3 style="font-family: var(--font-heading); font-size: 1.15rem;">My Job Applications &amp; Saved Opportunities</h3>
-          <p style="font-size: 0.78rem; color: var(--text-secondary);">Track submission dates, interview stages, registration IDs, and application notes.</p>
+          <h3 class="section-heading">My Job Applications &amp; Saved Opportunities</h3>
+          <p class="section-desc">Track submission dates, interview stages, registration IDs, and application notes.</p>
         </div>
 
-        <div class="filter-controls-group" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <div class="filter-controls-group">
           <select id="trackerStageFilter" class="filter-select">
             <option value="ALL">All Application Stages</option>
             <option value="SAVED">Saved / Reviewing (20%)</option>
@@ -316,8 +325,9 @@
             <option value="SELECTED">Selected / Offer (100%)</option>
             <option value="ARCHIVED">Archived / Closed</option>
           </select>
-          <button id="btnTrackerAddFinding" class="btn btn-primary btn-sm" style="font-weight: 600; white-space: nowrap;">
-            <span>➕</span> Add Finding to Track
+          <button id="btnTrackerAddFinding" class="btn btn-primary btn-sm btn-nowrap">
+            <i data-lucide="plus" class="icon"></i>
+            <span>Add Finding to Track</span>
           </button>
         </div>
       </div>
@@ -327,34 +337,40 @@
     <!-- SECTION: Source Registry & Search Providers -->
     <section id="sectionSources" class="view-section">
       <!-- Search Provider & Security Banner -->
-      <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-card);">
+      <div class="source-banner">
         <div>
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-            <strong style="font-size: 0.88rem; color: var(--text-main);">Active Search Gateway:</strong>
-            <span id="activeProviderBadge" class="badge-test-flag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
+          <div class="source-banner-header">
+            <strong class="source-banner-title">Active Search Gateway:</strong>
+            <span id="activeProviderBadge" class="badge-test-flag badge-provider-active">
               Public Feeds &amp; Official Portals
             </span>
           </div>
-          <p id="providerDisclosureText" style="font-size: 0.76rem; color: var(--text-secondary); max-width: 650px;">
+          <p id="providerDisclosureText" class="source-banner-desc">
             Monitoring verified government RSS feeds, gazettes, and public apex portals.
           </p>
         </div>
 
-        <div style="display: flex; gap: 0.6rem; align-items: center;">
-          <div style="text-align: right; margin-right: 0.5rem;">
-            <div style="font-size: 0.72rem; color: var(--text-muted);">Gateway Status</div>
-            <div style="font-family: var(--font-mono); font-weight: 700; color: #34d399; font-size: 0.95rem;" id="providerCostDisplay">Active</div>
+        <div class="source-banner-actions">
+          <div class="source-status-box">
+            <div class="source-status-label">Gateway Status</div>
+            <div class="source-status-value" id="providerCostDisplay">Active</div>
           </div>
-          <button id="btnConfigureProvider" class="btn btn-outline btn-sm">⚙️ Provider Settings</button>
-          <button id="btnRevalidateSources" class="btn btn-primary btn-sm">🩺 Revalidate Sources</button>
+          <button id="btnConfigureProvider" class="btn btn-outline btn-sm">
+            <i data-lucide="sliders-horizontal" class="icon"></i>
+            <span>Provider Settings</span>
+          </button>
+          <button id="btnRevalidateSources" class="btn btn-primary btn-sm">
+            <i data-lucide="activity" class="icon"></i>
+            <span>Revalidate Sources</span>
+          </button>
         </div>
       </div>
 
       <!-- Filter & Registration Bar -->
-      <div class="filter-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div class="filter-panel flex-between-wrap">
         <div>
-          <h3 style="font-family: var(--font-heading); font-size: 1.15rem;">Candidate Source Registry</h3>
-          <p style="font-size: 0.78rem; color: var(--text-secondary);">
+          <h3 class="section-heading">Candidate Source Registry</h3>
+          <p class="section-desc">
             Apex employers, recruitment boards, authorized gateways, and aggregators.
           </p>
         </div>
@@ -367,7 +383,10 @@
             <option value="AUTHORISED_PORTAL">Authorised Portals</option>
             <option value="THIRD_PARTY_AGGREGATOR">Third-Party Aggregators</option>
           </select>
-          <button id="btnAddSourcePrompt" class="btn btn-outline btn-sm">+ Register Source</button>
+          <button id="btnAddSourcePrompt" class="btn btn-outline btn-sm">
+            <i data-lucide="plus" class="icon"></i>
+            <span>Register Source</span>
+          </button>
         </div>
       </div>
 
@@ -381,10 +400,10 @@
 
     <!-- SECTION: Discovery Logs & Health Monitoring -->
     <section id="sectionLogs" class="view-section">
-      <div class="filter-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div class="filter-panel flex-between-wrap">
         <div>
-          <h3 style="font-family: var(--font-heading); font-size: 1.15rem;">Discovery History &amp; Automation Health</h3>
-          <p style="font-size: 0.78rem; color: var(--text-secondary);">
+          <h3 class="section-heading">Discovery History &amp; Automation Health</h3>
+          <p class="section-desc">
             Execution logs, source availability checks, and diagnostic records.
           </p>
         </div>
@@ -392,7 +411,7 @@
           <button id="btnClearLogs" class="btn btn-outline btn-sm">Clear History</button>
         </div>
       </div>
-      <div id="logsContainer" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+      <div id="logsContainer" class="logs-container"></div>
     </section>
 
     <!-- SECTION: Unified Control Dashboard (Settings, Credits, Keys, Profiles) -->
@@ -402,18 +421,20 @@
 
     <!-- SECTION: Trash (Deleted Vacancies & Suppressed Items) -->
     <section id="sectionTrash" class="view-section">
-      <div class="filter-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+      <div class="filter-panel flex-between-wrap trash-filter-panel">
         <div>
-          <h3 style="font-family: var(--font-heading); font-size: 1.15rem; display: flex; align-items: center; gap: 0.4rem;">
-            <span>🗑️</span> Trash &amp; Suppressed Vacancies
+          <h3 class="section-heading flex-heading">
+            <i data-lucide="trash-2" class="icon"></i>
+            <span>Trash &amp; Suppressed Vacancies</span>
           </h3>
-          <p style="font-size: 0.78rem; color: var(--text-secondary);">
+          <p class="section-desc">
             Deleted vacancies are permanently excluded from future scans. You can restore them to your active feed anytime.
           </p>
         </div>
         <div class="filter-controls-group">
-          <button id="btnEmptyTrashMain" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);">
-            🗑️ Empty Trash
+          <button id="btnEmptyTrashMain" class="btn btn-outline btn-sm btn-empty-trash">
+            <i data-lucide="trash-2" class="icon"></i>
+            <span>Empty Trash</span>
           </button>
         </div>
       </div>
@@ -431,23 +452,23 @@
 
   <!-- Application Status Modal -->
   <div id="appStatusModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-content modal-content-sm">
       <button id="appModalCloseBtn" class="modal-close-btn">&times;</button>
-      <h3 style="margin-bottom: 1rem; font-family: var(--font-heading);">Track Job Application</h3>
+      <h3 class="modal-heading">Track Job Application</h3>
       <div id="appModalBody"></div>
     </div>
   </div>
 
   <!-- Search Provider Configuration Modal -->
   <div id="providerModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 860px;">
+    <div class="modal-content modal-content-md">
       <button id="providerModalCloseBtn" class="modal-close-btn">&times;</button>
-      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem;">
-        <span style="font-size: 1.5rem;">🔄</span>
-        <h3 style="font-family: var(--font-heading); font-size: 1.3rem;">Search Provider Orchestration &amp; Health</h3>
+      <div class="modal-header-row">
+        <i data-lucide="refresh-cw" class="icon icon-lg"></i>
+        <h3 class="modal-heading">Search Providers &amp; Health</h3>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-        Configure multiple search providers, prioritize free quotas, inspect failover events, and enforce the zero-spending guard.
+      <p class="modal-desc">
+        Configure search providers, failover routing, and free quota thresholds.
       </p>
       <div id="providerModalBody"></div>
     </div>
@@ -455,14 +476,14 @@
 
   <!-- Automated Schedule & Monitoring Configuration Modal -->
   <div id="scheduleModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 650px;">
+    <div class="modal-content modal-content-schedule">
       <button id="scheduleModalCloseBtn" class="modal-close-btn">&times;</button>
-      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-        <span style="font-size: 1.5rem;">⏰</span>
-        <h3 style="font-family: var(--font-heading); font-size: 1.35rem;">Automated Scan Schedule &amp; Alerts</h3>
+      <div class="modal-header-row">
+        <i data-lucide="alarm-clock" class="icon icon-lg"></i>
+        <h3 class="modal-heading">Automated Scan Schedule &amp; Alerts</h3>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-        Configure background scan schedules (IST Asia/Kolkata), multi-email digests, and instant Telegram push alerts with automated cloud infrastructure.
+      <p class="modal-desc">
+        Configure scan schedules (Asia/Kolkata), multi-email digests, and Telegram alerts.
       </p>
       <div id="scheduleModalBody"></div>
     </div>
@@ -470,7 +491,7 @@
 
   <!-- Dedicated Per-Profile Settings & Preferences Modal Popup -->
   <div id="profileSettingsModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 980px; max-height: 92vh; overflow-y: auto; padding: 1.75rem 2rem;">
+    <div class="modal-content modal-content-lg">
       <button id="profileSettingsModalCloseBtn" class="modal-close-btn" aria-label="Close Profile Settings">&times;</button>
       <div id="modalProfileSettingsBody"></div>
     </div>
@@ -478,7 +499,7 @@
 
   <!-- Main System Settings & Control Dashboard Modal Popup -->
   <div id="dashboardModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 1160px; max-height: 92vh; overflow-y: auto; padding: 1.75rem 2rem;">
+    <div class="modal-content modal-content-xl">
       <button id="dashboardModalCloseBtn" class="modal-close-btn" aria-label="Close Main Settings">&times;</button>
       <div id="modalDashboardBody"></div>
     </div>
@@ -486,7 +507,7 @@
 
   <!-- Live Manual Scan Progress & Summary Modal -->
   <div id="scanResultModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 620px;">
+    <div class="modal-content modal-content-scan">
       <button id="scanResultModalCloseBtn" class="modal-close-btn">&times;</button>
       <div id="scanResultModalBody"></div>
     </div>
@@ -494,7 +515,7 @@
 
   <!-- Create New Search Profile Modal -->
   <div id="createProfileModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 820px;">
+    <div class="modal-content modal-content-profile">
       <button id="createProfileModalCloseBtn" class="modal-close-btn">&times;</button>
       <div id="createProfileModalBody"></div>
     </div>
@@ -502,62 +523,62 @@
 
   <!-- Add Custom Finding / External Vacancy Modal -->
   <div id="addVacancyModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-content modal-content-custom-vac">
       <button id="addVacancyModalCloseBtn" class="modal-close-btn">&times;</button>
-      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
-        <span style="font-size: 1.4rem;">➕</span>
-        <h3 style="font-family: var(--font-heading); font-size: 1.25rem;">Add External Finding / Custom Vacancy</h3>
+      <div class="modal-header-row">
+        <i data-lucide="plus" class="icon icon-lg"></i>
+        <h3 class="modal-heading">Add External Vacancy</h3>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.45;">
-        Found an opportunity from another website, newspaper, or circular? Paste the link below to auto-extract details, teach our crawler this employer source, and track your application milestones.
+      <p class="modal-desc">
+        Enter an opportunity link or manual details to track deadlines, requirements, and application status.
       </p>
 
       <!-- Step 1: Auto-Extract Link & Teach Model -->
-      <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: var(--radius-md); padding: 1.15rem; margin-bottom: 1.25rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
-          <span style="font-size: 0.74rem; color: #38bdf8; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem;">
-            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 8px #34d399;"></span>
-            Live Cloud AI: Gemini Engine (Cloud Native)
+      <div class="auto-extract-box">
+        <div class="auto-extract-header">
+          <span class="ai-engine-indicator">
+            <span class="engine-pulse-dot"></span>
+            AI Extraction: Gemini Engine
           </span>
-          <span id="badgeContinuousLearning" style="font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 600;">
-            🧠 Continuous Learning Active
+          <span id="badgeContinuousLearning" class="badge-learning">
+            <i data-lucide="brain" class="icon icon-sm"></i> Continuous Learning
           </span>
         </div>
-        <label style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #38bdf8; display: block; margin-bottom: 0.35rem;">
-          🌐 Paste Opportunity Web Link or PDF URL (Auto-Extract &amp; Learn)
+        <label class="form-label-primary">
+          <i data-lucide="globe" class="icon"></i> Paste Opportunity Web Link or PDF URL
         </label>
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
-          <input type="url" id="inputCustomVacUrl" class="search-input" placeholder="e.g. https://www.drdo.gov.in/careers/advt-123 or direct .pdf link" style="flex: 1; font-size: 0.82rem;">
-          <button type="button" id="btnAutoExtractFromUrl" class="btn btn-outline btn-sm" style="border-color: #38bdf8; color: #38bdf8; font-weight: 700; white-space: nowrap;">
-            ⚡ Auto-Extract &amp; Learn
+        <div class="input-row-flex">
+          <input type="url" id="inputCustomVacUrl" class="search-input" placeholder="e.g. https://www.drdo.gov.in/careers/advt-123 or direct .pdf link">
+          <button type="button" id="btnAutoExtractFromUrl" class="btn btn-outline btn-sm btn-extract">
+            <i data-lucide="zap" class="icon"></i> Auto-Extract
           </button>
         </div>
-        <div id="statusCustomVacExtract" style="display: none; font-size: 0.78rem; margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);"></div>
+        <div id="statusCustomVacExtract" class="extract-status" style="display: none;"></div>
       </div>
 
       <!-- Step 2: Form Details -->
       <form id="formAddCustomVacancy" onsubmit="return false;">
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 0.85rem;">
+        <div class="form-grid-2-1">
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+            <label class="form-label-section">
               Job Title / Designation *
             </label>
-            <input type="text" id="inputCustomVacTitle" class="search-input" placeholder="e.g. Scientist 'B' / Software Engineer" required style="width: 100%; font-size: 0.82rem;">
+            <input type="text" id="inputCustomVacTitle" class="search-input" placeholder="e.g. Scientist 'B' / Software Engineer" required>
           </div>
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+            <label class="form-label-section">
               Employer / Org *
             </label>
-            <input type="text" id="inputCustomVacOrg" class="search-input" placeholder="e.g. DRDO / C-DAC" required style="width: 100%; font-size: 0.82rem;">
+            <input type="text" id="inputCustomVacOrg" class="search-input" placeholder="e.g. DRDO / C-DAC" required>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem;">
+        <div class="form-grid-1-1-1">
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+            <label class="form-label-section">
               Sector
             </label>
-            <select id="selectCustomVacSector" class="filter-select" style="width: 100%; font-size: 0.8rem;">
+            <select id="selectCustomVacSector" class="filter-select">
               <option value="Central Government">Central Government</option>
               <option value="State Government">State Government</option>
               <option value="Public Sector Undertaking (PSU)">PSU</option>
@@ -566,57 +587,57 @@
             </select>
           </div>
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+            <label class="form-label-section">
               Advertisement Ref
             </label>
-            <input type="text" id="inputCustomVacAdvt" class="search-input" placeholder="e.g. Advt No. 04/2026" style="width: 100%; font-size: 0.8rem;">
+            <input type="text" id="inputCustomVacAdvt" class="search-input" placeholder="e.g. Advt No. 04/2026">
           </div>
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+            <label class="form-label-section">
               Closing Deadline
             </label>
-            <input type="date" id="inputCustomVacDeadline" class="search-input" style="width: 100%; font-size: 0.8rem;">
+            <input type="date" id="inputCustomVacDeadline" class="search-input">
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem;">
+        <div class="form-grid-2-1">
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
-              Pay Scale / Salary (Extracted by AI)
+            <label class="form-label-section">
+              Pay Scale / Salary
             </label>
-            <input type="text" id="inputCustomVacPay" class="search-input" placeholder="e.g. Pay Level 10 (₹56,100 - ₹1,77,500)" style="width: 100%; font-size: 0.8rem;">
+            <input type="text" id="inputCustomVacPay" class="search-input" placeholder="e.g. Pay Level 10 (₹56,100 - ₹1,77,500)">
           </div>
           <div>
-            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+            <label class="form-label-section">
               Total Posts
             </label>
-            <input type="number" id="inputCustomVacPosts" class="search-input" placeholder="e.g. 45" style="width: 100%; font-size: 0.8rem;">
+            <input type="number" id="inputCustomVacPosts" class="search-input" placeholder="e.g. 45">
           </div>
         </div>
 
         <div style="margin-bottom: 1rem;">
-          <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">
+          <label class="form-label-section">
             Official Notice / PDF Link
           </label>
-          <input type="url" id="inputCustomVacPdfUrl" class="search-input" placeholder="https://...pdf" style="width: 100%; font-size: 0.8rem;">
+          <input type="url" id="inputCustomVacPdfUrl" class="search-input" placeholder="https://...pdf">
         </div>
 
         <!-- Step 3: Application Tracker Integration -->
-        <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 700; color: #34d399; cursor: pointer;">
+        <div class="tracking-card">
+          <div class="tracking-card-header">
+            <label class="tracking-checkbox-label">
               <input type="checkbox" id="chkCustomVacTrack" checked>
               <span>Track in "My Job Applications"</span>
             </label>
             <span style="font-size: 0.72rem; color: var(--text-muted);">Syncs to personal Kanban board</span>
           </div>
 
-          <div id="customVacTrackFields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div id="customVacTrackFields" class="form-grid-1-1">
             <div>
-              <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">
+              <label class="form-label-sm">
                 Current Application Stage
               </label>
-              <select id="selectCustomVacStage" class="filter-select" style="width: 100%; font-size: 0.8rem;">
+              <select id="selectCustomVacStage" class="filter-select">
                 <option value="SAVED">Saved / Reviewing (20%)</option>
                 <option value="PREPARING">Preparing Documents &amp; Certificates (40%)</option>
                 <option value="APPLIED">Application Submitted (60%)</option>
@@ -625,30 +646,31 @@
               </select>
             </div>
             <div>
-              <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">
+              <label class="form-label-sm">
                 Application / Registration No.
               </label>
-              <input type="text" id="inputCustomVacRegNo" class="search-input" placeholder="e.g. REG-2026-9901" style="width: 100%; font-size: 0.8rem;">
+              <input type="text" id="inputCustomVacRegNo" class="search-input" placeholder="e.g. REG-2026-9901">
             </div>
-            <div style="grid-column: 1 / -1;">
-              <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">
+            <div class="form-col-full">
+              <label class="form-label-sm">
                 Application Notes &amp; Checklist
               </label>
-              <input type="text" id="inputCustomVacNotes" class="search-input" placeholder="e.g. Fee paid ₹500 via UPI, NOC required from employer" style="width: 100%; font-size: 0.8rem;">
+              <input type="text" id="inputCustomVacNotes" class="search-input" placeholder="e.g. Fee paid ₹500 via UPI, NOC required from employer">
             </div>
           </div>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <div class="form-actions-right">
           <button type="button" id="btnCancelAddCustomVac" class="btn btn-outline btn-sm">Cancel</button>
           <button type="button" id="btnSaveCustomVacancy" class="btn btn-primary" style="font-weight: 600;">
-            💾 Save Opportunity &amp; Start Tracking
+            <i data-lucide="save" class="icon"></i> Save Opportunity &amp; Start Tracking
           </button>
         </div>
       </form>
     </div>
   </div>
 
+  <script>lucide.createIcons();</script>
   <script type="module" src="js/app.js?v=4.0"></script>
 </body>
 </html>

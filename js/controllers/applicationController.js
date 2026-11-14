@@ -106,22 +106,23 @@ export function checkAndRenderPortalDeadlineReminders(app) {
           </div>
 
           <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <button id="btnBannerGoToTracker" class="btn btn-primary btn-sm" style="font-weight: 700; background: #ef4444; border-color: #dc2626; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
-              <span>📑</span> Open My Track (${urgentApps.length})
+            <button id="btnBannerGoToTracker" class="btn btn-primary btn-sm" style="font-weight: 600; background: #ef4444; border-color: #dc2626; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+              <i data-lucide="file-text" class="icon-xs"></i> Open My Track (${urgentApps.length})
             </button>
             <a href="https://careers.cdac.in" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="font-weight: 600; text-decoration: none; border-color: rgba(245, 158, 11, 0.5); color: #fbbf24;">
-              <span>🚀</span> C-DAC Apply Portal
+              <i data-lucide="external-link" class="icon-xs"></i> C-DAC Apply Portal
             </a>
             <button id="btnBannerSendTelegramAlert" class="btn btn-outline btn-sm" title="Dispatch immediate reminder alert to your Telegram">
-              <span>📲</span> Dispatch Telegram Alert
+              <i data-lucide="send" class="icon-xs"></i> Dispatch Telegram Alert
             </button>
             <button id="btnBannerDismiss" class="btn btn-ghost btn-sm" title="Dismiss banner for this session" style="color: var(--text-muted); font-size: 1.1rem; padding: 0.2rem 0.4rem;">
-              ✕
+              <i data-lucide="x" class="icon-xs"></i>
             </button>
           </div>
         </div>
       </div>
     `;
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
     document.getElementById('btnBannerGoToTracker')?.addEventListener('click', () => {
       app.switchTab('tracker');
@@ -133,24 +134,29 @@ export function checkAndRenderPortalDeadlineReminders(app) {
       const btn = e.currentTarget;
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Sending...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Sending...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       try {
         const res = await fetch('/api/trigger-deadline-reminders', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-          btn.innerHTML = '✅ Alert Sent!';
+          btn.innerHTML = '<i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Alert Sent!';
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           showConfirmationBanner('Telegram Reminder Sent', `Dispatched urgent alert for ${urgentApps.length} vacancies to Telegram!`, 'success', 3500);
         } else {
-          btn.innerHTML = '⚠️ Failed';
+          btn.innerHTML = '<i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Failed';
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           showConfirmationBanner('Reminder Warning', data.result?.error || 'Could not send reminder', 'warning', 3500);
         }
       } catch (err) {
-        btn.innerHTML = '❌ Error';
+        btn.innerHTML = '<i data-lucide="x-circle" class="icon-xs text-rose"></i> Error';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         showConfirmationBanner('Error', err.message, 'error', 3000);
       } finally {
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = origText;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }, 3000);
       }
     });
@@ -339,8 +345,8 @@ export function renderTrackedApplications(app) {
               Target / Deadline: <strong style="color: var(--text-main);">${a.deadline || a.submissionDate || 'Not specified'}</strong>
             </span>
             ${deadlinePill}
-            ${a.location ? `<span class="meta-pill" style="font-size: 0.72rem;">📍 ${app.escapeHtml(a.location)}</span>` : ''}
-            ${a.payScale ? `<span class="meta-pill" style="font-size: 0.72rem; color: #34d399; border-color: rgba(52, 211, 153, 0.3);">💰 ${app.escapeHtml(a.payScale)}</span>` : ''}
+            ${a.location ? `<span class="meta-pill" style="font-size: 0.72rem;"><i data-lucide="map-pin" class="icon-xs"></i> ${app.escapeHtml(a.location)}</span>` : ''}
+            ${a.payScale ? `<span class="meta-pill" style="font-size: 0.72rem; color: #34d399; border-color: rgba(52, 211, 153, 0.3);"><i data-lucide="indian-rupee" class="icon-xs"></i> ${app.escapeHtml(a.payScale)}</span>` : ''}
             ${a.registrationNo ? `
               <span class="meta-pill" style="font-size: 0.72rem; font-family: var(--font-mono); background: rgba(56, 189, 248, 0.12); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);">
                 Reg ID: <strong>${app.escapeHtml(a.registrationNo)}</strong>
@@ -358,7 +364,7 @@ export function renderTrackedApplications(app) {
             <div style="display: flex; gap: 0.4rem; align-items: center;">
               ${a.sourceUrl ? `
                 <a href="${a.sourceUrl}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.65rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
-                  <span>🔗</span> Apply Link
+                  <i data-lucide="external-link" class="icon-xs"></i> Apply Link
                 </a>
               ` : ''}
               <button class="btn btn-outline btn-sm btn-track" data-id="${a.vacancyId || a.id}" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">Edit Stage</button>
@@ -368,6 +374,8 @@ export function renderTrackedApplications(app) {
         </div>
       `;
     }).join('');
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
     container.querySelectorAll('.btn-track').forEach(btn => {
       btn.addEventListener('click', () => {

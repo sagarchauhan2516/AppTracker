@@ -18,7 +18,7 @@ export function renderProfilesTab(profiles, currentProfile) {
         <div style="background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.35); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(96, 165, 250, 0.2); color: #60a5fa; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-              👤
+              <i data-lucide="user" class="icon icon-md"></i>
             </div>
             <div>
               <strong style="color: #60a5fa; font-size: 0.95rem;">Dedicated Profile Settings Panel Available</strong>
@@ -28,7 +28,7 @@ export function renderProfilesTab(profiles, currentProfile) {
             </div>
           </div>
           <button type="button" id="btnJumpToDedicatedProfileSettings" class="btn btn-primary btn-sm" style="font-weight: 700; background: #2563eb; border-color: #2563eb; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);">
-            👤 Open Profile Settings Panel &rarr;
+            <i data-lucide="user" class="icon icon-sm"></i> Open Profile Settings Panel &rarr;
           </button>
         </div>
 
@@ -48,9 +48,9 @@ export function renderProfilesTab(profiles, currentProfile) {
           </div>
 
           <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <button id="btnDashNewProfile" class="btn btn-outline btn-sm">✨ + Create New Role Profile</button>
-            <button id="btnDashCloneProfile" class="btn btn-outline btn-sm">📋 Clone Profile</button>
-            <button id="btnSaveProfileCustomFields" class="btn btn-primary btn-sm">💾 Save All Profile Changes</button>
+            <button id="btnDashNewProfile" class="btn btn-outline btn-sm"><i data-lucide="plus" class="icon icon-sm"></i> Create New Role Profile</button>
+            <button id="btnDashCloneProfile" class="btn btn-outline btn-sm"><i data-lucide="copy" class="icon icon-sm"></i> Clone Profile</button>
+            <button id="btnSaveProfileCustomFields" class="btn btn-primary btn-sm"><i data-lucide="save" class="icon icon-sm"></i> Save All Profile Changes</button>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export function renderProfilesTab(profiles, currentProfile) {
             </label>
             <input type="text" id="dashProfRoles" class="search-input" value="${escapeHtml((p.roles || []).join(', '))}" style="width: 100%;">
             <div style="margin-top: 0.5rem;">
-              <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">🤖 AI Suggested Designations (1-Click Add):</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.25rem;"><i data-lucide="sparkles" class="icon icon-xs"></i> Suggested Designations:</span>
               <div id="dashAiRoleSuggestionsTray" class="ai-suggestion-tray">
                 ${AiSuggestionsEngine.getRoleSuggestions(p).map(r => `
                   <button type="button" class="btn-dash-add-ai-role ai-suggestion-chip" data-role="${escapeHtml(r)}">
@@ -84,7 +84,7 @@ export function renderProfilesTab(profiles, currentProfile) {
         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.75rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
             <div>
-              <strong style="color: #34d399; font-size: 0.95rem;">🎯 Target Organisation &amp; Website Whitelist</strong>
+              <strong style="color: #34d399; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="crosshair" class="icon icon-sm"></i> Target Organisation &amp; Website Whitelist</strong>
               <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem;">
                 Restrict or prioritize vacancy scans to specific recruitment portals and government apex websites.
               </div>
@@ -95,8 +95,8 @@ export function renderProfilesTab(profiles, currentProfile) {
                 <span>Enable Target Whitelist</span>
               </label>
               <select id="dashTargetFocusMode" class="filter-select" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;">
-                <option value="PRIORITY_BOOST" ${targetFocus.mode === 'PRIORITY_BOOST' ? 'selected' : ''}>⭐ Priority Boost (+15% score)</option>
-                <option value="STRICT_TARGET" ${targetFocus.mode === 'STRICT_TARGET' ? 'selected' : ''}>🔒 Strict Filter (Only whitelisted)</option>
+                <option value="PRIORITY_BOOST" ${targetFocus.mode === 'PRIORITY_BOOST' ? 'selected' : ''}>Priority Boost (+15% score)</option>
+                <option value="STRICT_TARGET" ${targetFocus.mode === 'STRICT_TARGET' ? 'selected' : ''}>Strict Filter (Only whitelisted)</option>
               </select>
             </div>
           </div>
@@ -123,8 +123,8 @@ export function renderProfilesTab(profiles, currentProfile) {
             <!-- Active Chips Container -->
             <div id="dashTargetChipsContainer" style="display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 32px; padding: 0.6rem; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px dashed var(--border-subtle);">
               ${dashUniqueDomains.map(d => `
-                <span class="target-focus-chip">
-                  🌐 <strong>${escapeHtml(d)}</strong>
+                <span class="target-focus-chip" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                  <i data-lucide="globe" class="icon icon-xs"></i> <strong>${escapeHtml(d)}</strong>
                   <button type="button" class="target-focus-chip-remove btn-dash-remove-domain" data-domain="${escapeHtml(d)}" title="Remove ${escapeHtml(d)}">&times;</button>
                 </span>
               `).join('')}
@@ -134,15 +134,15 @@ export function renderProfilesTab(profiles, currentProfile) {
 
           <!-- Section 2: AI Recommended Official Portals & PSUs -->
           <div>
-            <span style="font-size: 0.75rem; color: #34d399; font-weight: 600; display: block; margin-bottom: 0.45rem;">
-              ✨ AI Recommended Portals &amp; PSUs (1-Click to Whitelist):
+            <span style="font-size: 0.75rem; color: #34d399; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.45rem;">
+              <i data-lucide="sparkles" class="icon icon-xs"></i> Recommended Portals &amp; PSUs:
             </span>
             <div id="dashAiWebsiteSuggestionsTray" class="ai-suggestion-tray">
               ${AiSuggestionsEngine.getWebsiteSuggestions(p).map(s => {
                 const isSelected = dashUniqueDomains.includes(s.domain.toLowerCase());
                 return `
                   <button type="button" class="btn-dash-add-ai-website ai-suggestion-chip ${isSelected ? 'added' : ''}" data-domain="${s.domain.toLowerCase()}" title="${escapeHtml(s.org)}">
-                    <span>${isSelected ? '✓' : '+'}</span> <strong>${s.domain}</strong> <small style="opacity: 0.75;">(${escapeHtml(s.org.split('(')[0].trim())})</small>
+                    <i data-lucide="${isSelected ? 'check' : 'plus'}" class="icon-xs"></i> <strong>${s.domain}</strong> <small style="opacity: 0.75;">(${escapeHtml(s.org.split('(')[0].trim())})</small>
                   </button>
                 `;
               }).join('')}
@@ -154,8 +154,8 @@ export function renderProfilesTab(profiles, currentProfile) {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.75rem;">
           <!-- Positive Keywords -->
           <div class="dash-card-elevated">
-            <strong style="color: #60a5fa; font-size: 0.9rem; display: block; margin-bottom: 0.25rem;">
-              ✨ Custom Field: Positive Technical Keywords
+            <strong style="color: #60a5fa; font-size: 0.9rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.25rem;">
+              <i data-lucide="tag" class="icon icon-xs"></i> Custom Field: Positive Technical Keywords
             </strong>
             <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
               Terms that boost matching scores and trigger keyword expansions.
@@ -167,13 +167,13 @@ export function renderProfilesTab(profiles, currentProfile) {
             
             <!-- AI Positive Keyword Suggestions Tray -->
             <div style="margin-bottom: 0.75rem;">
-              <span style="font-size: 0.72rem; color: #60a5fa; font-weight: 600; display: block; margin-bottom: 0.25rem;">🤖 AI Suggested Keywords & Skills (1-Click Add):</span>
+              <span style="font-size: 0.72rem; color: #60a5fa; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.25rem;"><i data-lucide="sparkles" class="icon icon-xs"></i> Suggested Keywords &amp; Skills:</span>
               <div id="dashAiPosKwSuggestionsTray" class="ai-suggestion-tray">
                 ${AiSuggestionsEngine.getKeywordSuggestions(p).map(k => {
                   const isAdded = (p.keywords || []).includes(k);
                   return `
                     <button type="button" class="btn-dash-add-ai-pos-kw ai-suggestion-chip ${isAdded ? 'added' : ''}" data-kw="${escapeHtml(k)}">
-                      <span>${isAdded ? '✓' : '+'}</span> ${escapeHtml(k)}
+                      <i data-lucide="${isAdded ? 'check' : 'plus'}" class="icon-xs"></i> ${escapeHtml(k)}
                     </button>
                   `;
                 }).join('')}
@@ -192,8 +192,8 @@ export function renderProfilesTab(profiles, currentProfile) {
 
           <!-- Negative / Exclusion Keywords -->
           <div class="dash-card-elevated">
-            <strong style="color: #f87171; font-size: 0.9rem; display: block; margin-bottom: 0.25rem;">
-              🚫 Custom Field: Exclusion / Negative Keywords
+            <strong style="color: #f87171; font-size: 0.9rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.25rem;">
+              <i data-lucide="ban" class="icon icon-xs"></i> Custom Field: Exclusion / Negative Keywords
             </strong>
             <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
               Terms that automatically disqualify or suppress irrelevant listings.
@@ -205,13 +205,13 @@ export function renderProfilesTab(profiles, currentProfile) {
 
             <!-- AI Negative Keyword Suggestions Tray -->
             <div style="margin-bottom: 0.75rem;">
-              <span style="font-size: 0.72rem; color: #f87171; font-weight: 600; display: block; margin-bottom: 0.25rem;">🤖 AI Exclusion Suggestions (1-Click Add):</span>
+              <span style="font-size: 0.72rem; color: #f87171; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.25rem;"><i data-lucide="sparkles" class="icon icon-xs"></i> Suggested Exclusions:</span>
               <div id="dashAiNegKwSuggestionsTray" class="ai-suggestion-tray">
                 ${AiSuggestionsEngine.getNegativeSuggestions(p).map(nk => {
                   const isAdded = (negativeKeywords || []).includes(nk);
                   return `
                     <button type="button" class="btn-dash-add-ai-neg-kw ai-suggestion-chip ${isAdded ? 'added' : ''}" data-kw="${escapeHtml(nk)}">
-                      <span>${isAdded ? '✓' : '+'}</span> ${escapeHtml(nk)}
+                      <i data-lucide="${isAdded ? 'check' : 'plus'}" class="icon-xs"></i> ${escapeHtml(nk)}
                     </button>
                   `;
                 }).join('')}
@@ -233,8 +233,8 @@ export function renderProfilesTab(profiles, currentProfile) {
         <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
             <div>
-              <strong style="color: #a78bfa; font-size: 0.95rem;">
-                🏷️ Custom User Attributes &amp; Meta Fields (Everywhere)
+              <strong style="color: #a78bfa; font-size: 0.95rem; display: flex; align-items: center; gap: 0.35rem;">
+                <i data-lucide="sliders" class="icon icon-xs"></i> Custom User Attributes &amp; Meta Fields
               </strong>
               <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem;">
                 Add arbitrary custom fields to your profile (e.g. Notice Period, Security Clearance, Telegram Channel, Target State Directorate).
@@ -245,7 +245,7 @@ export function renderProfilesTab(profiles, currentProfile) {
 
           <!-- AI Meta Attributes Suggestions Tray -->
           <div style="margin-bottom: 0.75rem;">
-            <span style="font-size: 0.72rem; color: #a78bfa; font-weight: 600; display: block; margin-bottom: 0.25rem;">🤖 AI Suggested Meta Fields (1-Click Insert):</span>
+            <span style="font-size: 0.72rem; color: #a78bfa; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.25rem;"><i data-lucide="sparkles" class="icon icon-xs"></i> Suggested Meta Fields:</span>
             <div id="dashAiMetaSuggestionsTray" class="ai-suggestion-tray">
               ${AI_CUSTOM_META_SUGGESTIONS.map(m => `
                 <button type="button" class="btn-dash-add-ai-meta ai-suggestion-chip" data-key="${escapeHtml(m.key)}" data-val="${escapeHtml(m.val)}">
@@ -269,7 +269,7 @@ export function renderProfilesTab(profiles, currentProfile) {
         <!-- Save Button Footer -->
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
           <button type="button" id="btnBottomSaveProfileChanges" class="btn btn-primary" style="font-weight: 600;">
-            💾 Save Profile &amp; Custom Fields
+            <i data-lucide="save" class="icon icon-sm"></i> Save Profile &amp; Custom Fields
           </button>
         </div>
 
@@ -291,7 +291,7 @@ export function renderTargetChipsInDash(ctx) {
 
   chipContainer.innerHTML = sites.map(site => `
     <span class="profile-chip" style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem; font-family: monospace;">
-      🌐 ${escapeHtml(site)}
+      <i data-lucide="globe" class="icon icon-xs"></i> ${escapeHtml(site)}
       <button type="button" class="btn-remove-site" data-site="${escapeHtml(site)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1; margin-left: 0.2rem;" title="Remove this target website">&times;</button>
     </span>
   `).join('');
@@ -361,7 +361,7 @@ export function renderKeywordsInDash(ctx) {
     const neg = currentProfile.keywords?.negative || [];
     negContainer.innerHTML = neg.map(kw => `
       <span class="profile-chip" style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
-        🚫 ${escapeHtml(kw)}
+        <i data-lucide="ban" class="icon icon-xs"></i> ${escapeHtml(kw)}
         <button type="button" class="btn-remove-kw" data-type="negative" data-kw="${escapeHtml(kw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1; margin-left: 0.2rem;">&times;</button>
       </span>
     `).join('');
@@ -379,6 +379,9 @@ export function renderKeywordsInDash(ctx) {
 }
 
 export function bindProfilesTabEvents(container, ctx) {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
     // Toggle Target Focus Checkbox & Mode immediately
     document.getElementById('dashTargetFocusEnabled')?.addEventListener('change', (e) => {
       ctx.currentProfile.targetFocus.enabled = e.target.checked;
@@ -475,7 +478,8 @@ export function bindProfilesTabEvents(container, ctx) {
             ctx.currentProfile.roles = roles;
             storageService.saveProfile(ctx.currentProfile);
             btn.classList.add('added');
-            btn.innerHTML = `✓ ${escapeHtml(role)}`;
+            btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> ${escapeHtml(role)}`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
             showConfirmationBanner('AI Role Added', `Added "${role}" to target designations.`, 'info', 2200);
             if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
           } else {
@@ -520,7 +524,8 @@ export function bindProfilesTabEvents(container, ctx) {
           ctx.currentProfile.keywords.push(kw);
           storageService.saveProfile(ctx.currentProfile);
           btn.classList.add('added');
-          btn.innerHTML = `<span>✓</span> ${escapeHtml(kw)}`;
+          btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> ${escapeHtml(kw)}`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           renderKeywordsInDash(ctx);
           showConfirmationBanner('AI Keyword Added', `Added "${kw}" to technical keywords.`, 'info', 2200);
           if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
@@ -565,7 +570,8 @@ export function bindProfilesTabEvents(container, ctx) {
           ctx.currentProfile.negativeKeywords.push(kw);
           storageService.saveProfile(ctx.currentProfile);
           btn.classList.add('added');
-          btn.innerHTML = `<span>✓</span> ${escapeHtml(kw)}`;
+          btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> ${escapeHtml(kw)}`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           renderKeywordsInDash(ctx);
           showConfirmationBanner('AI Negative Filter Added', `Added "${kw}" to exclusion filters.`, 'warning', 2200);
           if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();

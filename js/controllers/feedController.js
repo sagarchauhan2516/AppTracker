@@ -196,7 +196,7 @@ export function renderVacancies(app) {
         bannerContainer.innerHTML = `
           <div class="target-focus-banner">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <span style="font-size: 1.4rem;">🎯</span>
+              <i data-lucide="crosshair" class="icon-lg text-emerald"></i>
               <div>
                 <strong style="color: #34d399; font-size: 0.95rem;">
                   Target Focus Active: Focusing on ${targetsList}${targetsCount > 4 ? ` +${targetsCount - 4} more` : ''}
@@ -208,7 +208,7 @@ export function renderVacancies(app) {
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
               <button id="btnBannerEditFocus" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">
-                ⚙️ Adjust Targets
+                <i data-lucide="sliders" class="icon-xs"></i> Adjust Targets
               </button>
               <button id="btnBannerToggleMode" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">
                 ${isStrict ? 'Switch to Boost Mode' : 'Switch to Strict Filter'}
@@ -216,6 +216,7 @@ export function renderVacancies(app) {
             </div>
           </div>
         `;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
         document.getElementById('btnBannerEditFocus')?.addEventListener('click', () => {
           app.switchTab('profiles');
@@ -330,18 +331,22 @@ export function renderVacancies(app) {
     const testCount = list.filter(v => v.isTestData).length;
     const testNotice = testCount > 0 ? `
       <div style="grid-column: 1 / -1; margin-bottom: 0.5rem; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: var(--radius-md); padding: 0.85rem 1.15rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
-        <div style="font-size: 0.82rem; color: #fbbf24; line-height: 1.4;">
-          <strong>⚠️ Showing Initial Prototype Test Data (${testCount} items).</strong><br>
-          <span style="color: var(--text-secondary); font-size: 0.76rem;">Pull verified vacancies from your Google Sheet or run a live web scan to view 100% real government posts.</span>
+        <div style="font-size: 0.82rem; color: #fbbf24; line-height: 1.4; display: flex; align-items: flex-start; gap: 0.45rem;">
+          <i data-lucide="alert-triangle" class="icon-sm text-amber" style="margin-top: 2px;"></i>
+          <div>
+            <strong>Showing Prototype / Demonstration Data (${testCount} items).</strong><br>
+            <span style="color: var(--text-secondary); font-size: 0.76rem;">Pull verified vacancies from your cloud database or run a live scan to view real government posts.</span>
+          </div>
         </div>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button id="btnQuickPullRealFromSheets" class="btn btn-primary btn-sm" style="font-size: 0.78rem; font-weight: 700; background: #2563eb; border-color: #2563eb;">📥 Pull from Google Sheets</button>
-          <button id="btnQuickPurgeTestData" class="btn btn-outline btn-sm" style="font-size: 0.78rem; border-color: rgba(239, 68, 68, 0.35); color: #f87171;">🧹 Purge Test Data</button>
+          <button id="btnQuickPullRealFromSheets" class="btn btn-primary btn-sm" style="font-size: 0.78rem; font-weight: 600;"><i data-lucide="download" class="icon-xs"></i> Pull from Google Sheets</button>
+          <button id="btnQuickPurgeTestData" class="btn btn-outline btn-sm" style="font-size: 0.78rem; border-color: rgba(239, 68, 68, 0.35); color: #f87171;"><i data-lucide="trash-2" class="icon-xs"></i> Purge Test Data</button>
         </div>
       </div>
     ` : '';
 
     container.innerHTML = testNotice + pagedList.map(v => app.renderVacancyCard(v, now)).join('');
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     app.renderPagination(totalItems, totalPages, startIndex, endIndex);
 
     // Attach listeners for test data banner
@@ -397,17 +402,18 @@ export function renderVacancies(app) {
     console.error('[VacancyRadar Feed Error Boundary]:', err);
     container.innerHTML = `
       <div class="dash-card-elevated" style="grid-column: 1 / -1; text-align: center; padding: 2.5rem 1.5rem; margin: 1.5rem 0;">
-        <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">⚠️</div>
+        <div style="margin-bottom: 0.5rem;"><i data-lucide="alert-triangle" class="icon-xl text-amber"></i></div>
         <h3 style="font-family: var(--font-heading); color: #f87171; margin-bottom: 0.4rem;">Feed Rendering Notice</h3>
         <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.25rem;">
           An unexpected error occurred while processing vacancy cards (${escapeHtml(err.message)}).
         </p>
         <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-          <button id="btnRecoverFeed" class="btn btn-primary btn-sm">🔄 Reload Feed</button>
-          <button id="btnRecoverResetFilters" class="btn btn-outline btn-sm">↺ Reset Filters</button>
+          <button id="btnRecoverFeed" class="btn btn-primary btn-sm"><i data-lucide="refresh-cw" class="icon-xs"></i> Reload Feed</button>
+          <button id="btnRecoverResetFilters" class="btn btn-outline btn-sm"><i data-lucide="rotate-ccw" class="icon-xs"></i> Reset Filters</button>
         </div>
       </div>
     `;
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     document.getElementById('btnRecoverFeed')?.addEventListener('click', () => app.renderVacancies());
     document.getElementById('btnRecoverResetFilters')?.addEventListener('click', () => app.resetFilters());
   }
@@ -542,24 +548,24 @@ export function renderVacancyCard(app, vac, now) {
       const diffDays = Math.ceil((close - now) / (1000 * 60 * 60 * 24));
       if (diffDays < 0) {
         isClosed = true;
-        deadlineHtml = `<span class="deadline-indicator" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); font-weight: 600;">⏱️ Closed on ${vac.dates.closingDate}</span>`;
+        deadlineHtml = `<span class="deadline-indicator" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); font-weight: 600;"><i data-lucide="clock" class="icon-xs"></i> Closed on ${vac.dates.closingDate}</span>`;
       } else if (diffDays <= 7) {
-        deadlineHtml = `<span class="deadline-indicator urgent">⚠️ Closes in ${diffDays} day${diffDays === 1 ? '' : 's'} (${vac.dates.closingDate})</span>`;
+        deadlineHtml = `<span class="deadline-indicator urgent"><i data-lucide="alert-triangle" class="icon-xs"></i> Closes in ${diffDays} day${diffDays === 1 ? '' : 's'} (${vac.dates.closingDate})</span>`;
       } else {
         deadlineHtml = `<span class="deadline-indicator">Closes: ${vac.dates.closingDate} (${diffDays} days left)</span>`;
       }
     }
 
     const testFlagHtml = vac.isTestData ? `<span class="badge-test-flag">[TEST DATA]</span>` : '';
-    const liveFlagHtml = vac.isLiveDiscovered ? `<span class="meta-pill" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;">🟢 LIVE DISCOVERED</span>` : '';
+    const liveFlagHtml = vac.isLiveDiscovered ? `<span class="meta-pill" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;"><i data-lucide="radio" class="icon-xs"></i> LIVE DISCOVERED</span>` : '';
     const locationText = vac.location ? `${vac.location.city || ''}, ${vac.location.state || ''} ${vac.location.isRemote ? '• Remote' : ''}` : 'Location Unspecified';
     const matchScore = vac.matchAnalysis?.overallScore || 0;
     const matchLabel = app.formatEligibilityLabel(vac.matchAnalysis?.eligibilityStatus);
     const topReason = vac.matchAnalysis?.reasons?.[0] || 'Keyword and qualification requirements evaluated.';
-    const duplicateBadge = vac.hasDuplicatesMerged ? `<span class="meta-pill" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);">🔗 Duplicate Merged</span>` : '';
-    const targetFocusBadge = vac.isTargetFocusMatch ? `<span class="meta-pill" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;">🎯 TARGET FOCUS</span>` : '';
-    const corrigendumBadge = vac.isCorrigendum ? `<span class="meta-pill" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.45); font-weight: 700;">📜 CORRIGENDUM</span>` : '';
-    const extensionBadge = vac.isExtension ? `<span class="meta-pill" style="color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;">⏳ DATE EXTENDED</span>` : '';
+    const duplicateBadge = vac.hasDuplicatesMerged ? `<span class="meta-pill" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);"><i data-lucide="copy" class="icon-xs"></i> Duplicate Merged</span>` : '';
+    const targetFocusBadge = vac.isTargetFocusMatch ? `<span class="meta-pill" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;"><i data-lucide="crosshair" class="icon-xs"></i> TARGET FOCUS</span>` : '';
+    const corrigendumBadge = vac.isCorrigendum ? `<span class="meta-pill" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.45); font-weight: 700;"><i data-lucide="file-text" class="icon-xs"></i> CORRIGENDUM</span>` : '';
+    const extensionBadge = vac.isExtension ? `<span class="meta-pill" style="color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;"><i data-lucide="clock" class="icon-xs"></i> DATE EXTENDED</span>` : '';
 
     return `
       <article class="vacancy-card" id="card-${vac.id}">
@@ -584,10 +590,10 @@ export function renderVacancyCard(app, vac, now) {
           </div>
 
           <div class="meta-pills">
-            <span class="meta-pill">🏢 <strong>${app.escapeHtml(vac.sector || 'Public')}</strong></span>
-            <span class="meta-pill">📋 <strong>${app.escapeHtml(vac.employmentType || 'Full-time')}</strong></span>
-            <span class="meta-pill">📍 ${app.escapeHtml(locationText)}</span>
-            ${vac.remuneration?.amountText ? `<span class="meta-pill">💰 ${app.escapeHtml(vac.remuneration.amountText)}</span>` : ''}
+            <span class="meta-pill"><i data-lucide="building-2" class="icon-xs"></i> <strong>${app.escapeHtml(vac.sector || 'Public')}</strong></span>
+            <span class="meta-pill"><i data-lucide="briefcase" class="icon-xs"></i> <strong>${app.escapeHtml(vac.employmentType || 'Full-time')}</strong></span>
+            <span class="meta-pill"><i data-lucide="map-pin" class="icon-xs"></i> ${app.escapeHtml(locationText)}</span>
+            ${vac.remuneration?.amountText ? `<span class="meta-pill"><i data-lucide="indian-rupee" class="icon-xs"></i> ${app.escapeHtml(vac.remuneration.amountText)}</span>` : ''}
           </div>
 
           <div class="match-box">
@@ -597,7 +603,7 @@ export function renderVacancyCard(app, vac, now) {
             </div>
             <p class="match-reason">${app.escapeHtml(topReason)}</p>
             ${vac.matchAnalysis?.whyMatchedSnippet ? `
-              <div class="match-audit-snippet" style="margin-top: 0.35rem; font-size: 0.76rem; font-family: monospace; background: rgba(59, 130, 246, 0.08); padding: 0.3rem 0.6rem; border-radius: 4px; border-left: 3px solid ${vac.matchAnalysis.whyMatchedSnippet.startsWith('✅') ? '#10b981' : '#ef4444'}; color: var(--text-primary); word-break: break-word;">
+              <div class="match-audit-snippet" style="margin-top: 0.35rem; font-size: 0.76rem; font-family: monospace; background: rgba(59, 130, 246, 0.08); padding: 0.3rem 0.6rem; border-radius: 4px; border-left: 3px solid ${matchScore >= 70 ? '#10b981' : (matchScore >= 45 ? '#f59e0b' : '#ef4444')}; color: var(--text-primary); word-break: break-word;">
                 ${app.escapeHtml(vac.matchAnalysis.whyMatchedSnippet)}
               </div>
             ` : ''}
@@ -617,22 +623,22 @@ export function renderVacancyCard(app, vac, now) {
           <div class="action-buttons" style="flex-wrap: wrap; align-items: center; gap: 0.4rem;">
             ${vac.verification?.officialNoticePdfUrl ? `
               <a href="${vac.verification.officialNoticePdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" title="View Official Notification PDF">
-                📄 PDF
+                <i data-lucide="file-text" class="icon-xs"></i> PDF
               </a>
             ` : ''}
             ${vac.verification?.applicationUrl ? `
               <a href="${vac.verification.applicationUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: #60a5fa;" title="Official Application Portal">
-                🌐 Apply
+                <i data-lucide="external-link" class="icon-xs"></i> Apply
               </a>
             ` : ''}
             ${referenceUrl ? `
               <a href="${referenceUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: ${isClosed ? '#f87171' : '#38bdf8'}; border-color: ${isClosed ? 'rgba(239, 68, 68, 0.45)' : 'rgba(56, 189, 248, 0.45)'}; font-weight: 600;" title="Visit reference source website (${referenceDomain || 'portal'}) to verify details">
-                ${isClosed ? '🔍 Check Source Site ↗' : '🌐 Visit Source Site ↗'}
+                ${isClosed ? '<i data-lucide="search" class="icon-xs"></i> Check Source Site' : '<i data-lucide="external-link" class="icon-xs"></i> Visit Source Site'}
               </a>
             ` : ''}
             <button class="btn btn-outline btn-sm btn-evidence" data-id="${vac.id}">Evidence</button>
             <button class="btn btn-primary btn-sm btn-track" data-id="${vac.id}">Track</button>
-            <button class="btn btn-outline btn-sm btn-delete-vacancy" data-id="${vac.id}" title="Move to Trash (Suppresses from future searches)" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35);">🗑️ Delete</button>
+            <button class="btn btn-outline btn-sm btn-delete-vacancy" data-id="${vac.id}" title="Move to Trash (Suppresses from future searches)" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35);"><i data-lucide="trash-2" class="icon-xs"></i> Delete</button>
           </div>
         </div>
       </article>
@@ -642,15 +648,15 @@ export function renderVacancyCard(app, vac, now) {
 export function formatVerificationBadge(status) {
     switch (status) {
       case VerificationStatus.OFFICIALLY_VERIFIED:
-        return '🛡️ OFFICIALLY VERIFIED';
+        return '<i data-lucide="shield-check" class="icon-xs"></i> OFFICIALLY VERIFIED';
       case VerificationStatus.CROSS_CHECKED:
-        return '🔗 CROSS-CHECKED';
+        return '<i data-lucide="link" class="icon-xs"></i> CROSS-CHECKED';
       case VerificationStatus.UNVERIFIED_LEAD:
-        return '⚠️ UNVERIFIED LEAD';
+        return '<i data-lucide="alert-triangle" class="icon-xs"></i> UNVERIFIED LEAD';
       case VerificationStatus.VERIFICATION_FAILED:
-        return '❌ VERIFICATION FAILED';
+        return '<i data-lucide="x-circle" class="icon-xs"></i> VERIFICATION FAILED';
       case VerificationStatus.EXPIRED_CLOSED:
-        return '⏱️ EXPIRED / CLOSED';
+        return '<i data-lucide="clock" class="icon-xs"></i> EXPIRED / CLOSED';
       default:
         return status;
     }
@@ -744,8 +750,8 @@ export function openEvidenceModal(app, vacId) {
       <!-- Confirmed Facts vs Uncertainties -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-md); padding: 1rem;">
-          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: #34d399; margin-bottom: 0.5rem; font-weight: 700;">
-            ✓ Confirmed Evidence Facts (${audit.confirmedFacts.length})
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: #34d399; margin-bottom: 0.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Confirmed Evidence Facts (${audit.confirmedFacts.length})
           </h4>
           <ul style="font-size: 0.8rem; padding-left: 1.2rem; color: var(--text-main); line-height: 1.5;">
             ${audit.confirmedFacts.map(f => `<li>${app.escapeHtml(f)}</li>`).join('')}
@@ -753,8 +759,8 @@ export function openEvidenceModal(app, vacId) {
         </div>
 
         <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: var(--radius-md); padding: 1rem;">
-          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700;">
-            ⚠️ Unverified / Uncertain Fields (${audit.uncertainFields.length})
+          <h4 style="font-size: 0.8rem; text-transform: uppercase; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Unverified / Uncertain Fields (${audit.uncertainFields.length})
           </h4>
           ${audit.uncertainFields.length > 0 ? `
             <ul style="font-size: 0.8rem; padding-left: 1.2rem; color: var(--text-secondary); line-height: 1.5;">
@@ -769,16 +775,16 @@ export function openEvidenceModal(app, vacId) {
         <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Official Notices &amp; Portals</h4>
         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
           ${ver.officialNoticePdfUrl ? `
-            <a href="${ver.officialNoticePdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="justify-content: flex-start;">
-              📄 Download / View Official Notification PDF
+            <a href="${ver.officialNoticePdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="justify-content: flex-start; gap: 0.5rem;">
+              <i data-lucide="file-text" class="icon-sm"></i> Download / View Official Notification PDF
             </a>
-          ` : '<span style="color: var(--text-muted); font-size: 0.85rem;">⚠️ No official notification PDF linked yet.</span>'}
+          ` : '<span style="color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-circle" class="icon-xs text-amber"></i> No official notification PDF linked yet.</span>'}
 
           ${ver.applicationUrl ? `
-            <a href="${ver.applicationUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="justify-content: flex-start;">
-              🌐 Official Application Portal Gateway
+            <a href="${ver.applicationUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="justify-content: flex-start; gap: 0.5rem;">
+              <i data-lucide="external-link" class="icon-sm"></i> Official Application Portal Gateway
             </a>
-          ` : '<span style="color: var(--text-muted); font-size: 0.85rem;">⚠️ Direct official application portal link not confirmed.</span>'}
+          ` : '<span style="color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-circle" class="icon-xs text-amber"></i> Direct official application portal link not confirmed.</span>'}
 
           ${ver.evidenceUrl ? `
             <a href="${ver.evidenceUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent-primary); text-decoration: underline; margin-top: 0.25rem;">
@@ -796,11 +802,13 @@ export function openEvidenceModal(app, vacId) {
         </div>
         <ul style="font-size: 0.85rem; padding-left: 1.2rem; color: var(--text-secondary); line-height: 1.6;">
           ${(vac.matchAnalysis?.reasons || []).map(r => `<li>${app.escapeHtml(r)}</li>`).join('')}
-          ${(vac.matchAnalysis?.warnings || []).map(w => `<li style="color: #fbbf24;">⚠️ ${app.escapeHtml(w)}</li>`).join('')}
-          ${(vac.matchAnalysis?.missingFields || []).map(m => `<li style="color: #94a3b8;">ℹ️ Missing: ${app.escapeHtml(m)}</li>`).join('')}
+          ${(vac.matchAnalysis?.warnings || []).map(w => `<li style="color: #fbbf24;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> ${app.escapeHtml(w)}</li>`).join('')}
+          ${(vac.matchAnalysis?.missingFields || []).map(m => `<li style="color: #94a3b8;"><i data-lucide="info" class="icon-xs"></i> Missing: ${app.escapeHtml(m)}</li>`).join('')}
         </ul>
       </div>
     `;
 
     document.getElementById('evidenceModal').classList.add('active');
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  }
   }

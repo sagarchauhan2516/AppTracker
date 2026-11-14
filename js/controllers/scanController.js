@@ -203,7 +203,7 @@ export function openScheduleModal(app) {
             <span style="font-size: 0.75rem; color: var(--text-muted);">Runs 24/7 in Google Cloud (Asia/Kolkata timezone) even when your PC is off</span>
           </div>
           <button id="btnTriggerScanFromModal" class="btn btn-primary btn-sm">
-            <span>🔄</span> Run Now
+            <i data-lucide="play" class="icon-xs"></i> Run Now
           </button>
         </div>
 
@@ -278,7 +278,7 @@ export function openScheduleModal(app) {
         <!-- Save Button -->
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem; margin-top: 0.5rem;">
           <button type="button" id="btnSaveScheduleConfig" class="btn btn-primary" style="width: 100%; justify-content: center;">
-            💾 Save Schedule &amp; Sync Cloud Triggers
+            <i data-lucide="save" class="icon-sm"></i> Save Schedule &amp; Sync Cloud Triggers
           </button>
         </div>
       </div>
@@ -374,7 +374,7 @@ export async function handleManualScan(app) {
     // 1. Show Scanning Animation with SerpApi Consent Area
     resultBody.innerHTML = `
       <div style="text-align: center; padding: 2rem 1rem;">
-        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📡</div>
+        <div style="margin-bottom: 1rem;"><i data-lucide="radio" class="icon-xl text-cyan" style="width: 40px; height: 40px;"></i></div>
         <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.5rem;">Live Dynamic Vacancy Scan In Progress</h3>
         <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 480px; margin: 0 auto 1rem;">
           Querying <strong>SearXNG (24 Public Mirrors)</strong> &amp; ${sources.length} active official channels tailored to "<strong>${app.escapeHtml(activeProfile.name)}</strong>"...
@@ -385,6 +385,7 @@ export async function handleManualScan(app) {
         <div id="serpApiConsentContainer" style="display: none; max-width: 520px; margin: 0 auto;"></div>
       </div>
     `;
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     resultModal.classList.add('active');
 
     // 2. Perform Discovery via Multi-Provider Search Orchestration Engine
@@ -410,7 +411,7 @@ export async function handleManualScan(app) {
           consentContainer.innerHTML = `
             <div style="background: rgba(245, 158, 11, 0.12); border: 2px solid #f59e0b; border-radius: var(--radius-lg); padding: 1.25rem; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
               <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
-                <span style="font-size: 1.4rem;">🔑</span>
+                <i data-lucide="key" class="icon-md text-amber"></i>
                 <strong style="color: #fbbf24; font-size: 1rem;">SerpApi Authorization Required</strong>
               </div>
               <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.5; margin: 0 0 0.75rem 0;">
@@ -418,19 +419,20 @@ export async function handleManualScan(app) {
                 Would you like to search via <strong>SerpApi (Google Jobs API)</strong>?
               </p>
               <div style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; gap: 1.25rem;">
-                <span>📊 Quota Remaining: <strong style="color: #34d399;">${provider.quotaRemaining} / ${provider.freeQuotaLimit}</strong></span>
-                <span>💳 Status: <strong>Standard Tier Included</strong></span>
+                <span><i data-lucide="gauge" class="icon-xs"></i> Quota Remaining: <strong style="color: #34d399;">${provider.quotaRemaining} / ${provider.freeQuotaLimit}</strong></span>
+                <span><i data-lucide="shield" class="icon-xs"></i> Status: <strong>Standard Tier Included</strong></span>
               </div>
               <div style="display: flex; gap: 0.75rem;">
                 <button id="btnConfirmSerpApiYes" type="button" class="btn btn-primary btn-sm" style="background: #f59e0b; border-color: #f59e0b; color: #000; font-weight: 700;">
-                  ✅ Yes, Use SerpApi (1 Credit)
+                  <i data-lucide="check" class="icon-xs"></i> Yes, Use SerpApi (1 Credit)
                 </button>
                 <button id="btnConfirmSerpApiNo" type="button" class="btn btn-outline btn-sm">
-                  ❌ No, Skip SerpApi
+                  <i data-lucide="x" class="icon-xs"></i> No, Skip SerpApi
                 </button>
               </div>
             </div>
           `;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
           document.getElementById('btnConfirmSerpApiYes')?.addEventListener('click', () => {
             consentContainer.style.display = 'none';
@@ -565,7 +567,7 @@ export async function handleManualScan(app) {
           if (syncData.status === 'SUCCESS') {
             sheetsSyncBadge = `
               <div style="margin-bottom: 1.25rem; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-md); padding: 0.75rem 1rem; font-size: 0.82rem; color: #34d399; display: flex; align-items: center; gap: 0.6rem;">
-                <span style="font-size: 1.3rem;">☁️</span>
+                <i data-lucide="cloud" class="icon-lg text-emerald"></i>
                 <div>
                   <strong>Automatically Saved to Google Sheets!</strong><br>
                   <span style="color: var(--text-secondary); font-size: 0.76rem;">All +${newCount} newly discovered vacancies were mirrored to your cloud spreadsheet in real-time.</span>
@@ -583,7 +585,7 @@ export async function handleManualScan(app) {
       resultBody.innerHTML = `
         <div style="padding: 1.5rem 1rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-            <span style="font-size: 2rem;">✅</span>
+            <i data-lucide="check-circle-2" class="icon-xl text-emerald" style="width: 32px; height: 32px;"></i>
             <div>
               <h3 style="font-family: var(--font-heading); font-size: 1.25rem;">Live Scan Completed Successfully</h3>
               <span style="font-size: 0.8rem; color: var(--text-secondary);">
@@ -594,7 +596,7 @@ export async function handleManualScan(app) {
 
           ${metadata.failoverEvents && metadata.failoverEvents.length > 0 ? `
             <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem;">
-              <span style="font-weight: 700; color: #fbbf24;">⚠️ Provider Activity &amp; Consent Log:</span>
+              <span style="font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Provider Activity &amp; Consent Log:</span>
               ${metadata.failoverEvents.map(e => `
                 <div style="margin-top: 0.25rem; color: var(--text-secondary);">
                   • <strong>${app.escapeHtml(e.fromProviderName)}</strong> (${app.escapeHtml(e.reason)}: ${app.escapeHtml(e.errorMessage)})
@@ -629,11 +631,12 @@ export async function handleManualScan(app) {
               View Discovered Vacancies
             </button>
             <button id="btnPurgeTestData" class="btn btn-outline" style="flex: 1; justify-content: center; border-color: rgba(239, 68, 68, 0.4); color: #f87171;" title="Remove initial sample test data and keep only live vacancies">
-              🧹 Purge Old Test Data
+              <i data-lucide="trash-2" class="icon-xs"></i> Purge Old Test Data
             </button>
           </div>
         </div>
       `;
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       document.getElementById('btnCloseScanSummary').onclick = () => {
         resultModal.classList.remove('active');
@@ -650,12 +653,13 @@ export async function handleManualScan(app) {
     } catch (err) {
       resultBody.innerHTML = `
         <div style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">❌</div>
+          <div style="margin-bottom: 0.5rem;"><i data-lucide="x-circle" class="icon-xl text-rose" style="width: 40px; height: 40px;"></i></div>
           <h3 style="font-family: var(--font-heading); color: #f87171;">Scan Error</h3>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0.5rem 0 1.5rem;">${app.escapeHtml(err.message)}</p>
           <button id="btnCloseScanError" class="btn btn-outline" style="width: 100%; justify-content: center;">Dismiss</button>
         </div>
       `;
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       document.getElementById('btnCloseScanError').onclick = () => resultModal.classList.remove('active');
     }
   }

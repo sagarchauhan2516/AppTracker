@@ -19,15 +19,16 @@ export function showConfirmationBanner(title, message, type = 'success', duratio
   const typeClass = type === 'info' ? 'banner-info' : (type === 'warning' ? 'banner-warning' : (type === 'error' ? 'banner-error' : ''));
   banner.className = `confirmation-banner ${typeClass}`;
   
-  const icon = type === 'warning' ? '⚠️' : (type === 'info' ? 'ℹ️' : (type === 'error' ? '❌' : '✅'));
+  const iconName = type === 'warning' ? 'alert-triangle' : (type === 'info' ? 'info' : (type === 'error' ? 'x-circle' : 'check-circle-2'));
+  const iconClass = type === 'warning' ? 'text-amber' : (type === 'info' ? 'text-blue' : (type === 'error' ? 'text-rose' : 'text-emerald'));
 
   banner.innerHTML = `
-    <span class="banner-icon">${icon}</span>
+    <span class="banner-icon"><i data-lucide="${iconName}" class="icon-md ${iconClass}"></i></span>
     <div class="banner-body">
       <div class="banner-title">${escapeHtml(title)}</div>
       <div class="banner-desc">${escapeHtml(message)}</div>
     </div>
-    <button type="button" class="banner-close-btn" aria-label="Close notification">&times;</button>
+    <button type="button" class="banner-close-btn" aria-label="Close notification"><i data-lucide="x" class="icon-xs"></i></button>
     <div class="banner-progress" style="animation-duration: ${durationMs}ms;"></div>
   `;
 
@@ -43,6 +44,7 @@ export function showConfirmationBanner(title, message, type = 'success', duratio
   setTimeout(dismiss, durationMs);
 
   container.appendChild(banner);
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 }
 
 // Make globally accessible across all modules and inline handlers

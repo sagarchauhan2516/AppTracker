@@ -10,7 +10,7 @@ export const ROLE_PRESETS = [
     id: 'preset-swe',
     name: 'Software Engineering & Full Stack Development',
     description: 'Targeted at tech MNCs, Big 4 tech consulting, startups, and government IT bodies (NIC, C-DAC). Covers Java, Python, React, Cloud & Microservices.',
-    icon: '💻',
+    icon: 'code',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'Software Engineer',
@@ -63,7 +63,7 @@ export const ROLE_PRESETS = [
     id: 'preset-ai-ml',
     name: 'Data Science, Artificial Intelligence & ML',
     description: 'Aimed at private AI labs, analytics consultancies, and national research institutes. Covers ML pipelines, LLMs, NLP, and predictive modeling.',
-    icon: '🤖',
+    icon: 'cpu',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'Data Scientist',
@@ -114,7 +114,7 @@ export const ROLE_PRESETS = [
     id: 'preset-consulting',
     name: 'Big 4 & Private Advisory (Tech / Risk Consulting)',
     description: 'Focused on premier professional services firms (Deloitte, PwC, EY, KPMG, BDO, GT). Encompasses cyber risk, IT audit, digital transformation, and forensic tech.',
-    icon: '💼',
+    icon: 'briefcase',
     sector: 'PRIVATE',
     roles: [
       'Technology Consultant',
@@ -166,7 +166,7 @@ export const ROLE_PRESETS = [
     id: 'preset-devops',
     name: 'Cloud Architecture, DevOps & SRE',
     description: 'Geared towards private cloud platforms, SaaS companies, and enterprise IT. Focuses on Kubernetes, CI/CD, Infrastructure as Code, and AWS/Azure/GCP.',
-    icon: '☁️',
+    icon: 'cloud',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'DevOps Engineer',
@@ -209,7 +209,7 @@ export const ROLE_PRESETS = [
     id: 'preset-banking',
     name: 'Banking, Fintech & Financial Technology',
     description: 'Covers technical officers and fintech engineers across Reserve Bank of India (RBI), SBI, SEBI, private banks (HDFC, ICICI), and payment gateways.',
-    icon: '🏦',
+    icon: 'building-2',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'IT Officer (Scale I / II)',
@@ -251,7 +251,7 @@ export const ROLE_PRESETS = [
     id: 'preset-dfir',
     name: 'Digital Forensics & Incident Response (DFIR)',
     description: 'Expertise in disk imaging, chain of custody, Section 65B Indian Evidence Act certification, and forensic lab tools across government and private DFIR labs.',
-    icon: '🔬',
+    icon: 'search',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'Digital Forensics Examiner',
@@ -307,7 +307,7 @@ export const ROLE_PRESETS = [
     id: 'preset-soc',
     name: 'Security Operations & Threat Hunting (SOC Analyst)',
     description: 'Aimed at enterprise SOCs (MNCs, banks), CERT-In, NCIIPC, and national critical infrastructure defense monitoring.',
-    icon: '🚨',
+    icon: 'shield-alert',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'SOC Analyst (L1/L2)',
@@ -356,7 +356,7 @@ export const ROLE_PRESETS = [
     id: 'preset-vapt',
     name: 'Vulnerability Assessment & Penetration Tester (VAPT)',
     description: 'Targeted at application security assessments, offensive security, and vulnerability remediation across private tech firms and public agencies.',
-    icon: '🎯',
+    icon: 'crosshair',
     sector: 'PRIVATE_AND_PUBLIC',
     roles: [
       'VAPT Analyst',
@@ -399,7 +399,7 @@ export const ROLE_PRESETS = [
     id: 'preset-investigator',
     name: 'Cyber Crime Investigator & Evidence Analyst',
     description: 'Designed for state cyber police cells, home departments, and law enforcement agencies requiring CDR/IPDR analysis and electronic evidence triage.',
-    icon: '🛡️',
+    icon: 'shield-check',
     sector: 'PUBLIC',
     roles: [
       'Cyber Crime Investigation Specialist',
@@ -442,7 +442,7 @@ export const ROLE_PRESETS = [
     id: 'preset-fsl',
     name: 'Junior Forensic Scientist (Cyber Division / FSL)',
     description: 'Focused on Central and State Forensic Science Laboratories (CFSL/FSL), NFSU, and judicial scientific evidence examination.',
-    icon: '⚖️',
+    icon: 'scale',
     sector: 'PUBLIC',
     roles: [
       'Junior Forensic Scientist (Cyber)',
@@ -483,7 +483,7 @@ export const ROLE_PRESETS = [
     id: 'preset-custom',
     name: 'Custom / Blank Role Profile (Any Field)',
     description: 'Define your own custom role for any technical, creative, private, or public field with custom titles, keywords, and website focus.',
-    icon: '✨',
+    icon: 'sparkles',
     sector: 'CUSTOM',
     roles: ['Technical Officer / Specialist'],
     keywords: ['Technical Skills', 'Project Experience'],
@@ -507,7 +507,7 @@ export const ROLE_PRESETS = [
 ];
 
 export const KNOWN_APEX_TARGETS = [
-  // 🏢 Big 4 & Premier Global Advisory (Private Sector)
+  // Big 4 & Premier Global Advisory (Private Sector)
   { domain: 'deloitte.com', org: 'Deloitte India (Cyber, Risk & Tech Advisory)', category: 'Private Big 4 Advisory' },
   { domain: 'pwc.in', org: 'PwC India (Technology & Forensic Consulting)', category: 'Private Big 4 Advisory' },
   { domain: 'ey.com', org: 'Ernst & Young India (Forensics & Technology)', category: 'Private Big 4 Advisory' },
@@ -516,7 +516,7 @@ export const KNOWN_APEX_TARGETS = [
   { domain: 'bdo.in', org: 'BDO India (Cyber Defense & Advisory)', category: 'Private Tech Advisory' },
   { domain: 'grantthornton.in', org: 'Grant Thornton Bharat (Advisory & Forensics)', category: 'Private Tech Advisory' },
 
-  // 💻 Top Tech Employers & Product Giants (Private Sector)
+  // Top Tech Employers & Product Giants (Private Sector)
   { domain: 'tcs.com', org: 'Tata Consultancy Services (TCS Careers)', category: 'Private Tech Enterprise' },
   { domain: 'infosys.com', org: 'Infosys Limited (Careers Portal)', category: 'Private Tech Enterprise' },
   { domain: 'wipro.com', org: 'Wipro Limited (Technology Careers)', category: 'Private Tech Enterprise' },
@@ -524,14 +524,14 @@ export const KNOWN_APEX_TARGETS = [
   { domain: 'google.com', org: 'Google India (Engineering & Operations)', category: 'Private Global Product' },
   { domain: 'amazon.jobs', org: 'Amazon India (Development Centre)', category: 'Private Global Product' },
 
-  // 🏦 Banking & Regulatory Apex Bodies
+  // Banking & Regulatory Apex Bodies
   { domain: 'rbi.org.in', org: 'Reserve Bank of India (RBI)', category: 'Central Banking Apex Body' },
   { domain: 'sbi.co.in', org: 'State Bank of India (SBI Recruitment)', category: 'Public Sector Banking' },
   { domain: 'sebi.gov.in', org: 'Securities and Exchange Board of India (SEBI)', category: 'Financial Regulatory Body' },
   { domain: 'hdfcbank.com', org: 'HDFC Bank (Technology & Risk)', category: 'Private Sector Banking' },
   { domain: 'icicibank.com', org: 'ICICI Bank (Digital & IT Careers)', category: 'Private Sector Banking' },
 
-  // 🏛️ Apex Government & Research Institutions
+  // Apex Government & Research Institutions
   { domain: 'cdac.in', org: 'Centre for Development of Advanced Computing (C-DAC)', category: 'Govt Apex Tech R&D' },
   { domain: 'upsc.gov.in', org: 'Union Public Service Commission (UPSC)', category: 'Central Recruitment Board' },
   { domain: 'nfsu.ac.in', org: 'National Forensic Sciences University (NFSU)', category: 'Forensic Apex University' },

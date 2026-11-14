@@ -173,13 +173,14 @@ export function renderTrashSection(app) {
     if (trash.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-subtle);">
-          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🗑️</div>
+          <div style="margin-bottom: 0.75rem;"><i data-lucide="trash-2" class="icon-xl text-rose" style="width: 36px; height: 36px;"></i></div>
           <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 600;">Trash folder is empty</p>
           <span style="font-size: 0.85rem; color: var(--text-muted);">
             Deleted vacancies will appear here. Trashed vacancies are permanently excluded from upcoming scans and alerts. You can recover them anytime.
           </span>
         </div>
       `;
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       return;
     }
 
@@ -188,8 +189,8 @@ export function renderTrashSection(app) {
         <div>
           <div class="card-top">
             <span class="org-name">${app.escapeHtml(v.organisation || 'Apex Authority')}</span>
-            <span class="meta-pill" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-weight: 700;">
-              🗑️ TRASHED (SUPPRESSED)
+            <span class="meta-pill" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="trash-2" class="icon-xs"></i> TRASHED (SUPPRESSED)
             </span>
           </div>
           <h2 class="job-title" style="text-decoration: line-through; opacity: 0.85;">${app.escapeHtml(v.title)}</h2>
@@ -203,14 +204,15 @@ export function renderTrashSection(app) {
         </div>
         <div class="card-actions" style="margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
           <button class="btn btn-primary btn-sm btn-main-restore-vac" data-id="${v.id}" style="font-weight: 600;">
-            ♻️ Recover to Feed
+            <i data-lucide="rotate-ccw" class="icon-xs"></i> Recover to Feed
           </button>
           <button class="btn btn-outline btn-sm btn-main-perm-delete-vac" data-id="${v.id}" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35);">
-            ❌ Delete Forever
+            <i data-lucide="trash-2" class="icon-xs"></i> Delete Forever
           </button>
         </div>
       </article>
     `).join('');
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
     container.querySelectorAll('.btn-main-restore-vac').forEach(btn => {
       btn.addEventListener('click', () => {

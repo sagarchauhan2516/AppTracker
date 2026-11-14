@@ -364,7 +364,8 @@ class App {
               storageService.saveVacancy(v);
             });
             this.refreshAll();
-            btnHeaderPullSheets.innerHTML = `<span>✅</span> Synced (${sheetData.vacancies.length})`;
+            btnHeaderPullSheets.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="check" class="icon-xs"></i> Synced (${sheetData.vacancies.length})</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
             showConfirmationBanner('Sheets Synced', `Successfully imported ${sheetData.vacancies.length} real vacancies from Google Sheets!`, 'success', 3000);
           } else {
             showConfirmationBanner('Sync Failed', sheetData?.message || 'Could not pull vacancies from Google Sheets.', 'error', 3500);
@@ -560,19 +561,23 @@ class App {
           statusDiv.style.display = 'block';
           statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
           statusDiv.style.color = '#f87171';
-          statusDiv.innerHTML = '⚠️ Please enter a web link or PDF URL first.';
+          statusDiv.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-circle" class="icon-xs"></i> Please enter a web link or PDF URL first.</span>';
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Extracting...';
+      btn.innerHTML = '<i data-lucide="loader" class="icon-xs icon-spin"></i> Extracting...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+
       if (statusDiv) {
         statusDiv.style.display = 'block';
         statusDiv.style.background = 'rgba(56, 189, 248, 0.12)';
         statusDiv.style.color = '#38bdf8';
-        statusDiv.innerHTML = '⏳ Fetching link and extracting structured vacancy metadata...';
+        statusDiv.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" class="icon-xs"></i> Fetching link and extracting structured vacancy metadata...</span>';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -604,7 +609,8 @@ class App {
             statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
             statusDiv.style.color = '#34d399';
             const aiBadge = data.aiEngine ? `<strong>${data.aiEngine}</strong>: ` : '';
-            statusDiv.innerHTML = `✅ ${aiBadge}${data.learned?.message || 'Extracted vacancy metadata.'}`;
+            statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> ${aiBadge}${data.learned?.message || 'Extracted vacancy metadata.'}</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           }
 
           // Register in search sources
@@ -624,18 +630,21 @@ class App {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(245, 158, 11, 0.15)';
             statusDiv.style.color = '#fbbf24';
-            statusDiv.innerHTML = `⚠️ Notice: ${data.error || 'Could not auto-extract from this page. You can fill the fields manually below.'}`;
+            statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Notice: ${data.error || 'Could not auto-extract from this page. You can fill the fields manually below.'}</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           }
         }
       } catch (err) {
         if (statusDiv) {
           statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
           statusDiv.style.color = '#f87171';
-          statusDiv.innerHTML = `❌ Error: ${err.message}. You can enter details manually below.`;
+          statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Error: ${err.message}. You can enter details manually below.</span>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 

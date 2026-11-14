@@ -8,8 +8,9 @@ export function renderCreditsTab(providers, providerConfig) {
       <div class="dash-panel-card">
         <div class="dash-header-bar">
           <div>
-            <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-main); margin: 0;">
-              💳 Search Quota &amp; Spending Cap Governance
+            <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i data-lucide="gauge" class="icon icon-md" style="color: var(--accent-primary);"></i>
+              <span>Search Quota &amp; Spending Cap Governance</span>
             </h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0.25rem 0 0 0;">
               Real-time query allocation, free allowance counters, and automatic rotation failover policies.
@@ -18,9 +19,9 @@ export function renderCreditsTab(providers, providerConfig) {
           <div style="display: flex; gap: 0.5rem; align-items: center;">
             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; background: var(--bg-surface-elevated); padding: 0.45rem 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.85rem; font-weight: 600; color: #34d399;">
               <input type="checkbox" id="chkGlobalZeroSpendGuard" checked>
-              <span>🔒 Automated Spending Cap</span>
+              <span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="shield" class="icon icon-xs"></i> Automated Spending Cap</span>
             </label>
-            <button id="btnResetQuotaCounters" class="btn btn-outline btn-sm">🔄 Reset Daily Counters</button>
+            <button id="btnResetQuotaCounters" class="btn btn-outline btn-sm"><i data-lucide="refresh-cw" class="icon icon-sm"></i> Reset Daily Counters</button>
           </div>
         </div>
 
@@ -78,7 +79,7 @@ export function renderCreditsTab(providers, providerConfig) {
                     </td>
                     <td style="padding: 0.75rem 1rem; text-align: right;">
                       <button class="btn btn-outline btn-sm btn-edit-provider-quota" data-id="${p.id}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                        ✏️ Adjust
+                        <i data-lucide="edit-2" class="icon icon-xs"></i> Adjust
                       </button>
                     </td>
                   </tr>
@@ -91,7 +92,7 @@ export function renderCreditsTab(providers, providerConfig) {
         <!-- Budget Cap Policy Notice -->
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.5rem;">🛡️</span>
+            <span style="display: flex; align-items: center; color: #34d399;"><i data-lucide="shield-check" class="icon icon-lg"></i></span>
             <div>
               <strong style="color: #34d399; font-size: 0.88rem;">Automated High-Availability Fallback Guarantee:</strong>
               <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.15rem;">
@@ -100,7 +101,7 @@ export function renderCreditsTab(providers, providerConfig) {
             </div>
           </div>
           <button id="btnRunDryRotationTest" class="btn btn-primary btn-sm" style="font-weight: 600;">
-            🧪 Run Failover Simulation Test
+            <i data-lucide="play" class="icon icon-sm"></i> Run Failover Simulation Test
           </button>
         </div>
       </div>
@@ -108,6 +109,9 @@ export function renderCreditsTab(providers, providerConfig) {
 }
 
 export function bindCreditsTabEvents(container, ctx) {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
     // Allow Paid Requests toggles
     container.querySelectorAll('.chk-allow-paid-prov').forEach(chk => {
       chk.addEventListener('change', () => {

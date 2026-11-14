@@ -94,19 +94,19 @@ export class ProfileBuilderUI {
                 `).join('')}
               </select>
             </div>
-            <button id="btnNewProfile" class="btn btn-primary btn-sm" style="font-weight: 600;">
-              ✨ + New Role Profile
+            <button id="btnNewProfile" class="btn btn-primary btn-sm" style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="plus" class="icon-xs"></i> New Role Profile
             </button>
-            <button id="btnCloneProfile" class="btn btn-outline btn-sm" title="Clone active profile as a duplicate">
-              📋 Duplicate
+            <button id="btnCloneProfile" class="btn btn-outline btn-sm" title="Clone active profile as a duplicate" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="copy" class="icon-xs"></i> Duplicate
             </button>
             ${allProfiles.length > 1 ? `
-              <button id="btnDeleteProfile" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);" title="Delete this profile">
-                🗑️ Delete
+              <button id="btnDeleteProfile" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3); display: inline-flex; align-items: center; gap: 0.35rem;" title="Delete this profile">
+                <i data-lucide="trash-2" class="icon-xs"></i> Delete
               </button>
             ` : ''}
-            <button id="btnSaveProfile" class="btn btn-outline btn-sm" style="border-color: rgba(16, 185, 129, 0.4); color: #34d399;">
-              💾 Save Changes
+            <button id="btnSaveProfile" class="btn btn-outline btn-sm" style="border-color: rgba(16, 185, 129, 0.4); color: #34d399; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="save" class="icon-xs"></i> Save Changes
             </button>
           </div>
         </div>
@@ -142,7 +142,7 @@ export class ProfileBuilderUI {
             ${roleSuggestions.length > 0 ? `
               <div class="ai-suggestion-tray">
                 <div class="ai-suggestion-tray-header">
-                  <span class="ai-suggestion-title">✨ AI Suggested Designations for this Profile:</span>
+                  <span class="ai-suggestion-title" style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="sparkles" class="icon-xs text-purple"></i> AI Suggested Designations for this Profile:</span>
                   <span style="font-size: 0.72rem; color: var(--text-muted);">Click to 1-click add</span>
                 </div>
                 <div class="ai-suggestion-chips-grid">
@@ -159,7 +159,7 @@ export class ProfileBuilderUI {
             <div style="background: rgba(96, 165, 250, 0.06); border: 1px solid rgba(96, 165, 250, 0.25); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; margin-top: 1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #60a5fa; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
-                  <span>📧</span> Alert Email Recipients for this Profile (Supports Multiple)
+                  <i data-lucide="mail" class="icon-xs"></i> Alert Email Recipients for this Profile (Supports Multiple)
                 </label>
                 <span style="font-size: 0.72rem; color: var(--text-muted); background: var(--bg-surface-elevated); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm);">
                   Configured separately per profile
@@ -184,7 +184,7 @@ export class ProfileBuilderUI {
             <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; margin-top: 1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #38bdf8; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
-                  <span>✈️</span> Telegram Alert Recipient(s) for this Profile (Supports Multiple)
+                  <i data-lucide="send" class="icon-xs"></i> Telegram Alert Recipient(s) for this Profile (Supports Multiple)
                 </label>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                   <span style="font-size: 0.72rem; color: var(--text-muted); background: var(--bg-surface-elevated); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm);">
@@ -216,10 +216,10 @@ export class ProfileBuilderUI {
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
               <div>
                 <div style="display: flex; align-items: center; gap: 0.6rem;">
-                  <span style="font-size: 1.3rem;">🎯</span>
+                  <i data-lucide="crosshair" class="icon-md text-emerald"></i>
                   <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: #34d399;">Target Organisation &amp; Website Focus</h3>
                   <span class="badge-test-flag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
-                    ${targetFocus.enabled ? (targetFocus.mode === 'STRICT_TARGET' ? '🔒 STRICT FOCUS ACTIVE' : '⭐ PRIORITY BOOST ACTIVE') : 'DISABLED'}
+                    ${targetFocus.enabled ? (targetFocus.mode === 'STRICT_TARGET' ? 'Strict Focus Active' : 'Priority Boost Active') : 'Disabled'}
                   </span>
                 </div>
                 <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
@@ -242,10 +242,10 @@ export class ProfileBuilderUI {
                   </label>
                   <select id="targetFocusModeSelect" class="filter-select" style="width: 100%;">
                     <option value="STRICT_TARGET" ${targetFocus.mode === 'STRICT_TARGET' ? 'selected' : ''}>
-                      🔒 Strict Target Filtering (Show ONLY selected websites/orgs)
+                      Strict Target Filtering (Show ONLY selected websites/orgs)
                     </option>
                     <option value="PRIORITY_BOOST" ${targetFocus.mode === 'PRIORITY_BOOST' ? 'selected' : ''}>
-                      ⭐ Priority Boost (+15% score bonus &amp; TARGET FOCUS badge)
+                      Priority Boost (+15% score bonus &amp; Target Focus badge)
                     </option>
                   </select>
                   <small style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">
@@ -267,8 +267,8 @@ export class ProfileBuilderUI {
               <!-- 1. ACTIVE WHITELISTED WEBSITES -->
               <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
-                  <span style="font-size: 0.78rem; text-transform: uppercase; color: #34d399; font-weight: 700;">
-                    🎯 Active Whitelisted Websites (${uniqueTargetDomains.length} Active):
+                  <span style="font-size: 0.78rem; text-transform: uppercase; color: #34d399; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="crosshair" class="icon-xs"></i> Active Whitelisted Websites (${uniqueTargetDomains.length} Active):
                   </span>
                   ${uniqueTargetDomains.length > 0 ? `
                     <button type="button" id="btnClearAllTargets" class="btn btn-outline btn-sm" style="font-size: 0.7rem; padding: 0.15rem 0.5rem; color: #f87171; border-color: rgba(239, 68, 68, 0.3);">
@@ -279,7 +279,7 @@ export class ProfileBuilderUI {
                 <div id="targetChipsContainer" style="display: flex; flex-wrap: wrap; gap: 0.45rem;">
                   ${uniqueTargetDomains.map(d => `
                     <span class="target-focus-chip">
-                      🌐 <strong>${this.escapeHtml(d)}</strong>
+                      <i data-lucide="globe" class="icon-xs"></i> <strong>${this.escapeHtml(d)}</strong>
                       <button type="button" class="target-focus-chip-remove btn-remove-domain" data-domain="${this.escapeHtml(d)}" title="Remove ${this.escapeHtml(d)}">&times;</button>
                     </span>
                   `).join('')}
@@ -294,11 +294,11 @@ export class ProfileBuilderUI {
               <!-- 2. AI RECOMMENDED OFFICIAL PORTALS & PSUS -->
               <div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; flex-wrap: wrap; gap: 0.5rem;">
-                  <span style="font-size: 0.75rem; text-transform: uppercase; color: #60a5fa; font-weight: 700;">
-                    ✨ AI Recommended Portals &amp; PSUs (1-Click Whitelist):
+                  <span style="font-size: 0.75rem; text-transform: uppercase; color: #60a5fa; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="sparkles" class="icon-xs text-blue"></i> AI Recommended Portals &amp; PSUs (1-Click Whitelist):
                   </span>
-                  <button type="button" id="btnAiAutoSelectTargets" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.08);">
-                    🤖 AI Auto-Select
+                  <button type="button" id="btnAiAutoSelectTargets" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.08); display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="bot" class="icon-xs"></i> AI Auto-Select
                   </button>
                 </div>
                 <div id="statusAiAutoSelect" style="display: none; font-size: 0.75rem; color: #a855f7; margin-bottom: 0.4rem;"></div>
@@ -308,7 +308,7 @@ export class ProfileBuilderUI {
                       const isAdded = uniqueTargetDomains.includes(w.domain.toLowerCase());
                       return `
                         <button type="button" class="ai-suggestion-chip btn-add-ai-website ${isAdded ? 'added' : ''}" data-domain="${w.domain}" data-org="${this.escapeHtml(w.org)}" title="${this.escapeHtml(w.org)}">
-                          <span>${isAdded ? '✓' : '+'}</span>
+                          <span style="display: inline-flex; align-items: center;">${isAdded ? '<i data-lucide="check" class="icon-xs"></i>' : '+'}</span>
                           <strong>${w.domain}</strong>
                           <small style="opacity: 0.75; font-size: 0.68rem;">(${this.escapeHtml(w.org.split('(')[0].trim())})</small>
                         </button>
@@ -351,13 +351,13 @@ export class ProfileBuilderUI {
               ${keywordSuggestions.length > 0 ? `
                 <div class="ai-suggestion-tray">
                   <div class="ai-suggestion-tray-header">
-                    <span class="ai-suggestion-title">✨ AI Recommended Technical Keywords &amp; Tools:</span>
+                    <span class="ai-suggestion-title" style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="sparkles" class="icon-xs text-purple"></i> AI Recommended Technical Keywords &amp; Tools:</span>
                     <span style="font-size: 0.72rem; color: var(--text-muted);">Click any keyword to 1-click add to profile</span>
                   </div>
                   <div class="ai-suggestion-chips-grid">
                     ${keywordSuggestions.map(k => `
                       <button type="button" class="ai-suggestion-chip btn-add-ai-keyword" data-keyword="${this.escapeHtml(k)}" title="Add keyword ${this.escapeHtml(k)}">
-                        ✨ <strong>${this.escapeHtml(k)}</strong> <span class="chip-add-icon">+</span>
+                        <i data-lucide="sparkles" class="icon-xs text-purple"></i> <strong>${this.escapeHtml(k)}</strong> <span class="chip-add-icon">+</span>
                       </button>
                     `).join('')}
                   </div>
@@ -367,8 +367,8 @@ export class ProfileBuilderUI {
 
             <!-- Expanded Terms Table -->
             <div style="border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
-              <span style="font-size: 0.78rem; text-transform: uppercase; color: #60a5fa; font-weight: 700; display: block; margin-bottom: 0.75rem;">
-                ⚡ Generated Expansions (${this.expandedTerms.length} Identified with Traceable Rationale)
+              <span style="font-size: 0.78rem; text-transform: uppercase; color: #60a5fa; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.75rem;">
+                <i data-lucide="zap" class="icon-xs"></i> Generated Expansions (${this.expandedTerms.length} Identified with Traceable Rationale)
               </span>
               <div style="display: flex; flex-direction: column; gap: 0.6rem; max-height: 280px; overflow-y: auto; padding-right: 0.5rem;">
                 ${this.expandedTerms.map((item, idx) => `
@@ -394,8 +394,8 @@ export class ProfileBuilderUI {
 
           <!-- Section 4: Generated Search Queries Preview -->
           <div style="background: rgba(30, 41, 59, 0.3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 2rem;">
-            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--accent-primary); letter-spacing: 0.05em; margin-bottom: 0.5rem;">
-              🔍 Auto-Constructed Production Queries
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--accent-primary); letter-spacing: 0.05em; margin-bottom: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="search" class="icon-xs"></i> Auto-Constructed Production Queries
             </h4>
             <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 1rem;">
               These queries are dynamically assembled and dispatched to RSS feeds, government career crawlers, and search APIs without manual intervention.
@@ -533,14 +533,19 @@ export class ProfileBuilderUI {
 
           <!-- Bottom Save Actions -->
           <div style="display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 1.5rem;">
-            <button type="button" id="btnSaveAsNew" class="btn btn-outline">Save As New Separate Profile</button>
-            <button type="button" id="btnBottomSave" class="btn btn-primary">💾 Save Profile &amp; Regenerate Radar Queries</button>
+            <button type="button" id="btnSaveAsNew" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="copy" class="icon-xs"></i> Save As New Separate Profile
+            </button>
+            <button type="button" id="btnBottomSave" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="save" class="icon-xs"></i> Save Profile &amp; Regenerate Radar Queries
+            </button>
           </div>
         </form>
       </div>
     `;
 
     this.bindEvents();
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
   bindEvents() {
@@ -759,11 +764,13 @@ export class ProfileBuilderUI {
 
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '🤖 Selecting...';
+      btn.innerHTML = '<i data-lucide="loader" class="icon-xs icon-spin"></i> Selecting...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `⏳ AI is selecting official career portals and PSU websites for "${query}"...`;
+        statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" class="icon-xs"></i> AI is selecting official career portals and PSU websites for "${this.escapeHtml(query)}"...</span>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -786,16 +793,19 @@ export class ProfileBuilderUI {
 
           this.recomputeAndRerender();
           if (statusDiv) {
-            statusDiv.innerHTML = `✅ Added ${tf.targetDomains.length} official targets for ${query}!`;
+            statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #34d399;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Added ${tf.targetDomains.length} official targets for ${this.escapeHtml(query)}!</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           }
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `❌ AI auto-select error: ${err.message}`;
+          statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #f87171;"><i data-lucide="alert-triangle" class="icon-xs text-rose"></i> AI auto-select error: ${this.escapeHtml(err.message)}</span>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -845,13 +855,13 @@ export class ProfileBuilderUI {
     const tf = this.currentProfile.targetFocus;
     const domainsHtml = (tf.targetDomains || []).map(d => `
       <span class="target-focus-chip">
-        🌐 <strong>${this.escapeHtml(d)}</strong>
+        <i data-lucide="globe" class="icon-xs"></i> <strong>${this.escapeHtml(d)}</strong>
         <button type="button" class="target-focus-chip-remove btn-remove-domain" data-domain="${this.escapeHtml(d)}">&times;</button>
       </span>
     `).join('');
     const orgsHtml = (tf.targetOrganisations || []).map(o => `
       <span class="target-focus-chip" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #93c5fd;">
-        🏢 <strong>${this.escapeHtml(o)}</strong>
+        <i data-lucide="building-2" class="icon-xs text-blue"></i> <strong>${this.escapeHtml(o)}</strong>
         <button type="button" class="target-focus-chip-remove btn-remove-org" data-org="${this.escapeHtml(o)}">&times;</button>
       </span>
     `).join('');
@@ -861,6 +871,8 @@ export class ProfileBuilderUI {
         No specific websites selected yet. Click the buttons above or enter custom domains to specify focus targets.
       </span>
     `;
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
     // Rebind remove chips
     container.querySelectorAll('.btn-remove-domain').forEach(btn => {
@@ -898,7 +910,7 @@ export class ProfileBuilderUI {
 
       modalBody.innerHTML = `
         <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
-          <span style="font-size: 1.5rem;">✨</span>
+          <i data-lucide="sparkles" class="icon-md text-purple"></i>
           <h3 style="font-family: var(--font-heading); font-size: 1.4rem;">Create New Role Profile</h3>
         </div>
         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
@@ -909,7 +921,7 @@ export class ProfileBuilderUI {
         <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: var(--radius-md); padding: 1.15rem; margin-bottom: 1.25rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.4rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 1.25rem;">🤖</span>
+              <i data-lucide="bot" class="icon-sm text-purple"></i>
               <strong style="color: #c084fc; font-size: 0.95rem;">Instant AI Profile &amp; Official Source Generator</strong>
               <span class="badge-test-flag" style="background: rgba(168, 85, 247, 0.2); color: #e879f9; border-color: rgba(168, 85, 247, 0.4); font-size: 0.68rem;">INTELLIGENT AI ENGINE</span>
             </div>
@@ -917,8 +929,8 @@ export class ProfileBuilderUI {
           </div>
           <div style="display: flex; gap: 0.5rem;">
             <input type="text" id="inputAiRoleQuery" class="search-input" placeholder="e.g. Software Developer, Python Backend, AI/ML Specialist..." style="flex: 1; font-size: 0.85rem; background: var(--bg-surface);">
-            <button type="button" id="btnGenerateProfileWithAi" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: none; font-weight: 600; padding: 0.5rem 1.1rem; white-space: nowrap;">
-              ⚡ Generate Profile &amp; Sources
+            <button type="button" id="btnGenerateProfileWithAi" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: none; font-weight: 600; padding: 0.5rem 1.1rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <i data-lucide="zap" class="icon-xs"></i> Generate Profile &amp; Sources
             </button>
           </div>
           <div id="aiGenStatus" style="display: none; font-size: 0.78rem; margin-top: 0.55rem; padding: 0.4rem 0.6rem; border-radius: 4px;"></div>
@@ -926,17 +938,17 @@ export class ProfileBuilderUI {
 
         <!-- Sector Filter Tabs -->
         <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'ALL' ? 'btn-primary' : 'btn-outline'}" data-filter="ALL">
-            🌐 All Roles (${ROLE_PRESETS.length})
+          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'ALL' ? 'btn-primary' : 'btn-outline'}" data-filter="ALL" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="layers" class="icon-xs"></i> All Roles (${ROLE_PRESETS.length})
           </button>
-          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'PRIVATE' ? 'btn-primary' : 'btn-outline'}" data-filter="PRIVATE">
-            🏢 Private Sector &amp; Big 4
+          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'PRIVATE' ? 'btn-primary' : 'btn-outline'}" data-filter="PRIVATE" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="building" class="icon-xs"></i> Private Sector &amp; Big 4
           </button>
-          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'PUBLIC' ? 'btn-primary' : 'btn-outline'}" data-filter="PUBLIC">
-            🏛️ Government &amp; Apex PSUs
+          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'PUBLIC' ? 'btn-primary' : 'btn-outline'}" data-filter="PUBLIC" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="landmark" class="icon-xs"></i> Government &amp; Apex PSUs
           </button>
-          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'CUSTOM' ? 'btn-primary' : 'btn-outline'}" data-filter="CUSTOM">
-            ✨ Custom / Any Field
+          <button type="button" class="btn btn-sm btn-modal-sector-filter ${activeFilter === 'CUSTOM' ? 'btn-primary' : 'btn-outline'}" data-filter="CUSTOM" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="sliders" class="icon-xs"></i> Custom / Any Field
           </button>
         </div>
 
@@ -949,7 +961,7 @@ export class ProfileBuilderUI {
             ${filteredPresets.map(p => `
               <div class="preset-card ${p.id === activePreset.id ? 'active' : ''}" data-preset="${p.id}">
                 <div class="preset-card-title">
-                  <span>${p.icon}</span>
+                  <i data-lucide="${p.icon || 'briefcase'}" class="icon-sm"></i>
                   <span>${this.escapeHtml(p.name)}</span>
                 </div>
                 <div class="preset-card-desc">${this.escapeHtml(p.description)}</div>
@@ -991,8 +1003,8 @@ export class ProfileBuilderUI {
               </label>
 
               <select id="modalTargetFocusMode" class="filter-select" style="font-size: 0.78rem; padding: 0.25rem 0.5rem;">
-                <option value="STRICT_TARGET" ${activePreset.targetFocus?.mode === 'STRICT_TARGET' ? 'selected' : ''}>🔒 Strict Filter (Only selected sites)</option>
-                <option value="PRIORITY_BOOST" ${activePreset.targetFocus?.mode === 'PRIORITY_BOOST' ? 'selected' : ''}>⭐ Priority Boost (+15% score)</option>
+                <option value="STRICT_TARGET" ${activePreset.targetFocus?.mode === 'STRICT_TARGET' ? 'selected' : ''}>Strict Filter (Only selected sites)</option>
+                <option value="PRIORITY_BOOST" ${activePreset.targetFocus?.mode === 'PRIORITY_BOOST' ? 'selected' : ''}>Priority Boost (+15% score)</option>
               </select>
             </div>
 
@@ -1009,8 +1021,8 @@ export class ProfileBuilderUI {
               ${KNOWN_APEX_TARGETS.map(t => {
                 const isSelected = (activePreset.targetFocus?.targetDomains || []).includes(t.domain);
                 return `
-                  <button type="button" class="btn-modal-domain meta-pill ${isSelected ? 'active-target' : ''}" data-domain="${t.domain}" data-org="${t.org}" style="cursor: pointer; font-size: 0.75rem; ${isSelected ? 'background: rgba(16, 185, 129, 0.25); border-color: #34d399; color: #34d399; font-weight: 600;' : 'background: var(--bg-surface); opacity: 0.8;'}">
-                    <span>${isSelected ? '✓' : '+'}</span>
+                  <button type="button" class="btn-modal-domain meta-pill ${isSelected ? 'active-target' : ''}" data-domain="${t.domain}" data-org="${t.org}" style="cursor: pointer; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.35rem; ${isSelected ? 'background: rgba(16, 185, 129, 0.25); border-color: #34d399; color: #34d399; font-weight: 600;' : 'background: var(--bg-surface); opacity: 0.8;'}">
+                    <span>${isSelected ? '<i data-lucide="check" class="icon-xs"></i>' : '+'}</span>
                     <strong>${t.domain}</strong>
                   </button>
                 `;
@@ -1022,8 +1034,8 @@ export class ProfileBuilderUI {
         <!-- Action Buttons -->
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
           <button type="button" id="btnCancelCreateModal" class="btn btn-outline">Cancel</button>
-          <button type="button" id="btnConfirmCreateProfile" class="btn btn-primary" style="font-weight: 600;">
-            🚀 Create &amp; Activate Profile
+          <button type="button" id="btnConfirmCreateProfile" class="btn btn-primary" style="font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="plus-circle" class="icon-xs"></i> Create &amp; Activate Profile
           </button>
         </div>
       `;
@@ -1053,13 +1065,15 @@ export class ProfileBuilderUI {
 
         const origText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '🤖 Analyzing with AI...';
+        btn.innerHTML = '<i data-lucide="loader" class="icon-xs icon-spin"></i> Analyzing with AI...';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 
         if (statusDiv) {
           statusDiv.style.display = 'block';
           statusDiv.style.background = 'rgba(99, 102, 241, 0.15)';
           statusDiv.style.color = '#c084fc';
-          statusDiv.innerHTML = `⏳ Asking AI to formulate profile, official employer websites, and recruitment bodies for <strong>"${query}"</strong>...`;
+          statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="clock" class="icon-xs"></i> Asking AI to formulate profile, official employer websites, and recruitment bodies for <strong>"${this.escapeHtml(query)}"</strong>...</span>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
 
         try {
@@ -1077,7 +1091,7 @@ export class ProfileBuilderUI {
               id: `ai-preset-${Date.now()}`,
               name: d.name || `${query} (AI Tailored)`,
               description: `AI-recommended profile with ${d.roles?.length || 0} designations and ${d.targetFocus?.targetDomains?.length || 0} official targets.`,
-              icon: '🤖',
+              icon: 'bot',
               sector: 'PUBLIC_AND_PRIVATE',
               roles: d.roles || [query],
               keywords: d.keywords || [query],
@@ -1109,24 +1123,28 @@ export class ProfileBuilderUI {
               newStatus.style.display = 'block';
               newStatus.style.background = 'rgba(16, 185, 129, 0.15)';
               newStatus.style.color = '#34d399';
-              newStatus.innerHTML = `✅ <strong>AI Profile Generated!</strong> Configured "${activePreset.name}" with ${activePreset.roles.length} roles, ${activePreset.keywords.length} keywords, and ${activePreset.targetFocus.targetDomains.length} official targets.`;
+              newStatus.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #34d399;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> <strong>AI Profile Generated!</strong> Configured "${this.escapeHtml(activePreset.name)}" with ${activePreset.roles.length} roles, ${activePreset.keywords.length} keywords, and ${activePreset.targetFocus.targetDomains.length} official targets.</span>`;
+              if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
             }
           } else {
             if (statusDiv) {
               statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
               statusDiv.style.color = '#f87171';
-              statusDiv.innerHTML = `❌ AI Recommendation failed: ${result.error || 'Unknown error'}`;
+              statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #f87171;"><i data-lucide="alert-triangle" class="icon-xs text-rose"></i> AI Recommendation failed: ${this.escapeHtml(result.error || 'Unknown error')}</span>`;
+              if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
             }
           }
         } catch (err) {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
             statusDiv.style.color = '#f87171';
-            statusDiv.innerHTML = `❌ Network error connecting to AI endpoint: ${err.message}`;
+            statusDiv.innerHTML = `<span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #f87171;"><i data-lucide="alert-triangle" class="icon-xs text-rose"></i> Network error connecting to AI endpoint: ${this.escapeHtml(err.message)}</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           }
         } finally {
           btn.disabled = false;
           btn.innerHTML = origText;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
       });
 
@@ -1270,6 +1288,8 @@ export class ProfileBuilderUI {
         if (this.onProfileUpdated) this.onProfileUpdated();
         this.render();
       });
+
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     };
 
     renderModalContent();

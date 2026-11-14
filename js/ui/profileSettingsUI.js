@@ -77,8 +77,8 @@ export class ProfileSettingsUI {
         <!-- Modal Top Bar: Profile Selector + Actions -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
           <div style="display: flex; align-items: center; gap: 0.6rem;">
-            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(96, 165, 250, 0.15); color: #60a5fa; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-              👤
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(96, 165, 250, 0.15); color: #60a5fa; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="user" class="icon-md"></i>
             </div>
             <div>
               <h3 style="font-family: var(--font-heading); font-size: 1.25rem; margin: 0; color: var(--text-main);">
@@ -100,14 +100,14 @@ export class ProfileSettingsUI {
               `).join('')}
             </select>
             <button type="button" id="btnModalNewProfile" class="btn btn-outline btn-sm" style="font-weight: 600;">
-              ➕ New Profile
+              <i data-lucide="plus" class="icon-xs"></i> New Profile
             </button>
             <button type="button" id="btnModalCloneProfile" class="btn btn-outline btn-sm" title="Clone current profile">
-              📋 Clone
+              <i data-lucide="copy" class="icon-xs"></i> Clone
             </button>
             ${profiles.length > 1 ? `
               <button type="button" id="btnModalDeleteProfile" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);" title="Delete current profile">
-                🗑️
+                <i data-lucide="trash-2" class="icon-xs"></i>
               </button>
             ` : ''}
           </div>
@@ -116,19 +116,19 @@ export class ProfileSettingsUI {
         <!-- Sub-Navigation Tabs for Profile Settings -->
         <div style="display: flex; gap: 0.4rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.35rem; flex-wrap: wrap;">
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'general' ? 'active' : ''}" data-tab="general" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
-            👤 Identity &amp; Roles
+            <i data-lucide="user" class="icon-xs"></i> Identity &amp; Roles
           </button>
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'keywords' ? 'active' : ''}" data-tab="keywords" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
-            🔍 Technical Keywords (${(this.currentProfile.keywords || []).length})
+            <i data-lucide="tag" class="icon-xs"></i> Technical Keywords (${(this.currentProfile.keywords || []).length})
           </button>
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'websites' ? 'active' : ''}" data-tab="websites" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
-            🎯 Target Websites &amp; Whitelist (${targetDomains.length})
+            <i data-lucide="crosshair" class="icon-xs"></i> Target Websites &amp; Whitelist (${targetDomains.length})
           </button>
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'alerts' ? 'active' : ''}" data-tab="alerts" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
-            📬 Alerts (Email &amp; Telegram)
+            <i data-lucide="bell" class="icon-xs"></i> Alerts (Email &amp; Telegram)
           </button>
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'custom' ? 'active' : ''}" data-tab="custom" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
-            📋 Custom Attributes (${(this.currentProfile.customFields || []).length})
+            <i data-lucide="sliders" class="icon-xs"></i> Custom Attributes (${(this.currentProfile.customFields || []).length})
           </button>
         </div>
 
@@ -193,7 +193,7 @@ export class ProfileSettingsUI {
             </label>
             <div style="display: flex; gap: 0.5rem; margin-bottom: 0.6rem;">
               <input type="text" id="inputAddPositiveKw" class="search-input" placeholder="e.g. Mobile Forensics, Memory Analysis, Ghidra, FTK, SAST" style="flex: 1; font-size: 0.82rem;">
-              <button type="button" id="btnAddPositiveKw" class="btn btn-primary btn-sm" style="font-weight: 600;">➕ Add Keyword</button>
+              <button type="button" id="btnAddPositiveKw" class="btn btn-primary btn-sm" style="font-weight: 600;"><i data-lucide="plus" class="icon-xs"></i> Add Keyword</button>
             </div>
             <div id="profPositiveKwChips" style="display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 40px; background: var(--bg-surface-elevated); padding: 0.6rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
               ${(this.currentProfile.keywords || []).map(kw => `
@@ -207,15 +207,15 @@ export class ProfileSettingsUI {
 
           <!-- 1-Click Recommended AI Forensics & Security Keywords -->
           <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 1rem;">
-            <strong style="font-size: 0.78rem; color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.4rem;">
-              ⚡ 1-Click Add Recommended Technical Keywords:
+            <strong style="font-size: 0.78rem; color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.4rem;">
+              <i data-lucide="sparkles" class="icon-xs"></i> 1-Click Add Recommended Technical Keywords:
             </strong>
             <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
               ${['Digital Forensics', 'DFIR', 'EnCase', 'FTK', 'Autopsy', 'Volatility', 'SIEM', 'VAPT', 'Section 65B', 'Deepfake', 'Network Forensics', 'Incident Response', 'Malware Analysis', 'Reverse Engineering', 'C-DAC', 'Cyber Crime'].map(kw => {
                 const isAlready = (this.currentProfile.keywords || []).includes(kw);
                 return `
                   <button type="button" class="btn-quick-add-kw ${isAlready ? 'added' : ''}" data-kw="${kw}" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: var(--radius-pill); border: 1px solid ${isAlready ? 'rgba(16, 185, 129, 0.4)' : 'rgba(168, 85, 247, 0.35)'}; background: ${isAlready ? 'rgba(16, 185, 129, 0.15)' : 'rgba(168, 85, 247, 0.15)'}; color: ${isAlready ? '#34d399' : '#c084fc'}; cursor: pointer;">
-                    ${isAlready ? '✓' : '+'} ${kw}
+                    <i data-lucide="${isAlready ? 'check' : 'plus'}" class="icon-xs"></i> ${kw}
                   </button>
                 `;
               }).join('')}
@@ -229,12 +229,12 @@ export class ProfileSettingsUI {
             </label>
             <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
               <input type="text" id="inputAddNegativeKw" class="search-input" placeholder="e.g. Sales, Marketing, Unpaid, Call Center" style="flex: 1; font-size: 0.82rem;">
-              <button type="button" id="btnAddNegativeKw" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);">➕ Add Exclusion</button>
+              <button type="button" id="btnAddNegativeKw" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);"><i data-lucide="plus" class="icon-xs"></i> Add Exclusion</button>
             </div>
             <div id="profNegativeKwChips" style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
               ${(this.currentProfile.negativeKeywords || []).map(nkw => `
                 <span class="meta-pill" style="font-size: 0.75rem; background: rgba(239, 68, 68, 0.12); color: #f87171; border-color: rgba(239, 68, 68, 0.3); display: inline-flex; align-items: center; gap: 0.35rem;">
-                  🚫 ${this.escapeHtml(nkw)}
+                  <i data-lucide="ban" class="icon-xs"></i> ${this.escapeHtml(nkw)}
                   <button type="button" class="btn-remove-nkw" data-kw="${this.escapeHtml(nkw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0;">&times;</button>
                 </span>
               `).join('')}
@@ -258,7 +258,7 @@ export class ProfileSettingsUI {
 
             <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
               <input type="text" id="inputAddWebsite" class="search-input" placeholder="e.g. careers.cdac.in, cbi.gov.in, cert-in.org.in" style="flex: 1; font-family: var(--font-mono); font-size: 0.82rem;">
-              <button type="button" id="btnAddWebsite" class="btn btn-primary btn-sm" style="font-weight: 600;">➕ Add Website</button>
+              <button type="button" id="btnAddWebsite" class="btn btn-primary btn-sm" style="font-weight: 600;"><i data-lucide="plus" class="icon-xs"></i> Add Website</button>
             </div>
 
             <!-- Whitelisted Domain Chips -->
@@ -268,7 +268,7 @@ export class ProfileSettingsUI {
             <div id="profWebsiteChips" style="display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.75rem;">
               ${targetDomains.map(d => `
                 <span class="meta-pill" style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.35); display: inline-flex; align-items: center; gap: 0.4rem;">
-                  🌐 <strong>${this.escapeHtml(d)}</strong>
+                  <i data-lucide="globe" class="icon-xs"></i> <strong>${this.escapeHtml(d)}</strong>
                   <button type="button" class="btn-remove-site" data-domain="${this.escapeHtml(d)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem;">&times;</button>
                 </span>
               `).join('')}
@@ -290,7 +290,7 @@ export class ProfileSettingsUI {
                 { d: 'dfs.nic.in', label: 'DFSS (MHA)' }
               ].map(s => `
                 <button type="button" class="btn-quick-add-site ${targetDomains.includes(s.d) ? 'added' : ''}" data-domain="${s.d}" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer;">
-                  ${targetDomains.includes(s.d) ? '✓' : '+'} ${s.label}
+                  <i data-lucide="${targetDomains.includes(s.d) ? 'check' : 'plus'}" class="icon-xs"></i> ${s.label}
                 </button>
               `).join('')}
             </div>
@@ -304,7 +304,7 @@ export class ProfileSettingsUI {
             <!-- Email Alert Box -->
             <div style="background: var(--bg-surface-elevated); padding: 1.15rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
               <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-                <span style="font-size: 1.2rem;">📧</span>
+                <i data-lucide="mail" class="icon-sm text-cyan"></i>
                 <strong style="font-size: 0.95rem; color: var(--text-main);">Email Alert Recipient for this Profile</strong>
               </div>
               <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0 0 0.6rem 0;">
@@ -313,7 +313,7 @@ export class ProfileSettingsUI {
               <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <input type="email" id="inputProfEmail" class="search-input" value="${this.escapeHtml(sched.emailAddress || 'sagarmc2516@gmail.com')}" placeholder="sagarmc2516@gmail.com" style="flex: 1; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;">
                 <button type="button" id="btnTestProfEmail" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: #60a5fa; color: #60a5fa; white-space: nowrap;">
-                  🧪 Send Test Email
+                  <i data-lucide="mail" class="icon-xs"></i> Send Test Email
                 </button>
               </div>
               <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; cursor: pointer; color: var(--text-secondary);">
@@ -326,7 +326,7 @@ export class ProfileSettingsUI {
             <!-- Telegram Alert Box -->
             <div style="background: var(--bg-surface-elevated); padding: 1.15rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
               <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-                <span style="font-size: 1.2rem;">📲</span>
+                <i data-lucide="send" class="icon-sm text-cyan"></i>
                 <strong style="font-size: 0.95rem; color: var(--text-main);">Telegram Chat ID for this Profile</strong>
               </div>
               <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0 0 0.6rem 0;">
@@ -335,7 +335,7 @@ export class ProfileSettingsUI {
               <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <input type="text" id="inputProfTgChat" class="search-input" value="${this.escapeHtml(sched.telegramChatId || '5451190370')}" placeholder="5451190370" style="flex: 1; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;">
                 <button type="button" id="btnTestProfTelegram" class="btn btn-outline btn-sm" style="font-weight: 600; border-color: #38bdf8; color: #38bdf8; white-space: nowrap;">
-                  📲 Send Test Alert
+                  <i data-lucide="send" class="icon-xs"></i> Send Test Alert
                 </button>
               </div>
               <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; cursor: pointer; color: var(--text-secondary);">
@@ -382,19 +382,19 @@ export class ProfileSettingsUI {
             `).join('')}
           </div>
           <button type="button" id="btnAddCustomFieldRow" class="btn btn-outline btn-sm" style="font-weight: 600;">
-            ➕ Add Custom Attribute Row
+            <i data-lucide="plus" class="icon-xs"></i> Add Custom Attribute Row
           </button>
         </div>
 
         <!-- Bottom Actions Bar -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 1rem; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.75rem;">
-          <span style="font-size: 0.75rem; color: var(--text-muted);">
-            💾 Changes persist directly to local database &amp; sync to Google Sheets.
+          <span style="font-size: 0.75rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem;">
+            <i data-lucide="shield-check" class="icon-xs text-emerald"></i> Changes persist directly to local database &amp; sync to Google Sheets.
           </span>
           <div style="display: flex; gap: 0.5rem;">
             <button type="button" id="btnCancelProfileSettings" class="btn btn-outline btn-sm">Cancel</button>
-            <button type="button" id="btnSaveProfileSettings" class="btn btn-primary btn-sm" style="font-weight: 700; padding: 0.45rem 1.25rem;">
-              💾 Save Profile Settings
+            <button type="button" id="btnSaveProfileSettings" class="btn btn-primary btn-sm" style="font-weight: 600; padding: 0.45rem 1.25rem;">
+              <i data-lucide="save" class="icon-xs"></i> Save Profile Settings
             </button>
           </div>
         </div>
@@ -637,16 +637,19 @@ export class ProfileSettingsUI {
       if (!webhookUrl) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem;">⚠️ Please configure Google Apps Script Webhook URL in Main Settings first.</span>`;
+          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please configure Google Apps Script Webhook URL in Main Settings first.</span>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
         }
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '⏳ Sending...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Sending...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<span style="color: #60a5fa; font-size: 0.78rem;">⏳ Dispatching test Gmail alert to ${email}...</span>`;
+        statusDiv.innerHTML = `<span style="color: #60a5fa; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Dispatching test Gmail alert to ${email}...</span>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
@@ -661,16 +664,19 @@ export class ProfileSettingsUI {
         const data = await res.json();
         const payloadData = data.data || {};
         if (data.success && payloadData.status === 'SUCCESS') {
-          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem;">✅ Test email dispatched successfully to <strong>${email}</strong>!</span>`;
+          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Test email dispatched successfully to <strong>${email}</strong>!</span>`;
           showConfirmationBanner('Email Dispatched', `Sample alert sent to ${email}.`, 'success', 3000);
         } else {
-          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem;">⚠️ Delivery notice: ${payloadData.message || data.error || 'Check Google Apps Script quota'}</span>`;
+          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Delivery notice: ${payloadData.message || data.error || 'Check Google Apps Script quota'}</span>`;
         }
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       } catch (err) {
-        statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem;">❌ Error: ${err.message}</span>`;
+        statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Error: ${err.message}</span>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '🧪 Send Test Email';
+        btn.innerHTML = '<i data-lucide="mail" class="icon-xs"></i> Send Test Email';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -679,26 +685,31 @@ export class ProfileSettingsUI {
       const btn = document.getElementById('btnTestProfTelegram');
       const statusDiv = document.getElementById('statusProfTgTest');
       btn.disabled = true;
-      btn.innerHTML = '⏳ Sending...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Sending...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<span style="color: #38bdf8; font-size: 0.78rem;">⏳ Dispatched alert to Telegram...</span>`;
+        statusDiv.innerHTML = `<span style="color: #38bdf8; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Dispatched alert to Telegram...</span>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
         const res = await fetch('/api/trigger-deadline-reminders', { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem;">✅ Telegram alert dispatched to chat <strong>5451190370</strong>!</span>`;
+          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Telegram alert dispatched to chat <strong>5451190370</strong>!</span>`;
           showConfirmationBanner('Telegram Sent', 'Verified alert sent to your Telegram.', 'success', 3000);
         } else {
-          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem;">⚠️ Error: ${data.result?.error || 'Failed'}</span>`;
+          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Error: ${data.result?.error || 'Failed'}</span>`;
         }
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       } catch (e) {
-        statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem;">❌ Error: ${e.message}</span>`;
+        statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="x-circle" class="icon-xs text-rose"></i> Error: ${e.message}</span>`;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '📲 Send Test Alert';
+        btn.innerHTML = '<i data-lucide="send" class="icon-xs"></i> Send Test Alert';
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 

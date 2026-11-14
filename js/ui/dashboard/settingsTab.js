@@ -17,11 +17,12 @@ export function renderSettingsTab(profile) {
 
     return `
       <div class="dash-panel-card">
-        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-main); margin: 0 0 0.4rem 0;">
-          ⏰ Automated Monitoring Schedule &amp; Alert Channels
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-main); margin: 0 0 0.4rem 0; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="clock" class="icon icon-md" style="color: var(--accent-primary);"></i>
+          <span>Automated Monitoring Schedule &amp; Alert Channels</span>
         </h3>
         <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 1.5rem 0; line-height: 1.5;">
-          Configure background scans across registered government portals (IST Asia/Kolkata), multi-email alerts, and Telegram Bot instant push notifications with automated cloud infrastructure.
+          Configure background scans across registered government portals (IST Asia/Kolkata), multi-email alerts, and Telegram Bot push notifications with automated infrastructure.
         </p>
 
         <!-- Telegram Bot Channel Card -->
@@ -29,23 +30,24 @@ export function renderSettingsTab(profile) {
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem;">
             <div>
               <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                <strong style="color: #38bdf8; font-size: 1rem;">
-                  ✈️ Telegram Mobile Alert &amp; Daily Digest Channel
+                <strong style="color: #38bdf8; font-size: 1rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <i data-lucide="send" class="icon icon-sm" style="color: #38bdf8;"></i>
+                  <span>Telegram Alert &amp; Daily Digest Channel</span>
                 </strong>
                 <span class="badge-test-flag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);">
-                  100% FREE • REAL-TIME PUSH
+                  REAL-TIME PUSH
                 </span>
               </div>
               <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                Receive daily morning bulletins, official corrigenda updates, and urgent &lt;48h closing alerts directly on your phone or desktop Telegram app.
+                Receive daily bulletins, official corrigenda updates, and urgent closing alerts directly on your phone or desktop Telegram app.
               </div>
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
               <button type="button" id="btnTestTelegram" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.5); font-weight: 600;">
-                ⚡ Test Telegram Connection
+                <i data-lucide="send" class="icon icon-sm"></i> Test Telegram Connection
               </button>
               <button type="button" id="btnSendDailyDigest" class="btn btn-primary btn-sm" style="background: #0284c7; border-color: #0284c7; font-weight: 600;">
-                📬 Send Daily Digest Now
+                <i data-lucide="mail" class="icon icon-sm"></i> Send Daily Digest Now
               </button>
             </div>
           </div>
@@ -53,7 +55,7 @@ export function renderSettingsTab(profile) {
           <!-- Quick 3-Step Setup Guide Banner -->
           <div style="background: rgba(56, 189, 248, 0.07); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.78rem; line-height: 1.55;">
             <div style="font-weight: 700; color: #38bdf8; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.4rem;">
-              <span>💡</span> <span>Quick Setup in 3 Easy Steps (Required by Telegram Anti-Spam Security):</span>
+              <i data-lucide="info" class="icon icon-sm"></i> <span>Quick Setup in 3 Easy Steps (Required by Telegram Anti-Spam Security):</span>
             </div>
             <div style="color: var(--text-secondary); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
               <div>
@@ -62,11 +64,11 @@ export function renderSettingsTab(profile) {
               </div>
               <div>
                 <strong style="color: var(--text-main);">2. Auto-Detect Your ID:</strong><br>
-                Click the <strong>"🔍 Auto-Detect ID"</strong> button below. The system automatically reads your unique numeric ID from Telegram and saves it.
+                Click the <strong>"Auto-Detect ID"</strong> button below. The system automatically reads your unique numeric ID from Telegram and saves it.
               </div>
               <div>
                 <strong style="color: var(--text-main);">3. Test &amp; Verify:</strong><br>
-                Click <strong>"⚡ Test Telegram Connection"</strong>. You will immediately receive a verified confirmation ping on your phone.
+                Click <strong>"Test Telegram Connection"</strong> to verify live message delivery.
               </div>
             </div>
           </div>
@@ -85,10 +87,10 @@ export function renderSettingsTab(profile) {
               </div>
               <div style="display: flex; gap: 0.4rem;">
                 <input type="password" id="inputTelegramBotToken" class="search-input" value="${escapeHtml(creds.telegramBotToken || '')}" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ..." style="flex: 1; font-family: var(--font-mono); font-size: 0.82rem;">
-                <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputTelegramBotToken" title="Toggle token visibility">👁️</button>
+                <button type="button" class="btn btn-outline btn-sm btn-toggle-mask" data-target="inputTelegramBotToken" title="Toggle token visibility"><i data-lucide="eye" class="icon icon-xs"></i></button>
               </div>
               <small style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem;">
-                Created free in 10 seconds via <code>@BotFather</code>. Grants your private bot permission to deliver job radar bulletins.
+                Created via <code>@BotFather</code>. Grants your private bot permission to deliver job radar bulletins.
               </small>
             </div>
             <div>
@@ -103,7 +105,7 @@ export function renderSettingsTab(profile) {
               <div style="display: flex; gap: 0.4rem;">
                 <input type="text" id="inputTelegramChatId" class="search-input" value="${escapeHtml(schedule.telegramChatId || creds.telegramChatId || '')}" placeholder="e.g. 987654321, 123456789, @my_channel" style="flex: 1; font-family: var(--font-mono); font-size: 0.82rem;">
                 <button type="button" id="btnDetectTelegramChatId" class="btn btn-outline btn-sm" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); font-weight: 600; white-space: nowrap;" title="Query recent updates to automatically find your numeric Chat ID">
-                  🔍 Auto-Detect ID
+                  <i data-lucide="search" class="icon icon-sm"></i> Auto-Detect ID
                 </button>
               </div>
               <small style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem;">
@@ -173,7 +175,7 @@ export function renderSettingsTab(profile) {
 
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
           <button type="button" id="btnSaveScheduleAndSettings" class="btn btn-primary" style="font-weight: 600;">
-            💾 Save Automation Settings
+            <i data-lucide="save" class="icon icon-sm"></i> Save Automation Settings
           </button>
         </div>
       </div>
@@ -299,17 +301,18 @@ export function bindSettingsTabEvents(container, ctx) {
       if (!token) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Telegram Bot Token first.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">Please enter your Telegram Bot Token first.</div>`;
         }
         return;
       }
 
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Scanning...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon icon-sm spin"></i> Scanning...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">⏳ Checking recent bot interactions on Telegram API...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">Checking recent bot interactions on Telegram API...</div>`;
       }
 
       try {
@@ -341,11 +344,11 @@ export function bindSettingsTabEvents(container, ctx) {
             const userTitle = data.latestChat?.title || data.latestChat?.first_name || 'Personal User';
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Chat ID Successfully Detected &amp; Linked to "${escapeHtml(ctx.currentProfile.name)}"!</strong><br>
+                <strong>Chat ID Successfully Detected &amp; Linked to "${escapeHtml(ctx.currentProfile.name)}"!</strong><br>
                 Latest Chat: <code>${data.latestChatId}</code> (${userTitle})<br>
                 Active Chat ID(s) for this Profile: <code>${escapeHtml(combinedChatIds)}</code><br>
                 <span style="color: var(--text-secondary); font-size: 0.76rem; display: block; margin-top: 0.35rem;">
-                  Saved automatically to disk. Click <strong>"⚡ Test Telegram Connection"</strong> to verify live delivery across all target accounts!
+                  Saved automatically to disk. Click <strong>"Test Telegram Connection"</strong> to verify live delivery across all target accounts!
                 </span>
               </div>
             `;
@@ -354,12 +357,12 @@ export function bindSettingsTabEvents(container, ctx) {
             const botUsername = data.botUser?.username || 'vacancy_radar1_bot';
             statusDiv.innerHTML = `
               <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 0.85rem; color: #fbbf24; font-size: 0.82rem; line-height: 1.5;">
-                ⚠️ <strong>No Messages Found Yet for @${botUsername}</strong><br>
+                <strong>No Messages Found Yet for @${botUsername}</strong><br>
                 <span style="color: var(--text-secondary); font-size: 0.78rem; display: block; margin-top: 0.3rem;">
                   Telegram bots cannot message users until the user initiates the conversation:<br>
-                  👉 <strong>Step 1:</strong> Have the new user open <a href="${botUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">@${botUsername} in Telegram</a>.<br>
-                  👉 <strong>Step 2:</strong> Tap the <strong>START</strong> button at the bottom (or send /start).<br>
-                  👉 <strong>Step 3:</strong> Click <strong>"🔍 Auto-Detect ID"</strong> here to append their ID automatically!
+                  <strong>Step 1:</strong> Have the new user open <a href="${botUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">@${botUsername} in Telegram</a>.<br>
+                  <strong>Step 2:</strong> Tap the <strong>START</strong> button at the bottom (or send /start).<br>
+                  <strong>Step 3:</strong> Click <strong>"Auto-Detect ID"</strong> here to append their ID automatically!
                 </span>
               </div>
             `;
@@ -367,11 +370,12 @@ export function bindSettingsTabEvents(container, ctx) {
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Auto-detect error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">Auto-detect error: ${err.message}</div>`;
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -385,17 +389,18 @@ export function bindSettingsTabEvents(container, ctx) {
       if (!token) {
         if (statusDiv) {
           statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">⚠️ Please enter your Telegram Bot Token.</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">Please enter your Telegram Bot Token.</div>`;
         }
         return;
       }
 
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Testing Bot...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon icon-sm spin"></i> Testing Bot...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">⏳ Connecting to Telegram Bot API...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">Connecting to Telegram Bot API...</div>`;
       }
 
       try {
@@ -413,12 +418,12 @@ export function bindSettingsTabEvents(container, ctx) {
               const botUsername = data.botUser?.username || 'vacancy_radar1_bot';
               statusDiv.innerHTML = `
                 <div style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 6px; padding: 0.85rem; color: #38bdf8; font-size: 0.82rem; line-height: 1.5;">
-                  ℹ️ <strong>Bot @${botUsername} is Active &amp; Valid!</strong><br>
+                  <strong>Bot @${botUsername} is Active &amp; Valid!</strong><br>
                   <span style="color: var(--text-secondary); font-size: 0.78rem; display: block; margin-top: 0.3rem;">
                     Almost ready! To receive alerts on your phone:<br>
-                    👉 <strong>Step 1:</strong> Open <a href="${botUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">@${botUsername} in Telegram</a> and tap <strong>START</strong>.<br>
-                    👉 <strong>Step 2:</strong> Click <strong>"🔍 Auto-Detect ID"</strong> above to fill your Chat ID.<br>
-                    👉 <strong>Step 3:</strong> Click <strong>"⚡ Test Telegram Connection"</strong> to verify!
+                    <strong>Step 1:</strong> Open <a href="${botUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">@${botUsername} in Telegram</a> and tap <strong>START</strong>.<br>
+                    <strong>Step 2:</strong> Click <strong>"Auto-Detect ID"</strong> above to fill your Chat ID.<br>
+                    <strong>Step 3:</strong> Click <strong>"Test Telegram Connection"</strong> to verify!<br>
                   </span>
                 </div>
               `;
@@ -428,7 +433,7 @@ export function bindSettingsTabEvents(container, ctx) {
                 <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem;">
                   ${deliveryList.map(d => `
                     <div style="font-size: 0.76rem; display: flex; align-items: center; gap: 0.4rem;">
-                      <span>${d.ok ? '✅' : '❌'}</span>
+                      <i data-lucide="${d.ok ? 'check' : 'x'}" class="icon-xs ${d.ok ? 'text-emerald' : 'text-rose'}"></i>
                       <code>${d.id}</code>:
                       <span style="color: ${d.ok ? '#34d399' : '#f87171'};">${d.ok ? 'Delivered successfully' : d.error}</span>
                     </div>
@@ -438,7 +443,7 @@ export function bindSettingsTabEvents(container, ctx) {
 
               statusDiv.innerHTML = `
                 <div class="alert-box alert-box-success">
-                  ✅ <strong>${data.message}</strong><br>
+                  <strong>${data.message}</strong><br>
                   <span style="color: var(--text-secondary); font-size: 0.76rem;">
                     Bot: <strong>@${data.botUser?.username}</strong> (${data.botUser?.first_name}) | Profile: <strong>${escapeHtml(ctx.currentProfile.name)}</strong>
                   </span>
@@ -452,20 +457,20 @@ export function bindSettingsTabEvents(container, ctx) {
               const botUsername = data.botUser?.username || 'vacancy_radar1_bot';
               statusDiv.innerHTML = `
                 <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 0.85rem; color: #fbbf24; font-size: 0.82rem; line-height: 1.5;">
-                  ⚠️ <strong>Telegram Chat Not Initiated (${data.chatId || 'Blank'})</strong><br>
+                  <strong>Telegram Chat Not Initiated (${data.chatId || 'Blank'})</strong><br>
                   <span style="color: var(--text-secondary); font-size: 0.78rem; display: block; margin-top: 0.3rem;">
-                    Telegram anti-spam security blocks bots from messaging users who haven't started the chat first.<br>
-                    👉 <strong>Step 1:</strong> Open <a href="${botUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">@${botUsername} in Telegram</a>.<br>
-                    👉 <strong>Step 2:</strong> Tap the <strong>START</strong> button at the bottom (or send /start).<br>
-                    👉 <strong>Step 3:</strong> Click <strong>"🔍 Auto-Detect ID"</strong> above, then Test again.
+                    Telegram security requires users to initiate the chat with the bot first.<br>
+                    <strong>Step 1:</strong> Open <a href="${botUrl}" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">@${botUsername} in Telegram</a>.<br>
+                    <strong>Step 2:</strong> Tap the <strong>START</strong> button at the bottom (or send /start).<br>
+                    <strong>Step 3:</strong> Click <strong>"Auto-Detect ID"</strong> above, then Test again.
                   </span>
                 </div>
               `;
             } else {
               statusDiv.innerHTML = `
                 <div class="alert-box alert-box-error">
-                  ❌ <strong>Telegram Bot Error:</strong> ${data.error || 'Failed to authenticate bot token'}<br>
-                  ${data.solution ? `<span style="color: var(--text-secondary); font-size: 0.76rem; display: block; margin-top: 0.25rem;">💡 ${data.solution}</span>` : ''}
+                  <strong>Telegram Bot Error:</strong> ${data.error || 'Failed to authenticate bot token'}<br>
+                  ${data.solution ? `<span style="color: var(--text-secondary); font-size: 0.76rem; display: block; margin-top: 0.25rem;">${data.solution}</span>` : ''}
                 </div>
               `;
             }
@@ -473,11 +478,12 @@ export function bindSettingsTabEvents(container, ctx) {
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">Network error: ${err.message}</div>`;
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 
@@ -489,10 +495,11 @@ export function bindSettingsTabEvents(container, ctx) {
 
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Compiling Digest...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="icon icon-sm spin"></i> Compiling Digest...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">⏳ Compiling Daily Digest for ${vacancies.length} active vacancies...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">Compiling Daily Digest for ${vacancies.length} active vacancies...</div>`;
       }
 
       try {
@@ -507,7 +514,7 @@ export function bindSettingsTabEvents(container, ctx) {
           if (data.success) {
             statusDiv.innerHTML = `
               <div class="alert-box alert-box-success">
-                ✅ <strong>Daily Digest Generated!</strong> ${data.sentToTelegram ? '🚀 Successfully pushed to your Telegram channel!' : 'ℹ️ Digest compiled (configure Telegram credentials to enable auto-push).'}<br>
+                <strong>Daily Digest Generated!</strong> ${data.sentToTelegram ? 'Successfully pushed to your Telegram channel.' : 'Digest compiled (configure Telegram credentials to enable auto-push).'}<br>
                 <details style="margin-top: 0.4rem; cursor: pointer;">
                   <summary style="font-size: 0.76rem; color: #38bdf8;">View Digest Content Preview</summary>
                   <pre style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px; font-size: 0.72rem; color: var(--text-main); white-space: pre-wrap; margin-top: 0.3rem;">${escapeHtml(data.digestText)}</pre>
@@ -516,17 +523,22 @@ export function bindSettingsTabEvents(container, ctx) {
             `;
             showConfirmationBanner('Daily Digest Sent', 'Daily Digest compiled and notification sent.', 'success', 3000);
           } else {
-            statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Failed to generate digest: ${data.error || 'Server error'}</div>`;
+            statusDiv.innerHTML = `<div class="alert-box alert-box-error">Failed to generate digest: ${data.error || 'Server error'}</div>`;
           }
         }
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Network error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">Network error: ${err.message}</div>`;
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
 
 }

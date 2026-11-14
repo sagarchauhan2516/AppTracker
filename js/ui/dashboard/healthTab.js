@@ -10,15 +10,16 @@ export function renderHealthTab(sources = []) {
       <div class="dash-panel-card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
           <div>
-            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-main); margin: 0 0 0.35rem 0;">
-              🩺 Silent-Failure &amp; Source Health Monitor
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-main); margin: 0 0 0.35rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <i data-lucide="activity" class="icon icon-md" style="color: var(--accent-primary);"></i>
+              <span>Silent-Failure &amp; Source Health Monitor</span>
             </h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">
               Detects portal redesigns, scraper failures, and 60+ day vacancy staleness across official government recruitment directories.
             </p>
           </div>
           <button type="button" id="btnRunHealthDiagnostics" class="btn btn-primary" style="font-weight: 600;">
-            🩺 Run Health &amp; Canary Checks Now
+            <i data-lucide="play" class="icon icon-sm"></i> Run Health &amp; Canary Checks Now
           </button>
         </div>
 
@@ -65,21 +66,21 @@ export function renderHealthTab(sources = []) {
             <tbody>
               ${sources.map(s => {
                 let badgeClass = 'badge-OFFICIALLY_VERIFIED';
-                let badgeText = '🟢 HEALTHY';
+                let badgeText = 'HEALTHY';
                 if (s.status === HealthStatus.STALE_WARNING) {
                   badgeClass = 'badge-UNVERIFIED_LEAD';
-                  badgeText = '🟡 STALE (>60d)';
+                  badgeText = 'STALE (>60d)';
                 } else if (s.status === HealthStatus.SCRAPER_ERROR) {
                   badgeClass = 'badge-VERIFICATION_FAILED';
-                  badgeText = '🔴 SCRAPER ERROR';
+                  badgeText = 'SCRAPER ERROR';
                 } else if (s.status === HealthStatus.UNCHECKED) {
-                  badgeText = '⚪ UNCHECKED';
+                  badgeText = 'UNCHECKED';
                 }
 
                 const staleness = SourceHealthMonitor.calculateStalenessDays(s.lastVacancyFoundDate);
-                const canaryBadge = s.canaryStatus === 'PASSED' ? '<span style="color: #34d399; font-weight: 700;">✅ PASSED</span>'
-                                  : s.canaryStatus === 'FAILED' ? '<span style="color: #f87171; font-weight: 700;">❌ FAILED</span>'
-                                  : '<span style="color: var(--text-muted);">⚪ UNTESTED</span>';
+                const canaryBadge = s.canaryStatus === 'PASSED' ? '<span style="color: #34d399; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;"><i data-lucide="check" class="icon icon-xs"></i> PASSED</span>'
+                                  : s.canaryStatus === 'FAILED' ? '<span style="color: #f87171; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;"><i data-lucide="x" class="icon icon-xs"></i> FAILED</span>'
+                                  : '<span style="color: var(--text-muted);">UNTESTED</span>';
 
                 return `
                   <tr style="border-bottom: 1px solid var(--border-subtle);">
@@ -107,8 +108,8 @@ export function renderHealthTab(sources = []) {
                       ${canaryBadge}
                     </td>
                     <td style="padding: 0.75rem 1rem; text-align: right;">
-                      <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 0.25rem 0.5rem;" title="Open official career page">
-                        Visit Site ↗
+                      <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 0.25rem 0.5rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Open official career page">
+                        Visit Site <i data-lucide="external-link" class="icon icon-xs"></i>
                       </a>
                     </td>
                   </tr>
@@ -122,6 +123,9 @@ export function renderHealthTab(sources = []) {
 }
 
 export function bindHealthTabEvents(container, ctx) {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
     // Run Full Source Health & Canary Diagnostics
     document.getElementById('btnRunHealthDiagnostics')?.addEventListener('click', async () => {
       const btn = document.getElementById('btnRunHealthDiagnostics');
@@ -129,10 +133,11 @@ export function bindHealthTabEvents(container, ctx) {
 
       btn.disabled = true;
       const origText = btn.innerHTML;
-      btn.innerHTML = '⏳ Testing Portals &amp; Canaries...';
+      btn.innerHTML = '<i data-lucide="refresh-cw" class="icon icon-sm spin"></i> Testing Portals &amp; Canaries...';
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">⏳ Running live health check &amp; scraper canary diagnostics across all monitored portals...</div>`;
+        statusDiv.innerHTML = `<div class="alert-box alert-box-cyan">Running live health check and scraper canary diagnostics across all monitored portals...</div>`;
       }
 
       try {
@@ -164,11 +169,12 @@ export function bindHealthTabEvents(container, ctx) {
         ctx.render();
       } catch (err) {
         if (statusDiv) {
-          statusDiv.innerHTML = `<div class="alert-box alert-box-error">❌ Error: ${err.message}</div>`;
+          statusDiv.innerHTML = `<div class="alert-box alert-box-error">Error: ${err.message}</div>`;
         }
       } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     });
 

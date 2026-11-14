@@ -13,13 +13,16 @@ export function initTheme() {
 export function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
-  const icon = document.getElementById('themeToggleIcon');
-  const label = document.getElementById('themeToggleLabel');
+  const icon = document.getElementById('themeToggleIcon') || document.getElementById('themeIcon');
+  const label = document.getElementById('themeToggleLabel') || document.getElementById('themeText');
   if (icon) {
-    icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
   }
   if (label) {
-    label.textContent = theme === 'dark' ? 'Bright Mode' : 'Dark Mode';
+    label.textContent = theme === 'dark' ? 'Bright' : 'Dark';
   }
   eventBus.publish(EVENTS.THEME_CHANGED, theme);
 }

@@ -668,7 +668,7 @@ export async function handleAiRoutes(req, res, reqPath) {
           isEligible: aiAnalysis?.isEligible !== false,
           eligibilityRationale: aiAnalysis?.eligibilityRationale || 'Verified from official portal circular.'
         },
-        aiEngine: aiModelUsed ? `${aiModelUsed} (Cloud Serverless • ₹0.00 Free)` : 'Zero-Latency Parser (Deterministic)',
+        aiEngine: aiModelUsed ? `${aiModelUsed} (Cloud Serverless Engine)` : 'High-Speed Parser (Deterministic)',
         learned: {
           domain,
           isNewSource: isNewLearned,
@@ -725,9 +725,9 @@ export async function handleAiRoutes(req, res, reqPath) {
       model: 'gemini-1.5-flash / gemini-3.8-flash',
       hostingMode: '24/7 Cloud Serverless',
       tier: 'FREE_TIER',
-      cost: '₹0.00 / month (100% Free Forever)',
+      cost: 'Standard Cloud Tier',
       quotaDaily: 1500,
-      offlineModel: 'DISABLED (Pure Cloud Architecture - No Local GPU/RAM Required)',
+      offlineModel: 'Cloud Managed Architecture',
       continuousLearning: 'ACTIVE',
       apiKeyConfigured: Boolean(creds.geminiApiKey),
       learnedSourcesCount: learnedSources.length,
@@ -765,7 +765,7 @@ export async function handleAiRoutes(req, res, reqPath) {
         stats: {
           learnedSources: learnedSources.length,
           trainingSpecimens: corpus.length,
-          serverlessCost: '₹0.00'
+          serverlessTier: 'Standard Cloud'
         },
         timestamp: new Date().toISOString()
       });

@@ -99,12 +99,12 @@ export class UnifiedDashboardUI {
         <!-- High-Level KPI Summary Meters -->
         <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
           <div class="kpi-card" style="border-top: 3px solid #34d399;">
-            <span class="kpi-label">Monthly Spending Cap</span>
-            <span class="kpi-value" style="color: #34d399;">₹${estSpendInr.toFixed(2)}</span>
-            <span class="kpi-sub">Guaranteed Zero-Cost Guard Active</span>
+            <span class="kpi-label">Gateway Status</span>
+            <span class="kpi-value" style="color: #34d399;">Active</span>
+            <span class="kpi-sub">Gateway Protection Armed</span>
           </div>
           <div class="kpi-card" style="border-top: 3px solid #60a5fa;">
-            <span class="kpi-label">Free Queries Remaining</span>
+            <span class="kpi-label">Search Queries Available</span>
             <span class="kpi-value" style="color: #60a5fa;">${totalRemaining}</span>
             <span class="kpi-sub">${totalUsed} Queries Dispatched This Cycle</span>
           </div>

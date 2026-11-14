@@ -326,24 +326,24 @@
 
     <!-- SECTION: Source Registry & Search Providers -->
     <section id="sectionSources" class="view-section">
-      <!-- Search Provider & Cost Guard Banner -->
+      <!-- Search Provider & Security Banner -->
       <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-card);">
         <div>
           <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-            <strong style="font-size: 0.88rem; color: var(--text-main);">Active Search Provider:</strong>
+            <strong style="font-size: 0.88rem; color: var(--text-main);">Active Search Gateway:</strong>
             <span id="activeProviderBadge" class="badge-test-flag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
-              Free Public Feeds (Zero Cost)
+              Public Feeds &amp; Official Portals
             </span>
           </div>
           <p id="providerDisclosureText" style="font-size: 0.76rem; color: var(--text-secondary); max-width: 650px;">
-            Scanning verified RSS feeds and open gazettes. Free allowance active with ₹0.00 spending cap.
+            Monitoring verified government RSS feeds, gazettes, and public apex portals.
           </p>
         </div>
 
         <div style="display: flex; gap: 0.6rem; align-items: center;">
           <div style="text-align: right; margin-right: 0.5rem;">
-            <div style="font-size: 0.72rem; color: var(--text-muted);">Est. Monthly Spend</div>
-            <div style="font-family: var(--font-mono); font-weight: 700; color: #34d399; font-size: 0.95rem;" id="providerCostDisplay">₹0.00</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Gateway Status</div>
+            <div style="font-family: var(--font-mono); font-weight: 700; color: #34d399; font-size: 0.95rem;" id="providerCostDisplay">Active</div>
           </div>
           <button id="btnConfigureProvider" class="btn btn-outline btn-sm">⚙️ Provider Settings</button>
           <button id="btnRevalidateSources" class="btn btn-primary btn-sm">🩺 Revalidate Sources</button>
@@ -462,7 +462,7 @@
         <h3 style="font-family: var(--font-heading); font-size: 1.35rem;">Automated Scan Schedule &amp; Alerts</h3>
       </div>
       <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-        Configure background scan schedules (IST Asia/Kolkata), multi-email digests, and instant Telegram push alerts with ₹0.00 cloud infrastructure.
+        Configure background scan schedules (IST Asia/Kolkata), multi-email digests, and instant Telegram push alerts with automated cloud infrastructure.
       </p>
       <div id="scheduleModalBody"></div>
     </div>
@@ -517,7 +517,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
           <span style="font-size: 0.74rem; color: #38bdf8; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem;">
             <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 8px #34d399;"></span>
-            Live Cloud AI: Gemini 1.5 Flash (₹0.00 Serverless)
+            Live Cloud AI: Gemini Engine (Cloud Native)
           </span>
           <span id="badgeContinuousLearning" style="font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 600;">
             🧠 Continuous Learning Active

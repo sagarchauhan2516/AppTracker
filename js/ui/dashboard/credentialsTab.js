@@ -22,7 +22,7 @@ export function renderCredentialsTab(providers, providerConfig) {
             🔑 Credentials &amp; API Integration Hub
           </h3>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">
-            Configure search engines and cloud endpoints. Search order: <strong>1. Direct Feeds (₹0)</strong> &rarr; <strong>2. SearXNG Metasearch (₹0)</strong> &rarr; <strong>3. Brave Search API (2,000 free/mo)</strong> &rarr; <strong>4. SerpApi (250 free/mo backup)</strong>.
+            Configure search engines and cloud endpoints. Search order: <strong>1. Direct Feeds (Primary)</strong> &rarr; <strong>2. SearXNG Metasearch</strong> &rarr; <strong>3. Brave Search API (2,000/mo)</strong> &rarr; <strong>4. SerpApi (Backup)</strong>.
           </p>
         </div>
 
@@ -32,13 +32,13 @@ export function renderCredentialsTab(providers, providerConfig) {
             <div style="display: flex; align-items: center; gap: 0.6rem;">
               <span style="font-size: 1.4rem;">🛡️</span>
               <div>
-                <strong style="font-size: 1.05rem; color: var(--text-main);">Direct Official &amp; Enterprise Feeds (Self-Reliable ₹0.00 Engine)</strong>
+                <strong style="font-size: 1.05rem; color: var(--text-main);">Direct Official &amp; Enterprise Feeds (Direct Autonomous Engine)</strong>
                 <span class="badge-test-flag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3); margin-left: 0.5rem;">
                   ⭐ PRIORITY #1 (PRIMARY SEARCH)
                 </span>
               </div>
             </div>
-            <span class="meta-pill" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">100% UNLIMITED &bull; ₹0.00</span>
+            <span class="meta-pill" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">ACTIVE &bull; UNLIMITED</span>
           </div>
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
             <p style="margin: 0 0 0.5rem 0;">
@@ -64,7 +64,7 @@ export function renderCredentialsTab(providers, providerConfig) {
                 </span>
               </div>
             </div>
-            <span id="badgeSearxStatus" class="meta-pill" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-weight: 700;">₹0.00 &bull; AUTO-ROTATION</span>
+            <span id="badgeSearxStatus" class="meta-pill" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-weight: 700;">ONLINE &bull; AUTO-ROTATION</span>
           </div>
 
           <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
@@ -157,7 +157,7 @@ export function renderCredentialsTab(providers, providerConfig) {
                 1. Visit <a href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline;">https://brave.com/search/api/</a> and click <strong>Get started for free</strong>.
               </p>
               <p style="margin: 0 0 0.3rem 0;">
-                2. Select the <strong>Free Plan (Data for Search)</strong> &mdash; 2,000 queries per month at ₹0.00 cost.
+                2. Select the <strong>Free Plan (Data for Search)</strong> &mdash; 2,000 queries per month included.
               </p>
               <p style="margin: 0;">
                 3. Copy your API token and paste it above. Key is tested and auto-saved locally.
@@ -246,7 +246,7 @@ export function renderCredentialsTab(providers, providerConfig) {
               </div>
             </div>
             <span id="badgeGeminiStatus" class="meta-pill" style="font-size: 0.75rem; background: ${geminiApiKey ? 'rgba(16, 185, 129, 0.15)' : 'rgba(168, 85, 247, 0.15)'}; color: ${geminiApiKey ? '#34d399' : '#c084fc'}; font-weight: 600;">
-              ${geminiApiKey ? 'AI Key Saved (Active)' : '₹0.00 Free Tier'}
+              ${geminiApiKey ? 'AI Key Saved (Active)' : 'Standard Cloud'}
             </span>
           </div>
 
@@ -255,9 +255,9 @@ export function renderCredentialsTab(providers, providerConfig) {
               Powers <strong>AI Profile Generation</strong> (for Software Developer, Data Science, etc.), <strong>Entire Web Search Strategist</strong> (decides which sites to search and query syntax), <strong>Notification Date/Fact Extractor</strong>, and <strong>AI System Health Watchdog</strong>.
             </p>
             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: #c084fc;">
-              <span>✅ 1,500 Requests/Day Free (Consumes &lt;3% daily)</span>
+              <span>✅ 1,500 Requests/Day (High Quota)</span>
               <span>✅ 15 Requests/Min (1M Context)</span>
-              <span>✅ ₹0.00 Cost with regular Google Account</span>
+              <span>✅ Compatible with Google Account</span>
               <span>✅ Auto-Saved to Disk</span>
             </div>
           </div>
@@ -294,7 +294,7 @@ export function renderCredentialsTab(providers, providerConfig) {
             </div>
           </details>
 
-          <!-- Continuous Learning Cloud Brain Panel (₹0.00 Serverless Auto-Updates) -->
+          <!-- Continuous Learning Cloud Brain Panel (Automated Cloud Updates) -->
           <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: var(--radius-md); padding: 0.85rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem; flex-wrap: wrap; gap: 0.4rem;">
               <div style="display: flex; align-items: center; gap: 0.45rem;">
@@ -315,7 +315,7 @@ export function renderCredentialsTab(providers, providerConfig) {
               </div>
               <div class="dash-card-compact">
                 <div style="color: var(--text-muted); font-size: 0.68rem;">Monthly Cloud Cost</div>
-                <div style="color: #38bdf8; font-weight: 700;">₹0.00 (Free Tier)</div>
+                <div style="color: #38bdf8; font-weight: 700;">Standard Cloud</div>
               </div>
               <div class="dash-card-compact">
                 <div style="color: var(--text-muted); font-size: 0.68rem;">Offline Model</div>
@@ -330,7 +330,7 @@ export function renderCredentialsTab(providers, providerConfig) {
           </div>
         </div>
 
-        <!-- 6. Telegram Instant Mobile Alert & Push Bot (100% Free) -->
+        <!-- 6. Telegram Instant Mobile Alert & Push Bot -->
         <div class="credential-card" style="background: var(--bg-surface); border: 2px solid rgba(56, 189, 248, 0.4); border-radius: var(--radius-lg); padding: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem;">
@@ -338,12 +338,12 @@ export function renderCredentialsTab(providers, providerConfig) {
               <div>
                 <strong style="font-size: 1.05rem; color: var(--text-main);">Telegram Instant Mobile Alert Channel</strong>
                 <span class="badge-test-flag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35); margin-left: 0.5rem;">
-                  ⭐ 100% FREE PUSH ALERTS
+                  ⭐ INSTANT PUSH ALERTS
                 </span>
               </div>
             </div>
             <span class="meta-pill" style="font-size: 0.75rem; background: ${providerConfig.telegramBotToken ? 'rgba(16, 185, 129, 0.15)' : 'rgba(56, 189, 248, 0.15)'}; color: ${providerConfig.telegramBotToken ? '#34d399' : '#38bdf8'}; font-weight: 600;">
-              ${providerConfig.telegramBotToken ? 'Bot Configured' : '₹0.00 Setup'}
+              ${providerConfig.telegramBotToken ? 'Bot Configured' : 'Ready'}
             </span>
           </div>
 
@@ -985,7 +985,7 @@ export function bindCredentialsTabEvents(container, ctx) {
           if (statusDiv) {
             statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
             statusDiv.style.color = '#34d399';
-            statusDiv.innerHTML = `✅ <strong>Brain Synchronized!</strong> ${data.stats?.trainingSpecimens || 0} specimens &bull; ${data.stats?.learnedSources || 0} learned sources &bull; Cloud Cost: ${data.stats?.serverlessCost || '₹0.00'}`;
+            statusDiv.innerHTML = `✅ <strong>Brain Synchronized!</strong> ${data.stats?.trainingSpecimens || 0} specimens &bull; ${data.stats?.learnedSources || 0} learned sources &bull; Cloud: Standard Tier`;
           }
           if (countStat) {
             countStat.textContent = `${data.stats?.learnedSources || 0} Sources (${data.stats?.trainingSpecimens || 0} Specs)`;

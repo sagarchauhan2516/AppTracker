@@ -39,14 +39,14 @@ export class SearchProviderDashboardUI {
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-size: 1.5rem;">🛡️</span>
             <div>
-              <strong style="font-size: 0.88rem; color: #34d399;">Zero-Spending Safeguard Enforced (₹0.00 Spent)</strong>
+              <strong style="font-size: 0.88rem; color: #34d399;">Active Gateway Safeguard Enforced</strong>
               <div style="font-size: 0.78rem; color: var(--text-secondary);">
-                All search providers default to free-tier quotas. If quotas exhaust, discovery seamlessly shifts to direct official feeds without billing.
+                All search providers default to standard tier allowances with automated failover to direct official portals.
               </div>
             </div>
           </div>
           <div style="font-family: var(--font-mono); font-weight: 700; color: #34d399; font-size: 1.1rem; background: rgba(0,0,0,0.2); padding: 0.3rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.2);">
-            EST. SPEND: ₹0.00
+            STATUS: ACTIVE
           </div>
         </div>
 
@@ -227,7 +227,7 @@ export class SearchProviderDashboardUI {
               <span style="color: var(--text-muted);">Success/Err:</span> <strong style="color: var(--text-main); font-family: var(--font-mono);">${p.successCount || 0}/${p.errorCount || 0}</strong>
             </div>
             <div>
-              <span style="color: var(--text-muted);">Paid Allowed:</span> <strong style="color: ${p.permitPaidRequests ? '#f87171' : '#34d399'}; font-family: var(--font-mono);">${p.permitPaidRequests ? 'YES' : 'NO (₹0.00)'}</strong>
+              <span style="color: var(--text-muted);">Paid Allowed:</span> <strong style="color: ${p.permitPaidRequests ? '#f87171' : '#34d399'}; font-family: var(--font-mono);">${p.permitPaidRequests ? 'YES' : 'NO (STANDARD)'}</strong>
             </div>
           </div>
         </div>
@@ -373,7 +373,7 @@ export class SearchProviderDashboardUI {
             <div>
               <label class="form-label" style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Provider Architecture / Adapter Type</label>
               <select id="selProvType" class="filter-select" style="width: 100%;">
-                <option value="${ProviderType.PUBLIC_FEEDS_RSS}" ${provider.type === ProviderType.PUBLIC_FEEDS_RSS ? 'selected' : ''}>Public Feeds &amp; Open Gazettes (Zero Cost)</option>
+                <option value="${ProviderType.PUBLIC_FEEDS_RSS}" ${provider.type === ProviderType.PUBLIC_FEEDS_RSS ? 'selected' : ''}>Public Feeds &amp; Open Gazettes (Standard)</option>
                 <option value="${ProviderType.GOOGLE_CUSTOM_SEARCH}" ${provider.type === ProviderType.GOOGLE_CUSTOM_SEARCH ? 'selected' : ''}>Google Custom Search JSON API</option>
                 <option value="${ProviderType.BING_WEB_SEARCH}" ${provider.type === ProviderType.BING_WEB_SEARCH ? 'selected' : ''}>Bing Web Search API</option>
                 <option value="${ProviderType.SERPAPI}" ${provider.type === ProviderType.SERPAPI ? 'selected' : ''}>SerpApi Search Platform</option>
@@ -425,7 +425,7 @@ export class SearchProviderDashboardUI {
                 Permit Paid Queries after Free Quota Depleted
               </label>
               <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 0.2rem; line-height: 1.4;">
-                CRITICAL SAFEGUARD: By default, this is disabled (₹0.00 cost ceiling). When left unchecked, Vacancy Radar India will NEVER incur API charges and will failover to free public feeds.
+                CRITICAL SAFEGUARD: By default, this is disabled to prevent unintended API charges. When left unchecked, Vacancy Radar will automatically failover to public feeds.
               </div>
             </div>
           </div>

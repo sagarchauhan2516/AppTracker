@@ -18,7 +18,7 @@ export function renderSettingsTab(profile) {
           ⏰ Automated Monitoring Schedule &amp; Alert Channels
         </h3>
         <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 1.5rem 0; line-height: 1.5;">
-          Configure background scans across registered government portals (IST Asia/Kolkata), multi-email alerts, and Telegram Bot instant push notifications with ₹0.00 infrastructure costs.
+          Configure background scans across registered government portals (IST Asia/Kolkata), multi-email alerts, and Telegram Bot instant push notifications with automated cloud infrastructure.
         </p>
 
         <!-- Telegram Bot Channel Card -->

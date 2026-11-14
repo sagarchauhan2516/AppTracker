@@ -18,7 +18,7 @@ export function renderCreditsTab(providers, providerConfig) {
           <div style="display: flex; gap: 0.5rem; align-items: center;">
             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; background: var(--bg-surface-elevated); padding: 0.45rem 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.85rem; font-weight: 600; color: #34d399;">
               <input type="checkbox" id="chkGlobalZeroSpendGuard" checked>
-              <span>🔒 Strict ₹0.00 Spending Cap</span>
+              <span>🔒 Automated Spending Cap</span>
             </label>
             <button id="btnResetQuotaCounters" class="btn btn-outline btn-sm">🔄 Reset Daily Counters</button>
           </div>
@@ -93,9 +93,9 @@ export function renderCreditsTab(providers, providerConfig) {
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-size: 1.5rem;">🛡️</span>
             <div>
-              <strong style="color: #34d399; font-size: 0.88rem;">Automated Zero-Spending Fallback Guarantee:</strong>
+              <strong style="color: #34d399; font-size: 0.88rem;">Automated High-Availability Fallback Guarantee:</strong>
               <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.15rem;">
-                If all free search API tiers (Google 100/day, Bing 1,000/mo, SerpApi 250/mo) are exhausted, the engine automatically rolls back to direct public RSS feeds and official gazettes without paying ₹1 or stopping.
+                If external search API tiers are exhausted, the engine automatically rolls back to direct public RSS feeds and official gazettes seamlessly without interruption.
               </div>
             </div>
           </div>

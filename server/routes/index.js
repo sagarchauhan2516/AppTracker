@@ -1,4 +1,5 @@
 import { handleCredentialsRoutes } from './credentialsRoutes.js';
+import { handleProfileRoutes } from './profileRoutes.js';
 import { handleSearchRoutes } from './searchRoutes.js';
 import { handleAiRoutes } from './aiRoutes.js';
 import { handlePdfRoutes } from './pdfRoutes.js';
@@ -17,6 +18,7 @@ import { handleApplicationRoutes } from './applicationRoutes.js';
  */
 export async function handleApiRoute(req, res, reqPath) {
   if (await handleCredentialsRoutes(req, res, reqPath)) return true;
+  if (await handleProfileRoutes(req, res, reqPath)) return true;
   if (await handleSearchRoutes(req, res, reqPath)) return true;
   if (await handleAiRoutes(req, res, reqPath)) return true;
   if (await handlePdfRoutes(req, res, reqPath)) return true;

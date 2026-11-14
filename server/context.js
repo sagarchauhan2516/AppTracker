@@ -146,6 +146,60 @@ export function saveStoredCredentials(creds) {
   }
 }
 
+export const USER_PROFILES_FILE = path.join(ROOT_DIR, 'data', 'user-profiles.json');
+
+export function loadStoredProfiles() {
+  try {
+    if (fs.existsSync(USER_PROFILES_FILE)) {
+      return JSON.parse(fs.readFileSync(USER_PROFILES_FILE, 'utf8') || '[]');
+    }
+  } catch (_) {}
+  return [];
+}
+
+export function saveStoredProfile(profile) {
+  try {
+    const dir = path.dirname(USER_PROFILES_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const list = loadStoredProfiles();
+    const idx = list.findIndex(p => p.id === profile.id);
+    if (idx >= 0) {
+      list[idx] = { ...list[idx], ...profile, updatedAt: new Date().toISOString() };
+    } else {
+      list.push({ ...profile, id: profile.id || `profile-${Date.now()}`, createdAt: new Date().toISOString() });
+    }
+    fs.writeFileSync(USER_PROFILES_FILE, JSON.stringify(list, null, 2), 'utf8');
+    return profile;
+  } catch (err) {
+    console.error('Error saving user profile:', err.message);
+    return profile;
+  }
+}
+
+export function saveAllStoredProfiles(profilesList) {
+  try {
+    const dir = path.dirname(USER_PROFILES_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(USER_PROFILES_FILE, JSON.stringify(profilesList, null, 2), 'utf8');
+    return profilesList;
+  } catch (err) {
+    console.error('Error saving profiles list:', err.message);
+    return profilesList;
+  }
+}
+
+export function deleteStoredProfile(profileId) {
+  try {
+    const list = loadStoredProfiles();
+    const filtered = list.filter(p => p.id !== profileId);
+    fs.writeFileSync(USER_PROFILES_FILE, JSON.stringify(filtered, null, 2), 'utf8');
+    return true;
+  } catch (err) {
+    console.error('Error deleting user profile:', err.message);
+    return false;
+  }
+}
+
 export const LEARNED_SOURCES_FILE = path.join(ROOT_DIR, 'data', 'learned-sources.json');
 
 export function loadLearnedSources() {

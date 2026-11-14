@@ -366,19 +366,19 @@ export async function handleManualScan(app) {
                 <strong style="color: #fbbf24; font-size: 1rem;">SerpApi Authorization Required</strong>
               </div>
               <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.5; margin: 0 0 0.75rem 0;">
-                SearXNG (₹0.00 Metasearch) was busy or unreachable for <em>"${app.escapeHtml(q)}"</em>. 
+                Public metasearch was busy or unreachable for <em>"${app.escapeHtml(q)}"</em>. 
                 Would you like to search via <strong>SerpApi (Google Jobs API)</strong>?
               </p>
               <div style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; gap: 1.25rem;">
                 <span>📊 Quota Remaining: <strong style="color: #34d399;">${provider.quotaRemaining} / ${provider.freeQuotaLimit}</strong></span>
-                <span>💳 Cost: <strong>₹0.00 (Free Monthly)</strong></span>
+                <span>💳 Status: <strong>Standard Tier Included</strong></span>
               </div>
               <div style="display: flex; gap: 0.75rem;">
                 <button id="btnConfirmSerpApiYes" type="button" class="btn btn-primary btn-sm" style="background: #f59e0b; border-color: #f59e0b; color: #000; font-weight: 700;">
                   ✅ Yes, Use SerpApi (1 Credit)
                 </button>
                 <button id="btnConfirmSerpApiNo" type="button" class="btn btn-outline btn-sm">
-                  ❌ No, Keep ₹0.00 / Skip SerpApi
+                  ❌ No, Skip SerpApi
                 </button>
               </div>
             </div>
@@ -539,7 +539,7 @@ export async function handleManualScan(app) {
             <div>
               <h3 style="font-family: var(--font-heading); font-size: 1.25rem;">Live Scan Completed Successfully</h3>
               <span style="font-size: 0.8rem; color: var(--text-secondary);">
-                Active Engine: <strong style="color: #60a5fa;">SearXNG (24 Mirrors) &amp; Live Feeds</strong> • Duration: ${elapsedMs}ms • <strong>₹0.00 Incurred</strong>
+                Active Engine: <strong style="color: #60a5fa;">Multi-Source Aggregator &amp; Live Feeds</strong> • Duration: ${elapsedMs}ms • <strong style="color: #34d399;">Active</strong>
               </span>
             </div>
           </div>

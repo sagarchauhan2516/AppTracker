@@ -69,7 +69,7 @@ export const PUBLIC_SEARXNG_MIRRORS = [
 export const initialSearchProviders = [
   {
     id: 'prov-public-feeds',
-    name: 'Direct Official & Enterprise Feeds (Self-Reliable ₹0.00 Engine)',
+    name: 'Direct Official & Enterprise Feeds (Direct Autonomous Engine)',
     type: ProviderType.PUBLIC_FEEDS_RSS,
     endpoint: 'https://www.ncs.gov.in/rss/all-jobs.xml',
     apiKey: '',
@@ -96,7 +96,7 @@ export const initialSearchProviders = [
   },
   {
     id: 'prov-searxng',
-    name: 'SearXNG Metasearch Engine (Free & Open Source ₹0.00)',
+    name: 'SearXNG Metasearch Engine (High-Availability Cluster)',
     type: ProviderType.SEARXNG,
     endpoint: 'https://www.isci.si',
     apiKey: '',

@@ -4,7 +4,7 @@
  * Designed to seamlessly bridge with Google Sheets / Apps Script backend.
  */
 
-import { defaultProfile } from '../data/defaultProfile.js';
+import { defaultProfile, initialDefaultProfiles } from '../data/defaultProfile.js';
 import { testVacancies } from '../data/testVacancies.js';
 import { initialSources } from '../data/initialSources.js';
 import { initialSearchProviders } from '../models/providerTypes.js';
@@ -54,12 +54,26 @@ export class StorageService {
   initDefaults() {
     // 1. Initialize Profiles
     if (!this.storage.getItem(STORAGE_KEYS.PROFILES)) {
-      this.storage.setItem(STORAGE_KEYS.PROFILES, JSON.stringify([defaultProfile]));
-      this.storage.setItem(STORAGE_KEYS.ACTIVE_PROFILE_ID, defaultProfile.id);
+      const seedList = (Array.isArray(initialDefaultProfiles) && initialDefaultProfiles.length > 0)
+        ? initialDefaultProfiles
+        : [defaultProfile];
+      this.storage.setItem(STORAGE_KEYS.PROFILES, JSON.stringify(seedList));
+      this.storage.setItem(STORAGE_KEYS.ACTIVE_PROFILE_ID, seedList[0].id);
     } else {
       try {
-        const storedProfiles = JSON.parse(this.storage.getItem(STORAGE_KEYS.PROFILES) || '[]');
+        let storedProfiles = JSON.parse(this.storage.getItem(STORAGE_KEYS.PROFILES) || '[]');
         let profModified = false;
+
+        // Auto-merge multi-role profiles (Software, AI/ML, Cloud) if user only had 1 profile
+        if (Array.isArray(initialDefaultProfiles)) {
+          initialDefaultProfiles.forEach(seed => {
+            if (!storedProfiles.some(p => p.id === seed.id)) {
+              storedProfiles.push(seed);
+              profModified = true;
+            }
+          });
+        }
+
         storedProfiles.forEach(p => {
           if (!p.scheduleSettings) p.scheduleSettings = {};
           if (!p.scheduleSettings.emailAddress || p.scheduleSettings.emailAddress === 'candidate@dfir-india.org') {
@@ -159,7 +173,7 @@ export class StorageService {
         if (feeds) {
           feeds.priority = 1;
           feeds.isEnabled = true;
-          feeds.name = 'Direct Official & Enterprise Feeds (Self-Reliable ₹0.00 Engine)';
+          feeds.name = 'Direct Official & Enterprise Feeds (Direct Autonomous Engine)';
           modified = true;
         }
 
@@ -258,7 +272,33 @@ export class StorageService {
     }
     this.storage.setItem(STORAGE_KEYS.PROFILES, JSON.stringify(profiles));
     eventBus.publish(EVENTS.PROFILES_UPDATED, profiles);
+    try {
+      if (typeof fetch === 'function') {
+        fetch('/api/profiles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile)
+        }).catch(() => {});
+      }
+    } catch (_) {}
     return profile;
+  }
+
+  deleteProfile(profileId) {
+    let profiles = this.getProfiles();
+    profiles = profiles.filter(p => p.id !== profileId);
+    this.storage.setItem(STORAGE_KEYS.PROFILES, JSON.stringify(profiles));
+    const activeId = this.storage.getItem(STORAGE_KEYS.ACTIVE_PROFILE_ID);
+    if (activeId === profileId && profiles.length > 0) {
+      this.setActiveProfile(profiles[0].id);
+    }
+    eventBus.publish(EVENTS.PROFILES_UPDATED, profiles);
+    try {
+      if (typeof fetch === 'function') {
+        fetch(`/api/profiles/${encodeURIComponent(profileId)}`, { method: 'DELETE' }).catch(() => {});
+      }
+    } catch (_) {}
+    return profiles;
   }
 
   setActiveProfile(profileId) {

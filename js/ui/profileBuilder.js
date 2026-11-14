@@ -911,7 +911,7 @@ export class ProfileBuilderUI {
             <div style="display: flex; align-items: center; gap: 0.5rem;">
               <span style="font-size: 1.25rem;">🤖</span>
               <strong style="color: #c084fc; font-size: 0.95rem;">Instant AI Profile &amp; Official Source Generator</strong>
-              <span class="badge-test-flag" style="background: rgba(168, 85, 247, 0.2); color: #e879f9; border-color: rgba(168, 85, 247, 0.4); font-size: 0.68rem;">GEMINI 1.5 FLASH (₹0.00)</span>
+              <span class="badge-test-flag" style="background: rgba(168, 85, 247, 0.2); color: #e879f9; border-color: rgba(168, 85, 247, 0.4); font-size: 0.68rem;">INTELLIGENT AI ENGINE</span>
             </div>
             <span style="font-size: 0.72rem; color: var(--text-secondary);">Enter any title (e.g. "Software Developer", "Data Scientist", "Full Stack Engineer")</span>
           </div>

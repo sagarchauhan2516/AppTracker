@@ -451,6 +451,60 @@ function setupDatabase() {
     seedActiveVacancies.forEach(v => vacSheet.appendRow(v));
   }
 
+  // Seed default multi-domain user profiles if Profiles sheet is empty
+  const profSheet = ss.getSheetByName('Profiles');
+  if (profSheet && profSheet.getLastRow() <= 1) {
+    const userEmail = getRecipientEmail();
+    const seedProfiles = [
+      [
+        'profile-software-engineer',
+        'Software Engineering & Full Stack Developer',
+        'Software Engineer, Full Stack Developer, Backend Engineer, Frontend Developer, Project Engineer, Scientist B',
+        'Python, Node.js, React, Java, Spring Boot, PostgreSQL, Docker, Microservices, REST APIs, Git',
+        JSON.stringify({ enabled: false, mode: 'PRIORITY_BOOST', targetDomains: ['cdac.in', 'nic.in', 'cris.org.in', 'isro.gov.in', 'drdo.gov.in'] }),
+        userEmail,
+        new Date().toISOString()
+      ],
+      [
+        'profile-data-ai',
+        'Data Science, Machine Learning & AI Specialist',
+        'Data Scientist, Machine Learning Engineer, AI Research Engineer, Project Scientist, Data Analyst',
+        'Machine Learning, Deep Learning, Python, PyTorch, TensorFlow, NLP, Generative AI, SQL, Computer Vision',
+        JSON.stringify({ enabled: false, mode: 'PRIORITY_BOOST', targetDomains: ['cdac.in', 'drdo.gov.in', 'nic.in', 'csir.res.in'] }),
+        userEmail,
+        new Date().toISOString()
+      ],
+      [
+        'profile-primary-dfir',
+        'Digital Forensics & Incident Response (DFIR)',
+        'Digital Forensics Examiner, Cyber Forensics Analyst, Digital Evidence Examiner, Forensic Scientist, Incident Response Analyst',
+        'Digital Forensics, Mobile Forensics, Disk Imaging, Evidence Handling, Section 65B, Autopsy, FTK Imager, EnCase, Volatility, Cellebrite',
+        JSON.stringify({ enabled: false, mode: 'PRIORITY_BOOST', targetDomains: ['cdac.in', 'upsc.gov.in', 'nfsu.ac.in', 'cfslcbi.gov.in', 'drdo.gov.in'] }),
+        userEmail,
+        new Date().toISOString()
+      ],
+      [
+        'profile-cloud-devops',
+        'Cloud Solutions, DevOps & Infrastructure',
+        'DevOps Engineer, Cloud Infrastructure Specialist, Site Reliability Engineer, System Administrator, Platform Engineer',
+        'AWS, Azure, Docker, Kubernetes, CI/CD, Terraform, Linux, Prometheus, Grafana, Ansible',
+        JSON.stringify({ enabled: false, mode: 'PRIORITY_BOOST', targetDomains: ['nic.in', 'cdac.in', 'railtel.in', 'cris.org.in'] }),
+        userEmail,
+        new Date().toISOString()
+      ],
+      [
+        'profile-cyber-soc',
+        'Cyber Security, SOC Analyst & Threat Defense',
+        'SOC Analyst, Cyber Security Engineer, Threat Intelligence Analyst, Information Security Auditor, Network Security Specialist',
+        'SOC Operations, SIEM, Splunk, Next-Gen Firewall, Vulnerability Assessment, OWASP Top 10, CrowdStrike, MITRE ATT&CK, ISO 27001',
+        JSON.stringify({ enabled: false, mode: 'PRIORITY_BOOST', targetDomains: ['cert-in.org.in', 'nciipc.gov.in', 'nic.in', 'drdo.gov.in', 'bel-india.in'] }),
+        userEmail,
+        new Date().toISOString()
+      ]
+    ];
+    seedProfiles.forEach(p => profSheet.appendRow(p));
+  }
+
   // Seed default settings
   const settingsSheet = ss.getSheetByName('Settings');
   if (settingsSheet && settingsSheet.getLastRow() <= 1) {
@@ -1181,13 +1235,26 @@ function executeCloudWebSearch(existingMap, profiles = []) {
   }
 
   if (!braveKey) {
-    // Zero-Cost Live Web Index Discovery Fallback (Runs without any API key or subscription)
-    const openFeeds = [
-      'https://news.google.com/rss/search?q=site:gov.in+(recruitment+OR+vacancy)+(cyber+OR+forensic+OR+engineer)+2026&hl=en-IN&gl=IN&ceid=IN:en',
-      'https://news.google.com/rss/search?q=site:gov.in+(forensic+OR+dfir+OR+cybercrime)+recruitment+2026&hl=en-IN&gl=IN&ceid=IN:en'
-    ];
+    // Dynamic Live Web Index Discovery across Indian Government domains (.gov.in, .nic.in, .ac.in)
+    const openFeeds = [];
+    if (profiles && profiles.length > 0) {
+      profiles.forEach(p => {
+        const topRoles = (p.roles || []).slice(0, 2).map(r => encodeURIComponent(r.replace(/[\(\)\/\\]/g, ''))).join('+OR+');
+        const topKws = (p.keywords || []).slice(0, 2).map(k => encodeURIComponent(k.replace(/[\(\)\/\\]/g, ''))).join('+OR+');
+        const roleQuery = topRoles || 'engineer+OR+developer+OR+officer';
+        const kwQuery = topKws ? `+(${topKws})` : '';
+        openFeeds.push(`https://news.google.com/rss/search?q=site:gov.in+(recruitment+OR+vacancy)+(${roleQuery})${kwQuery}+2026&hl=en-IN&gl=IN&ceid=IN:en`);
+      });
+    }
+    if (openFeeds.length === 0) {
+      openFeeds.push(
+        'https://news.google.com/rss/search?q=site:gov.in+(recruitment+OR+vacancy)+(software+OR+engineer+OR+developer)+2026&hl=en-IN&gl=IN&ceid=IN:en',
+        'https://news.google.com/rss/search?q=site:gov.in+(recruitment+OR+vacancy)+(cyber+OR+forensic+OR+data)+2026&hl=en-IN&gl=IN&ceid=IN:en'
+      );
+    }
 
-    for (const feedUrl of openFeeds) {
+    const uniqueFeeds = [...new Set(openFeeds)].slice(0, 6);
+    for (const feedUrl of uniqueFeeds) {
       try {
         const feedVacancies = scanFeedWithBackoff(feedUrl, 'news.google.com');
         feedVacancies.forEach(vac => {
@@ -1815,41 +1882,148 @@ function saveAllProfiles(profilesList, overwriteAll = false) {
   }
 }
 
+function getGeminiApiKey() {
+  try {
+    const key = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+    if (key && key.trim()) return key.trim();
+  } catch (_) {}
+  try {
+    const ss = getDatabaseSpreadsheet();
+    const sheet = ss.getSheetByName('Settings');
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === 'GEMINI_API_KEY' && data[i][1]) {
+          return String(data[i][1]).trim();
+        }
+      }
+    }
+  } catch (_) {}
+  return '';
+}
+
+function callGeminiAiInAppsScript(prompt, apiKey = null) {
+  const key = apiKey || getGeminiApiKey();
+  if (!key) return null;
+  const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(key);
+  const payload = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.1,
+      maxOutputTokens: 500
+    }
+  };
+  try {
+    const res = UrlFetchApp.fetch(endpoint, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+    if (res.getResponseCode() === 200) {
+      const json = JSON.parse(res.getContentText());
+      return json?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+    }
+  } catch (err) {
+    Logger.log('Gemini AI call in Apps Script failed: ' + err.message);
+  }
+  return null;
+}
+
+function callGeminiProfileMatch(vacTitle, vacOrg, profile, apiKey = null) {
+  const key = apiKey || getGeminiApiKey();
+  if (!key) return null;
+  const rolesList = (profile.roles || []).join(', ');
+  const skillsList = (profile.keywords || []).slice(0, 10).join(', ');
+  const prompt = `You are an Indian employment qualification expert.
+Determine if the following government job advertisement is relevant to this candidate.
+Job Title: "${vacTitle}"
+Organisation: "${vacOrg}"
+Candidate Target Roles: "${rolesList}"
+Candidate Skills/Domain: "${skillsList}"
+
+Answer in valid JSON only, no markdown:
+{"isRelevant": true or false, "rationale": "one short sentence"}`;
+
+  try {
+    const raw = callGeminiAiInAppsScript(prompt, key);
+    if (!raw) return null;
+    const clean = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    if (typeof parsed.isRelevant === 'boolean') {
+      return parsed.isRelevant;
+    }
+  } catch (_) {}
+  return null;
+}
+
 function getRegisteredProfiles() {
   const profiles = [];
   try {
     const ss = getDatabaseSpreadsheet();
     const sheet = ss.getSheetByName('Profiles');
-    if (!sheet || sheet.getLastRow() <= 1) return profiles;
+    if (sheet && sheet.getLastRow() > 1) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        const id = String(data[i][0] || '').trim();
+        const name = String(data[i][1] || '').trim();
+        const rolesStr = String(data[i][2] || '').trim();
+        const keywordsStr = String(data[i][3] || '').trim();
+        const targetFocusStr = String(data[i][4] || '').trim();
+        const emailRecipient = String(data[i][5] || '').trim();
 
-    const data = sheet.getDataRange().getValues();
-    for (let i = 1; i < data.length; i++) {
-      const id = String(data[i][0] || '').trim();
-      const name = String(data[i][1] || '').trim();
-      const rolesStr = String(data[i][2] || '').trim();
-      const keywordsStr = String(data[i][3] || '').trim();
-      const targetFocusStr = String(data[i][4] || '').trim();
-      const emailRecipient = String(data[i][5] || '').trim();
+        if (!name) continue;
 
-      if (!name) continue;
+        let targetFocus = {};
+        try {
+          if (targetFocusStr) targetFocus = JSON.parse(targetFocusStr);
+        } catch (_) {}
 
-      let targetFocus = {};
-      try {
-        if (targetFocusStr) targetFocus = JSON.parse(targetFocusStr);
-      } catch (_) {}
-
-      profiles.push({
-        id: id || `prof-${i}`,
-        name: name,
-        roles: rolesStr.split(',').map(s => s.trim()).filter(Boolean),
-        keywords: keywordsStr.split(',').map(s => s.trim()).filter(Boolean),
-        targetFocus: targetFocus,
-        emailRecipient: emailRecipient
-      });
+        profiles.push({
+          id: id || `prof-${i}`,
+          name: name,
+          roles: rolesStr.split(',').map(s => s.trim()).filter(Boolean),
+          keywords: keywordsStr.split(',').map(s => s.trim()).filter(Boolean),
+          targetFocus: targetFocus,
+          emailRecipient: emailRecipient
+        });
+      }
     }
   } catch (err) {
     Logger.log('Error reading registered profiles: ' + err.message);
   }
+
+  // Fallback: If no profiles are registered in sheet yet, provide multi-domain baseline
+  if (profiles.length === 0) {
+    const userEmail = getRecipientEmail();
+    return [
+      {
+        id: 'profile-software-engineer',
+        name: 'Software Engineering & Full Stack Developer',
+        roles: ['Software Engineer', 'Full Stack Developer', 'Backend Engineer', 'Project Engineer', 'Scientist B', 'Technical Officer'],
+        keywords: ['Python', 'Node.js', 'React', 'Java', 'Spring Boot', 'PostgreSQL', 'Docker', 'Microservices', 'REST APIs'],
+        targetFocus: { enabled: false },
+        emailRecipient: userEmail
+      },
+      {
+        id: 'profile-data-ai',
+        name: 'Data Science, Machine Learning & AI Specialist',
+        roles: ['Data Scientist', 'Machine Learning Engineer', 'AI Research Engineer', 'Project Scientist', 'Data Analyst'],
+        keywords: ['Machine Learning', 'Deep Learning', 'Python', 'PyTorch', 'TensorFlow', 'NLP', 'Generative AI', 'SQL'],
+        targetFocus: { enabled: false },
+        emailRecipient: userEmail
+      },
+      {
+        id: 'profile-primary-dfir',
+        name: 'Digital Forensics & Incident Response (DFIR)',
+        roles: ['Digital Forensics Examiner', 'Cyber Forensics Analyst', 'Digital Evidence Examiner', 'Forensic Scientist'],
+        keywords: ['Digital Forensics', 'Mobile Forensics', 'Disk Imaging', 'Evidence Handling', 'Section 65B', 'Autopsy', 'FTK Imager'],
+        targetFocus: { enabled: false },
+        emailRecipient: userEmail
+      }
+    ];
+  }
+
   return profiles;
 }
 
@@ -1901,40 +2075,82 @@ function isVacancyRelevantToProfile(vac, profile) {
   if (roles.some(role => vacDesc.includes(role))) return true;
   if (keywords.some(kw => vacDesc.includes(kw))) return true;
 
-  // 3. Flexible Semantic & Token-Based Matching
-  // For Indian Technical & DFIR careers (B.E. Computer Engineering + DFIR examiner):
-  const domainStems = ['forensic', 'cyber', 'security', 'dfir', 'incident', 'evidence', 'malware', 'vapt', 'soc', 'investigat', 'digital', 'cctv'];
-  const roleStems = ['examiner', 'analyst', 'officer', 'scientist', 'engineer', 'specialist', 'expert', 'consultant', 'technic', 'programmer', 'developer', 'associate', 'fellow', 'faculty', 'professor'];
-  const techStems = ['computer', 'software', 'information technology', 'system', 'network', 'data'];
+  // 3. Dynamic Profile-Aware Token & Stem Matching (Works for ANY Profile: Software, AI, Cloud, Cyber)
+  const dynamicStems = [];
+  roles.forEach(r => {
+    r.toLowerCase().split(/[\s\-_/,\(\)]+/).forEach(t => {
+      if (t.length >= 3 && !['with', 'from', 'level', 'post', 'lead', 'team', 'senior', 'junior', 'grade', 'project', 'specialist', 'officer', 'engineer'].includes(t)) {
+        dynamicStems.push(t);
+      }
+    });
+  });
+  keywords.forEach(k => {
+    k.toLowerCase().split(/[\s\-_/,\(\)]+/).forEach(t => {
+      if (t.length >= 3 && !['with', 'from', 'level', 'post', 'tools'].includes(t)) {
+        dynamicStems.push(t);
+      }
+    });
+  });
 
-  const hasDomainStem = domainStems.some(s => vacDesc.includes(s));
-  const hasRoleStem = roleStems.some(s => vacDesc.includes(s));
-  const hasTechStem = techStems.some(s => vacDesc.includes(s));
+  const universalRoleStems = ['engineer', 'developer', 'analyst', 'scientist', 'officer', 'specialist', 'expert', 'consultant', 'technic', 'programmer', 'architect', 'associate', 'fellow', 'faculty', 'professor', 'examiner', 'manager', 'lead', 'mts'];
+  const hasRoleStem = universalRoleStems.some(s => vacDesc.includes(s));
+  const matchedProfileStems = dynamicStems.filter(stem => vacDesc.includes(stem));
 
-  // Match condition A: Specialized domain (cyber/forensic) combined with a role or engineering stem
-  // e.g. "Junior Scientific Officer (Cyber)", "Project Engineer (Cyber Security)", "Forensic Assistant"
-  if (hasDomainStem && (hasRoleStem || hasTechStem)) {
-    return true;
+  if (matchedProfileStems.length >= 2) {
+    return true; // 2 or more distinct profile tokens matched
+  }
+  if (matchedProfileStems.length >= 1 && hasRoleStem) {
+    return true; // Skill/domain token + technical role stem matched (e.g. Python Developer, Data Scientist, Cloud Engineer)
   }
 
-  // Match condition B: Apex Forensics / Cyber Agency Posting (NFSU, CFSL, CBI Cyber, I4C, CERT-In, DFS)
-  const apexForensicDomains = ['nfsu.ac.in', 'cfslcbi.gov.in', 'dfs.nic.in', 'cert-in.org.in', 'cybercrime.gov.in', 'dfs.gujarat.gov.in', 'bprd.nic.in'];
-  const isApexForensic = apexForensicDomains.some(ad => vacDomain && (vacDomain === ad || vacDomain.endsWith('.' + ad)));
-  if (isApexForensic && (hasRoleStem || hasTechStem || hasDomainStem)) {
-    return true;
+  // 4. Multi-Domain Technical Stems & Apex Bodies Matching
+  // Software / Full Stack:
+  const isSoftwareProfile = dynamicStems.some(s => ['software', 'python', 'java', 'react', 'web', 'backend', 'developer', 'coding', 'fullstack'].includes(s));
+  if (isSoftwareProfile) {
+    const swStems = ['software', 'developer', 'programmer', 'computer', 'information technology', 'systems', 'cloud', 'application'];
+    if (swStems.some(s => vacDesc.includes(s)) && hasRoleStem) return true;
+    const apexTechDomains = ['cdac.in', 'nic.in', 'nielit.in', 'nielit.gov.in', 'drdo.gov.in', 'stpi.in', 'cris.org.in'];
+    if (apexTechDomains.some(atd => vacDomain && (vacDomain === atd || vacDomain.endsWith('.' + atd))) && hasRoleStem) return true;
   }
 
-  // Match condition C: Apex Tech R&D (C-DAC, NIC, NIELIT, DRDO) with Software / Computer Engineering roles
-  const apexTechDomains = ['cdac.in', 'nic.in', 'nielit.in', 'nielit.gov.in', 'drdo.gov.in', 'rac.gov.in'];
-  const isApexTech = apexTechDomains.some(atd => vacDomain && (vacDomain === atd || vacDomain.endsWith('.' + atd)));
-  if (isApexTech && hasTechStem && hasRoleStem) {
-    return true;
+  // Data Science / AI / ML:
+  const isAiDataProfile = dynamicStems.some(s => ['data', 'analytics', 'machine', 'learning', 'deep', 'pytorch', 'ai', 'intelligence'].includes(s));
+  if (isAiDataProfile) {
+    const dataStems = ['data', 'analytics', 'statistic', 'machine learning', 'artificial intelligence', 'python'];
+    if (dataStems.some(s => vacDesc.includes(s)) && hasRoleStem) return true;
   }
 
-  // Match condition D: Target Domain Match (Priority Boost Mode)
+  // Cyber Security & DFIR:
+  const isCyberProfile = dynamicStems.some(s => ['forensic', 'cyber', 'security', 'dfir', 'evidence', 'incident', 'malware', 'vapt', 'soc'].includes(s));
+  if (isCyberProfile) {
+    const domainStems = ['forensic', 'cyber', 'security', 'dfir', 'incident', 'evidence', 'malware', 'vapt', 'soc', 'investigat', 'digital', 'cctv'];
+    if (domainStems.some(s => vacDesc.includes(s)) && hasRoleStem) return true;
+    const apexForensicDomains = ['nfsu.ac.in', 'cfslcbi.gov.in', 'dfs.nic.in', 'cert-in.org.in', 'cybercrime.gov.in', 'dfs.gujarat.gov.in', 'bprd.nic.in'];
+    if (apexForensicDomains.some(ad => vacDomain && (vacDomain === ad || vacDomain.endsWith('.' + ad)))) return true;
+  }
+
+  // Cloud & DevOps:
+  const isCloudProfile = dynamicStems.some(s => ['cloud', 'devops', 'aws', 'azure', 'docker', 'kubernetes', 'infrastructure'].includes(s));
+  if (isCloudProfile) {
+    const cloudStems = ['cloud', 'devops', 'infrastructure', 'linux', 'system admin', 'network'];
+    if (cloudStems.some(s => vacDesc.includes(s)) && hasRoleStem) return true;
+  }
+
+  // Target Domain Match (Priority Boost Mode)
   if (targetDomains.length > 0) {
     const domainMatch = targetDomains.some(td => vacDomain && (vacDomain === td || vacDomain.endsWith('.' + td)));
-    if (domainMatch && (hasRoleStem || hasTechStem || hasDomainStem)) return true;
+    if (domainMatch && (hasRoleStem || matchedProfileStems.length > 0)) return true;
+  }
+
+  // 5. Gemini AI Evaluation (if API Key is configured)
+  const geminiKey = getGeminiApiKey();
+  if (geminiKey && vacTitle.length >= 8) {
+    try {
+      const aiVerdict = callGeminiProfileMatch(vac.title, vac.organisation, profile, geminiKey);
+      if (typeof aiVerdict === 'boolean') {
+        return aiVerdict;
+      }
+    } catch (_) {}
   }
 
   return false;

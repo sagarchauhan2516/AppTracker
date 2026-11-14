@@ -1,6 +1,6 @@
 /**
- * Vacancy Radar India - Free Public Feeds & RSS/Atom Provider
- * Zero-cost discovery utilizing open public government feeds and verified career boards.
+ * Vacancy Radar India - Public Feeds & RSS/Atom Provider
+ * Discovery utilizing open public government feeds and verified career boards.
  */
 
 import { SearchProviderInterface } from './searchProviderInterface.js';
@@ -10,7 +10,7 @@ export class PublicFeedsProvider extends SearchProviderInterface {
   constructor(config = {}) {
     super(config);
     this.id = 'FREE_PUBLIC_FEEDS';
-    this.name = 'Public RSS & Open Government Feeds (Zero Cost)';
+    this.name = 'Public RSS & Open Government Feeds';
     this.isFreeByDefault = true;
     this.requiresApiKey = false;
     this.queriesUsed = 0;

@@ -410,9 +410,6 @@ export function renderCredentialsTab(providers, providerConfig) {
 
       </div>
     `;
-
-      </div>
-    `;
 }
 
 export function bindCredentialsTabEvents(container, ctx) {
@@ -650,7 +647,6 @@ export function bindCredentialsTabEvents(container, ctx) {
       if (webhookUrl) document.getElementById('btnTestWebhookPing')?.click();
       if (googleApiKey) document.getElementById('btnTestGoogleApi')?.click();
       if (tgToken) document.getElementById('btnTestTelegramCredentials')?.click();
-    });
     });
 
     // Test Google Custom Search API Live
@@ -1694,5 +1690,3 @@ export function bindCredentialsTabEvents(container, ctx) {
       lucide.createIcons();
     }
   }
-
-}

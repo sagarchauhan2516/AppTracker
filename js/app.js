@@ -94,10 +94,12 @@ class App {
 
   async init() {
     window.app = this;
-    this.initTheme();
-    await this.hydratePersistentCredentials();
-    await this.syncTrackedApplications();
-    this.normalizeAndRepairVacancies();
+    try {
+      this.initTheme();
+    } catch (e) {
+      console.warn('[VacancyRadar] Theme init notice:', e);
+    }
+
     this.profileBuilderUI = new ProfileBuilderUI('profileBuilderContainer', () => {
       this.renderProfileSelector();
       this.refreshAll();
@@ -110,6 +112,8 @@ class App {
       this.renderProfileSelector();
       this.refreshAll();
     });
+
+    // Bind all UI event listeners immediately so buttons are active instantly
     this.bindEvents();
 
     // Subscribe to reactive state events
@@ -133,22 +137,43 @@ class App {
       })
     ];
 
-    this.renderProfileSelector();
-    this.refreshAll();
-    this.checkAndRenderPortalDeadlineReminders();
+    // Initial render of active views
+    try {
+      this.normalizeAndRepairVacancies();
+      this.renderProfileSelector();
+      this.refreshAll();
+    } catch (e) {
+      console.warn('[VacancyRadar] Initial view render notice:', e);
+    }
+
+    // Background asynchronous hydration (safely isolated)
+    try {
+      await this.hydratePersistentCredentials();
+      await this.syncTrackedApplications();
+      this.checkAndRenderPortalDeadlineReminders();
+    } catch (err) {
+      console.warn('[VacancyRadar] Background credential/application sync notice:', err);
+    }
 
     // Periodic Portal Deadline Checker (checks every 15 minutes while page is active)
-    setInterval(() => {
-      this.checkAndRenderPortalDeadlineReminders();
+    const deadlineTimer = setInterval(() => {
+      try {
+        this.checkAndRenderPortalDeadlineReminders();
+      } catch (_) {}
     }, 15 * 60 * 1000);
+    if (deadlineTimer && typeof deadlineTimer.unref === 'function') {
+      deadlineTimer.unref();
+    }
 
     // If database contains only test data and webhook is configured, quietly pull real vacancies from Google Sheets
-    const vacancies = storageService.getVacancies();
-    const hasOnlyTestData = vacancies.length > 0 && vacancies.every(v => v.isTestData);
-    const webhookUrl = storageService.getProviderConfig()?.googleAppsScriptWebhookUrl?.trim();
-    if (hasOnlyTestData && webhookUrl) {
-      this.pullRealVacanciesQuietly(webhookUrl);
-    }
+    try {
+      const vacancies = storageService.getVacancies();
+      const hasOnlyTestData = vacancies.length > 0 && vacancies.every(v => v.isTestData);
+      const webhookUrl = storageService.getProviderConfig()?.googleAppsScriptWebhookUrl?.trim();
+      if (hasOnlyTestData && webhookUrl) {
+        this.pullRealVacanciesQuietly(webhookUrl);
+      }
+    } catch (_) {}
   }
 
   refreshAll() {
@@ -1014,7 +1039,11 @@ class App {
 
 
 const app = new App();
-window.addEventListener('DOMContentLoaded', () => app.init());
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => app.init());
+} else {
+  app.init();
+}
 
 // Global Error Boundaries for graceful recovery and user-friendly error banners
 window.addEventListener('unhandledrejection', (event) => {

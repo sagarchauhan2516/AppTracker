@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="css/style.css?v=3.0">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="js/vendor/lucide.min.js"></script>
+  <script>if (typeof lucide === 'undefined') { document.write('<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"><\/script>'); }</script>
 </head>
 <body>
   <!-- Global Form Confirmation Overlay Banner Container -->
@@ -670,7 +671,7 @@
     </div>
   </div>
 
-  <script>lucide.createIcons();</script>
+  <script>if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();</script>
   <script type="module" src="js/app.js?v=4.0"></script>
 </body>
 </html>

@@ -48,7 +48,7 @@ export async function syncTrackedApplications(app) {
 export function checkAndRenderPortalDeadlineReminders(app) {
     const banner = document.getElementById('portalDeadlineAlertBanner');
     if (!banner) return;
-    if (sessionStorage.getItem('portal_deadline_banner_dismissed') === 'true') {
+    if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('portal_deadline_banner_dismissed') === 'true') {
       banner.style.display = 'none';
       return;
     }

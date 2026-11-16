@@ -811,4 +811,3 @@ export function openEvidenceModal(app, vacId) {
     document.getElementById('evidenceModal').classList.add('active');
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
-  }

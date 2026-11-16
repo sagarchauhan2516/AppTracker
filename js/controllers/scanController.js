@@ -7,6 +7,9 @@ import { storageService } from '../services/storageService.js';
 import { searchOrchestrationEngine } from '../engine/searchOrchestrationEngine.js';
 import { showConfirmationBanner } from '../services/notificationService.js';
 import { escapeHtml } from '../utils/htmlUtils.js';
+import { SourceRegistryService } from '../services/sourceRegistryService.js';
+import { VerificationEngine } from '../engine/verificationEngine.js';
+import { MatchingEngine } from '../engine/matchingEngine.js';
 
 export async function hydratePersistentCredentials(app) {
     try {
@@ -660,6 +663,6 @@ export async function handleManualScan(app) {
         </div>
       `;
       if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-      document.getElementById('btnCloseScanError').onclick = () => resultModal.classList.remove('active');
+      document.getElementById('btnCloseScanError')?.addEventListener('click', () => resultModal?.classList.remove('active'));
     }
   }

@@ -129,4 +129,16 @@ test('Button Interactivity: Header buttons, modals, and controllers bind and act
   btnTheme.click();
   const revertedTheme = document.documentElement.getAttribute('data-theme');
   assert.strictEqual(initialTheme, revertedTheme, 'Theme should toggle back on second click');
+
+  // 4. Test Manual Scan does not throw ReferenceError for SourceRegistryService
+  const btnScan = document.getElementById('btnManualScan');
+  assert(btnScan, 'btnManualScan must exist in DOM');
+  // Mock search provider search execution
+  app.searchProvider = {
+    search: async () => ({ results: [], metadata: { providerUsed: 'Mock' } }),
+    getUsageStats: () => ({ remaining: 100, limit: 100 })
+  };
+  await assert.doesNotReject(async () => {
+    await app.handleManualScan();
+  }, 'handleManualScan must execute without ReferenceError (SourceRegistryService defined)');
 });

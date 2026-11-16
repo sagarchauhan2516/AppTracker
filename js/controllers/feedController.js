@@ -7,6 +7,7 @@ import { storageService } from '../services/storageService.js';
 import { VerificationStatus, SourceCategory } from '../models/types.js';
 import { MatchingEngine } from '../engine/matchingEngine.js';
 import { DuplicateDetector } from '../engine/duplicateDetector.js';
+import { VerificationEngine } from '../engine/verificationEngine.js';
 import { showConfirmationBanner } from '../services/notificationService.js';
 import { escapeHtml } from '../utils/htmlUtils.js';
 

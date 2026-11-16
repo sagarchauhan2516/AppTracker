@@ -21,7 +21,7 @@ export function renderSources(app) {
     
     if (badge) badge.textContent = stats.providerName;
     if (disclosure) disclosure.textContent = stats.coverageDisclosure || '';
-    if (costDisplay) costDisplay.textContent = `₹${stats.estimatedCostInr.toFixed(2)}`;
+    if (costDisplay) costDisplay.textContent = `₹${(stats.estimatedCostInr != null && !isNaN(stats.estimatedCostInr)) ? stats.estimatedCostInr.toFixed(2) : '0.00'}`;
 
     let sources = storageService.getSources();
     if (app.filterState.sourceCategory && app.filterState.sourceCategory !== 'ALL') {

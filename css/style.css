@@ -1938,3 +1938,74 @@ body {
   justify-content: flex-end;
   gap: 0.5rem;
 }
+
+/* UI-UX Pro Max: Quick Add Target & Keyword Interactive Pill Buttons */
+.btn-quick-add-site,
+.btn-quick-add-kw {
+  position: relative;
+  font-family: var(--font-body);
+  border-radius: var(--radius-pill);
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-quick-add-site:hover,
+.btn-quick-add-kw:hover {
+  transform: translateY(-1px);
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.btn-quick-add-site.added {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+.btn-quick-add-site.added:hover {
+  background: rgba(16, 185, 129, 0.22) !important;
+  border-color: rgba(16, 185, 129, 0.6) !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+}
+
+.btn-quick-add-kw.added {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+
+.btn-quick-add-site:focus-visible,
+.btn-quick-add-kw:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+.btn-remove-site,
+.btn-remove-kw,
+.btn-remove-nkw {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.btn-remove-site:hover,
+.btn-remove-kw:hover,
+.btn-remove-nkw:hover {
+  transform: scale(1.15);
+  color: #ef4444 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-quick-add-site,
+  .btn-quick-add-kw,
+  .btn-remove-site,
+  .btn-remove-kw,
+  .btn-remove-nkw {
+    transition: none !important;
+    transform: none !important;
+  }
+}

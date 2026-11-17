@@ -1371,6 +1371,16 @@ function executeCloudWebSearch(existingMap, profiles = []) {
   return discovered;
 }
 
+function escapeEmailHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 /**
  * Sends a rich, responsive HTML alert digest via GmailApp.
  * Strictly provides direct official government links and verified dates.
@@ -1412,157 +1422,283 @@ function sendEmailNotification(newVacancies, closingSoon, scanSummary = {}) {
   const scanTimeFormatted = Utilities.formatDate(new Date(), CONFIG.DEFAULT_TIMEZONE, 'dd MMM yyyy, HH:mm') + ' IST';
 
   let htmlBody = `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 650px; margin: 0 auto; color: #1e293b; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; line-height: 1.5;">
-      
-      <!-- Header Banner -->
-      <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 22px 24px; color: #f8fafc;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="background: #2563eb; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em;">RADAR</span>
-            <h2 style="margin: 0; color: #60a5fa; font-size: 19px; font-weight: 700; letter-spacing: -0.02em;">Vacancy Radar India</h2>
-          </div>
-          <span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600;">52+ Official Gov &amp; Apex Portals</span>
-        </div>
-        <p style="margin: 6px 0 0; font-size: 13px; color: #94a3b8;">
-          ${profileName ? `<strong style="color: #f8fafc;">Role Profile: ${profileName}</strong> &bull; ` : ''}Official Government Opportunities Monitor (IST Scan: ${scanTimeFormatted})
-        </p>
-      </div>
-
-      <!-- Quick KPI Badges -->
-      <div style="background: #f1f5f9; padding: 12px 20px; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px;">
-        <div>Sources Checked: <strong style="color: #0369a1;">${totalSourcesCount} Official Portals + Live Gov Index</strong></div>
-        <div style="color: #059669;">New Announcements: <strong>+${newCount}</strong></div>
-        <div style="color: ${deadlineCount > 0 ? '#dc2626' : '#64748b'};">Urgent Deadlines: <strong>${deadlineCount}</strong></div>
-      </div>
-
-      <div style="padding: 24px; background: #fafafa;">
-
-        <!-- 1. Newly Discovered & Verified Vacancies -->
-        ${newCount > 0 ? `
-          <div style="margin-bottom: 24px;">
-            <div style="margin: 0 0 12px 0; border-bottom: 2px solid #10b981; padding-bottom: 6px; display: flex; align-items: center;">
-              <span style="background: #059669; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 3px; margin-right: 6px;">NEW</span>
-              <h3 style="color: #059669; font-size: 15px; margin: 0; font-weight: 700;">
-                Official Government &amp; Apex Announcements (+${newCount})
-              </h3>
-            </div>
-            ${newVacancies.map(v => {
-              const targetUrl = v.verification?.officialNoticePdfUrl || v.verification?.applicationUrl || v.sourceUrl;
-              let domainName = '';
-              try { domainName = new URL(targetUrl).hostname.replace(/^www\./i, ''); } catch (_) { domainName = 'official.gov.in'; }
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${escapeEmailHtml(subject)}</title>
+      <style>
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+        @media screen and (max-width: 600px) {
+          .email-container { width: 100% !important; }
+          .fluid { width: 100% !important; max-width: 100% !important; height: auto !important; margin-left: auto !important; margin-right: auto !important; }
+          .stack-column { display: block !important; width: 100% !important; max-width: 100% !important; direction: ltr !important; }
+          .mobile-p-15 { padding: 15px !important; }
+        }
+      </style>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #0b1120; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <!-- Outer Wrapper -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #0b1120; width: 100%; margin: 0; padding: 24px 0;">
+        <tr>
+          <td align="center" style="padding: 0 10px;">
+            <!-- Main Content Container -->
+            <table role="presentation" class="email-container" width="620" cellpadding="0" cellspacing="0" border="0" style="max-width: 620px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.35); border: 1px solid #1e293b;">
               
-              const closingText = (v.dates && v.dates.closingDate) 
-                ? `<span style="color: #e11d48; font-weight: 700;">${v.dates.closingDate}</span>` 
-                : `<span style="color: #64748b; font-style: italic;">Refer Official Notification PDF</span>`;
+              <!-- 1. Header Banner -->
+              <tr>
+                <td style="background-color: #0f172a; padding: 24px 28px; border-bottom: 2px solid #2563eb;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td valign="middle" align="left">
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                          <tr>
+                            <td style="background-color: #2563eb; color: #ffffff; font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 4px; letter-spacing: 0.08em; text-transform: uppercase;">
+                              RADAR
+                            </td>
+                            <td style="padding-left: 10px; font-size: 20px; font-weight: 800; color: #60a5fa; letter-spacing: -0.02em;">
+                              Vacancy Radar India
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td valign="middle" align="right">
+                        <span style="background-color: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">
+                          52+ Apex Portals
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" style="padding-top: 10px; font-size: 13px; color: #94a3b8; line-height: 1.4;">
+                        ${profileName ? `<strong style="color: #f1f5f9; font-size: 13.5px;">Role Profile: ${escapeEmailHtml(profileName)}</strong> &bull; ` : ''}Official Government &amp; Apex Opportunities Monitor &bull; ${scanTimeFormatted}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
-              return `
-                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <strong style="font-size: 14px; color: #0f172a; line-height: 1.4;">${v.title}</strong>
-                    <span style="background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; border: 1px solid #bbf7d0;">
-                      GOV: ${domainName}
-                    </span>
-                  </div>
-                  <div style="font-size: 12px; color: #475569; margin-top: 6px;">
-                    Authority: <strong>${v.organisation || 'Apex Public Authority'}</strong><br>
-                    Official Closing Date: <strong>${closingText}</strong>
-                    ${v.advertisementNumber ? `<br>Advt Reference: <code style="font-family: monospace; color: #0284c7;">${v.advertisementNumber}</code>` : ''}
-                  </div>
-                  <div style="margin-top: 10px;">
-                    <a href="${targetUrl}" style="background: #0284c7; color: #ffffff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; display: inline-block;">
-                      [PDF] View Official Announcement &rarr;
-                    </a>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        ` : `
-          <!-- When 0 new posts emerged in this exact scan cycle, show open active verified opportunities -->
-          <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px; margin-bottom: 22px;">
-            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px; display: flex; align-items: center;">
-              <span style="background: #0284c7; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 3px; margin-right: 6px;">ACTIVE</span>
-              <div>
-                <h3 style="color: #0369a1; font-size: 15px; margin: 0; font-weight: 700;">
-                  Currently Open Official Opportunities (${activeVacancies.length})
-                </h3>
-                <p style="margin: 3px 0 0 0; font-size: 12px; color: #64748b;">
-                  Scanned <strong>${totalSourcesCount}+ Official Government Portals &amp; Live Indian Technical Index</strong>. No new notices were issued in this 6-hour scan window. The verified opportunities below remain open for application:
-                </p>
-              </div>
-            </div>
+              <!-- 2. KPI Summary Bar -->
+              <tr>
+                <td style="background-color: #f8fafc; padding: 14px 28px; border-bottom: 1px solid #e2e8f0;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="left" style="font-size: 12px; color: #475569;">
+                        Portals Monitored: <strong style="color: #0284c7;">${totalSourcesCount} Apex Sources</strong>
+                      </td>
+                      <td align="center" style="font-size: 12px; color: #059669; font-weight: 600;">
+                        New Notices: <strong style="color: #059669;">+${newCount}</strong>
+                      </td>
+                      <td align="right" style="font-size: 12px; color: ${deadlineCount > 0 ? '#dc2626' : '#64748b'}; font-weight: 600;">
+                        Closing in ≤ 7 Days: <strong style="color: ${deadlineCount > 0 ? '#dc2626' : '#64748b'};">${deadlineCount}</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
 
-            ${activeVacancies.length > 0 ? activeVacancies.map(v => {
-              let domainName = '';
-              try { domainName = new URL(v.targetUrl).hostname.replace(/^www\./i, ''); } catch (_) { domainName = 'official.gov.in'; }
-              const closingBadge = (v.daysRemaining !== null)
-                ? `<span style="background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid #bae6fd;">${v.daysRemaining} days left (${v.closingDate})</span>`
-                : `<span style="color: #64748b; font-size: 12px;">Closes: ${v.closingDate}</span>`;
+              <!-- 3. Main Opportunities Body -->
+              <tr>
+                <td class="mobile-p-15" style="padding: 26px 28px; background-color: #f1f5f9;">
+                  
+                  <!-- Section A: Newly Discovered Opportunities -->
+                  ${newCount > 0 ? `
+                    <div style="margin-bottom: 24px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 12px; border-bottom: 2px solid #10b981; padding-bottom: 6px;">
+                        <tr>
+                          <td valign="middle" align="left">
+                            <span style="background-color: #059669; color: #ffffff; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 3px; margin-right: 6px; letter-spacing: 0.05em;">NEW</span>
+                            <strong style="color: #059669; font-size: 15px; font-weight: 700;">
+                              Official Apex &amp; Public Sector Announcements (+${newCount})
+                            </strong>
+                          </td>
+                        </tr>
+                      </table>
 
-              return `
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                    <strong style="font-size: 13.5px; color: #0f172a; line-height: 1.4;">${v.title}</strong>
-                    <span style="background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; border: 1px solid #bbf7d0;">
-                      GOV: ${domainName}
-                    </span>
-                  </div>
-                  <div style="font-size: 12px; color: #475569; margin-top: 5px;">
-                    Authority: <strong>${v.organisation || 'Apex Public Authority'}</strong> &bull; Deadline: ${closingBadge}
-                    ${v.advertisementNumber ? `<br>Advt Reference: <code style="font-family: monospace; color: #0284c7;">${v.advertisementNumber}</code>` : ''}
-                  </div>
-                  <div style="margin-top: 8px;">
-                    <a href="${v.targetUrl}" style="background: #0284c7; color: #ffffff; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 11.5px; font-weight: 600; display: inline-block;">
-                      [PDF] View Official Announcement &rarr;
-                    </a>
-                  </div>
-                </div>
-              `;
-            }).join('') : `
-              <div style="text-align: center; color: #64748b; font-size: 13px; padding: 10px;">
-                All 52+ official government portals checked and up-to-date.
-              </div>
-            `}
-          </div>
-        `}
+                      ${newVacancies.map(v => {
+                        const targetUrl = v.verification?.officialNoticePdfUrl || v.verification?.applicationUrl || v.sourceUrl;
+                        let domainName = '';
+                        try { domainName = new URL(targetUrl).hostname.replace(/^www\./i, ''); } catch (_) { domainName = 'official.gov.in'; }
+                        
+                        const closingText = (v.dates && v.dates.closingDate) 
+                          ? `<span style="color: #dc2626; font-weight: 700;">${escapeEmailHtml(v.dates.closingDate)}</span>` 
+                          : `<span style="color: #64748b; font-style: italic;">Refer Official PDF Notice</span>`;
 
-        <!-- 2. Upcoming Deadlines (≤ 7 Days) -->
-        ${deadlineCount > 0 ? `
-          <div style="margin-bottom: 24px;">
-            <div style="margin: 0 0 12px 0; border-bottom: 2px solid #ef4444; padding-bottom: 6px; display: flex; align-items: center;">
-              <span style="background: #dc2626; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 3px; margin-right: 6px;">DEADLINE</span>
-              <h3 style="color: #dc2626; font-size: 15px; margin: 0; font-weight: 700;">
-                Official Deadlines Approaching (Closing Within 7 Days)
-              </h3>
-            </div>
-            ${closingSoon.map(c => `
-              <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 12px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                <div>
-                  <strong style="color: #9f1239;">${c.title}</strong><br>
-                  <span style="font-size: 12px; color: #be123c;">Org: ${c.organisation || 'Apex Board'}</span>
-                </div>
-                <div style="text-align: right; white-space: nowrap;">
-                  <span style="background: #e11d48; color: #ffffff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">
-                    ${c.daysRemaining === 0 ? 'CLOSES TODAY!' : `${c.daysRemaining} days left`}
-                  </span>
-                  <div style="font-size: 11px; color: #64748b; margin-top: 3px;">${c.closingDate}</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
+                        return `
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); overflow: hidden;">
+                            <tr>
+                              <td style="padding: 16px 20px;">
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                  <tr>
+                                    <td valign="top" align="left">
+                                      <span style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.4; display: block;">
+                                        ${escapeEmailHtml(v.title)}
+                                      </span>
+                                    </td>
+                                    <td valign="top" align="right" style="padding-left: 10px; white-space: nowrap;">
+                                      <span style="background-color: #dcfce7; color: #15803d; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid #bbf7d0; text-transform: uppercase;">
+                                        OFFICIAL: ${escapeEmailHtml(domainName)}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </table>
+                                
+                                <div style="margin-top: 8px; font-size: 12.5px; color: #334155; line-height: 1.55;">
+                                  <span style="color: #64748b;">Employer / Board:</span> <strong style="color: #0f172a;">${escapeEmailHtml(v.organisation || 'Apex Public Authority')}</strong><br>
+                                  <span style="color: #64748b;">Official Deadline:</span> <strong>${closingText}</strong>
+                                  ${v.advertisementNumber ? `<br><span style="color: #64748b;">Advt Reference:</span> <code style="font-family: monospace; background-color: #f1f5f9; padding: 2px 6px; border-radius: 3px; color: #0284c7; font-size: 11.5px;">${escapeEmailHtml(v.advertisementNumber)}</code>` : ''}
+                                </div>
 
-        <!-- 3. Zero-Cost Cloud System Health Footer -->
-        <div style="margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px; font-size: 11px; color: #64748b; line-height: 1.6;">
-          <strong>Official Source Guarantee:</strong> 100% of links above point directly to verified official government (.gov.in, .nic.in), public sector undertakings, and accredited university (.ac.in) portals. Zero blog links.<br>
-          <strong>Comprehensive Coverage:</strong> 52+ official portals (C-DAC, NIELIT, NFSU, DRDO RAC, ISRO, BARC, NIC, CERT-In, STPI, ERNET, DIC, SSC, IBPS, RBI, SEBI, BEL, ECIL, RailTel, PowerGrid, ONGC, BHEL, HAL, NTPC, NIA, CBI, NTRO, MHA, CSIR, DFS Gujarat, Delhi Police Cyber, KSP, TN Police, IIT Delhi, IIT Bombay, IIT Madras, Employment News) + Live Indian Technical Web Index.<br>
-          Next Scheduled Scan: 08:00, 14:00, or 20:00 Asia/Kolkata (IST).<br>
-          To manage email preferences, configure your Web App recipient or Google Sheets Settings tab.
-        </div>
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 14px;">
+                                  <tr>
+                                    <td align="center" style="background-color: #2563eb; border-radius: 6px;">
+                                      <a href="${targetUrl}" target="_blank" style="display: inline-block; padding: 8px 18px; font-size: 12.5px; font-weight: 700; color: #ffffff; text-decoration: none; letter-spacing: 0.02em;">
+                                        View Official Notification PDF &rarr;
+                                      </a>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        `;
+                      }).join('')}
+                    </div>
+                  ` : `
+                    <!-- When 0 new notices in current cycle, render open verified opportunities -->
+                    <div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 22px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px;">
+                        <tr>
+                          <td valign="top" align="left">
+                            <span style="background-color: #0284c7; color: #ffffff; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 3px; margin-right: 6px; letter-spacing: 0.05em;">ACTIVE</span>
+                            <strong style="color: #0369a1; font-size: 15px; font-weight: 700;">
+                              Currently Open Verified Opportunities (${activeVacancies.length})
+                            </strong>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b; line-height: 1.45;">
+                              Scanned <strong>${totalSourcesCount}+ Official Portals</strong>. No new circulars emerged in this specific cycle. The verified opportunities below remain active:
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
 
-      </div>
-    </div>
+                      ${activeVacancies.length > 0 ? activeVacancies.map(v => {
+                        let domainName = '';
+                        try { domainName = new URL(v.targetUrl).hostname.replace(/^www\./i, ''); } catch (_) { domainName = 'official.gov.in'; }
+                        const closingBadge = (v.daysRemaining !== null)
+                          ? `<span style="background-color: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid #bae6fd;">${v.daysRemaining} days left (${escapeEmailHtml(v.closingDate)})</span>`
+                          : `<span style="color: #64748b; font-size: 12px;">Closes: ${escapeEmailHtml(v.closingDate)}</span>`;
+
+                        return `
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 12px; overflow: hidden;">
+                            <tr>
+                              <td style="padding: 14px 16px;">
+                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                  <tr>
+                                    <td valign="top" align="left">
+                                      <strong style="font-size: 13.5px; color: #0f172a; line-height: 1.4; display: block;">${escapeEmailHtml(v.title)}</strong>
+                                    </td>
+                                    <td valign="top" align="right" style="padding-left: 8px; white-space: nowrap;">
+                                      <span style="background-color: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">
+                                        GOV: ${escapeEmailHtml(domainName)}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <div style="font-size: 12px; color: #475569; margin-top: 5px; line-height: 1.5;">
+                                  Authority: <strong>${escapeEmailHtml(v.organisation || 'Apex Public Authority')}</strong> &bull; Deadline: ${closingBadge}
+                                  ${v.advertisementNumber ? `<br>Advt Reference: <code style="font-family: monospace; color: #0284c7;">${escapeEmailHtml(v.advertisementNumber)}</code>` : ''}
+                                </div>
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 10px;">
+                                  <tr>
+                                    <td align="center" style="background-color: #0284c7; border-radius: 4px;">
+                                      <a href="${v.targetUrl}" target="_blank" style="display: inline-block; padding: 6px 14px; font-size: 11.5px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                        View Official Notification PDF &rarr;
+                                      </a>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        `;
+                      }).join('') : `
+                        <div style="text-align: center; color: #64748b; font-size: 13px; padding: 10px;">
+                          All 52+ official portals checked and up-to-date.
+                        </div>
+                      `}
+                    </div>
+                  `}
+
+                  <!-- Section B: Deadlines Approaching (≤ 7 Days) -->
+                  ${deadlineCount > 0 ? `
+                    <div style="margin-top: 16px; margin-bottom: 20px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 12px; border-bottom: 2px solid #ef4444; padding-bottom: 6px;">
+                        <tr>
+                          <td valign="middle" align="left">
+                            <span style="background-color: #dc2626; color: #ffffff; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 3px; margin-right: 6px; letter-spacing: 0.05em;">DEADLINE</span>
+                            <strong style="color: #dc2626; font-size: 15px; font-weight: 700;">
+                              Official Deadlines Approaching (Closing Within 7 Days)
+                            </strong>
+                          </td>
+                        </tr>
+                      </table>
+
+                      ${closingSoon.map(c => `
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; margin-bottom: 10px;">
+                          <tr>
+                            <td style="padding: 12px 16px;">
+                              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                  <td valign="middle" align="left">
+                                    <strong style="color: #9f1239; font-size: 13.5px; display: block;">${escapeEmailHtml(c.title)}</strong>
+                                    <span style="font-size: 12px; color: #be123c;">Organisation: ${escapeEmailHtml(c.organisation || 'Apex Board')}</span>
+                                  </td>
+                                  <td valign="middle" align="right" style="padding-left: 10px; white-space: nowrap;">
+                                    <span style="background-color: #e11d48; color: #ffffff; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 4px;">
+                                      ${c.daysRemaining === 0 ? 'CLOSES TODAY!' : `${c.daysRemaining} days left`}
+                                    </span>
+                                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">${escapeEmailHtml(c.closingDate)}</div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+
+                </td>
+              </tr>
+
+              <!-- 4. Footer Banner -->
+              <tr>
+                <td style="background-color: #0f172a; padding: 20px 28px; border-top: 1px solid #1e293b; color: #94a3b8; font-size: 11.5px; line-height: 1.6;">
+                  <strong style="color: #f8fafc;">100% Official Source Guarantee:</strong> Every alert link points strictly to verified apex government (.gov.in, .nic.in) or university (.ac.in) portals. Zero third-party aggregator links.<br>
+                  <strong style="color: #f8fafc;">Portals Monitored:</strong> 52+ Official Sources (C-DAC, CERT-In, CBI, NFSU, DRDO, ISRO, NIELIT, UPSC, NIC, DFSS, etc.)<br>
+                  <span style="color: #64748b;">Scheduled Scans: 08:00, 14:00, and 20:00 IST &bull; Vacancy Radar India</span>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
   `;
+
+  const plainText = `${subject}\n\nScan completed at ${scanTimeFormatted}.\nSources Monitored: ${totalSourcesCount}+ Official Portals & Live Gov Web Index.\nNew Opportunities: ${newCount}\nUpcoming Deadlines: ${deadlineCount}\n\nPlease view this alert in an HTML-compatible email client to inspect verified direct links.`;
+
+  GmailApp.sendEmail(recipient, subject, plainText, {
+    htmlBody: htmlBody,
+    name: 'Vacancy Radar India'
+  });
+
+  Logger.log(`Alert digest email dispatched to: ${recipient}`);
+  return { success: true, recipient, subject };
 
   const plainText = `${subject}\n\nScan completed at ${scanTimeFormatted}.\nSources Monitored: ${totalSourcesCount}+ Official Portals & Live Gov Web Index.\nNew Opportunities: ${newCount}\nUpcoming Deadlines: ${deadlineCount}\n\nPlease view this alert in an HTML-compatible email client to inspect verified direct links.`;
 

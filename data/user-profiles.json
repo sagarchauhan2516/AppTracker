@@ -246,7 +246,7 @@
     "name": "Digital Forensics & Incident Response (DFIR)",
     "isActive": true,
     "createdAt": "2026-10-15T12:00:00Z",
-    "updatedAt": "2026-11-14T06:02:50.842Z",
+    "updatedAt": "2026-11-17T05:27:14.667Z",
     "roles": [
       "Digital Forensics Examiner",
       "Cyber Forensics Analyst",
@@ -273,8 +273,12 @@
       "Incident Response",
       "Memory Forensics",
       "Network Packet Analysis",
-      "Wireshark",
-      "Malware Analysis"
+      "Malware Analysis",
+      "Network Forensics",
+      "FTK",
+      "C-DAC",
+      "Cyber Crime",
+      "Deepfake"
     ],
     "education": {
       "degreeLevel": "Bachelor of Engineering (B.E.) / B.Tech",
@@ -343,14 +347,25 @@
       "targetDomains": [
         "cdac.in",
         "upsc.gov.in",
+        "cfslcbi.gov.in",
+        "cbi.gov.in",
+        "cert-in.org.in",
         "nfsu.ac.in",
-        "drdo.gov.in",
-        "cfslcbi.gov.in"
+        "nielit.gov.in"
       ],
       "targetOrganisations": [
         "Centre for Development of Advanced Computing (C-DAC)",
         "Union Public Service Commission (UPSC)",
         "National Forensic Sciences University (NFSU)"
+      ],
+      "websites": [
+        "cdac.in",
+        "upsc.gov.in",
+        "cfslcbi.gov.in",
+        "cbi.gov.in",
+        "cert-in.org.in",
+        "nfsu.ac.in",
+        "nielit.gov.in"
       ]
     },
     "scheduleSettings": {

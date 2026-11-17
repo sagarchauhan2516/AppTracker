@@ -219,4 +219,36 @@ test('ProfileSettingsUI: Interactive add and remove of keywords and websites', a
   quickAddBtn.click();
   profile = storage.getActiveProfile();
   assert(!profile.targetFocus.targetDomains.includes('drdo.gov.in'), 'drdo.gov.in must be removed on second click');
+
+  // 8. Test Telegram Alert Button calls /api/test-telegram
+  ui.activeTab = 'alerts';
+  ui.render();
+
+  let testTelegramEndpointCalled = false;
+  let sentPayload = null;
+  global.fetch = async (url, opts) => {
+    if (url === '/api/test-telegram') {
+      testTelegramEndpointCalled = true;
+      sentPayload = JSON.parse(opts.body);
+      return {
+        ok: true,
+        json: async () => ({
+          success: true,
+          pingSent: true,
+          botUser: { username: 'vacancy_radar1_bot' }
+        })
+      };
+    }
+    return { ok: true, json: async () => ({}) };
+  };
+
+  const inputTg = global.mockRegistry.get('inputProfTgChat');
+  const btnTestTg = global.mockRegistry.get('btnTestProfTelegram');
+  assert(inputTg && btnTestTg, 'Telegram inputs must be present in DOM');
+
+  inputTg.value = '5451190370';
+  await btnTestTg.click();
+
+  assert.strictEqual(testTelegramEndpointCalled, true, '/api/test-telegram must be called when clicking Send Test Alert');
+  assert.strictEqual(sentPayload.chatId, '5451190370', 'Chat ID must be dispatched in body');
 });

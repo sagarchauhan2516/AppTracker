@@ -26,6 +26,33 @@ export class ProfileSettingsUI {
     return escapeHtml(str);
   }
 
+  isDomainWhitelisted(dom) {
+    if (!dom) return false;
+    const tf = this.currentProfile?.targetFocus || {};
+    const domains = tf.targetDomains || tf.websites || [];
+    const norm = String(dom || '').toLowerCase().trim().replace(/^https?:\/\//i, '').split('/')[0];
+    if (!norm) return false;
+    return domains.some(d => {
+      const nd = String(d || '').toLowerCase().trim().replace(/^https?:\/\//i, '').split('/')[0];
+      return nd === norm || nd.endsWith('.' + norm) || norm.endsWith('.' + nd);
+    });
+  }
+
+  static get APEX_QUICK_TARGETS() {
+    return [
+      { d: 'cdac.in', label: 'C-DAC', org: 'Centre for Development of Advanced Computing' },
+      { d: 'cert-in.org.in', label: 'CERT-In', org: 'Indian Computer Emergency Response Team' },
+      { d: 'cbi.gov.in', label: 'CBI Cyber Crime', org: 'Central Bureau of Investigation' },
+      { d: 'nfsu.ac.in', label: 'NFSU Forensics', org: 'National Forensic Sciences University' },
+      { d: 'drdo.gov.in', label: 'DRDO', org: 'Defence Research & Development Organisation' },
+      { d: 'isro.gov.in', label: 'ISRO', org: 'Indian Space Research Organisation' },
+      { d: 'nielit.gov.in', label: 'NIELIT', org: 'National Institute of Electronics & IT' },
+      { d: 'upsc.gov.in', label: 'UPSC', org: 'Union Public Service Commission' },
+      { d: 'nic.in', label: 'NIC', org: 'National Informatics Centre' },
+      { d: 'dfs.nic.in', label: 'DFSS (MHA)', org: 'Directorate of Forensic Science Services' }
+    ];
+  }
+
   render() {
     if (!this.container) {
       this.container = document.getElementById(this.containerId);
@@ -268,37 +295,51 @@ export class ProfileSettingsUI {
             </div>
 
             <!-- Whitelisted Domain Chips -->
-            <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 0.4rem;">
-              Currently Whitelisted Official Websites:
+            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span>Currently Whitelisted Official Portals (${targetDomains.length} Active):</span>
+              ${targetDomains.length > 0 ? `<span style="font-size: 0.7rem; color: #34d399; font-weight: 600;">Active in radar search &amp; scoring</span>` : ''}
             </label>
-            <div id="profWebsiteChips" style="display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.75rem;">
+            <div id="profWebsiteChips" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; min-height: 42px; background: var(--bg-surface); padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
               ${targetDomains.map(d => `
-                <span class="meta-pill" style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.35); display: inline-flex; align-items: center; gap: 0.4rem;">
-                  <i data-lucide="globe" class="icon-xs"></i> <strong>${this.escapeHtml(d)}</strong>
-                  <button type="button" class="btn-remove-site" data-domain="${this.escapeHtml(d)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem;">&times;</button>
+                <span class="meta-pill" style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.14); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.65rem; border-radius: var(--radius-pill);">
+                  <i data-lucide="globe" class="icon-xs text-emerald"></i>
+                  <strong>${this.escapeHtml(d)}</strong>
+                  <button type="button" class="btn-remove-site" data-domain="${this.escapeHtml(d)}" title="Remove ${this.escapeHtml(d)} from whitelist" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; line-height: 1; padding: 0; margin-left: 2px;">&times;</button>
                 </span>
               `).join('')}
+              ${targetDomains.length === 0 ? `
+                <span style="font-size: 0.78rem; color: var(--text-muted); font-style: italic; align-self: center;">
+                  No specific websites whitelisted yet. All official registered sources are scanned. Click any apex body below to whitelist.
+                </span>
+              ` : ''}
             </div>
 
             <!-- Quick Add Apex Portals -->
-            <strong style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 0.35rem;">
-              Quick Add Known Apex Bodies:
-            </strong>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-              ${[
-                { d: 'careers.cdac.in', label: 'C-DAC Careers' },
-                { d: 'cert-in.org.in', label: 'CERT-In' },
-                { d: 'cbi.gov.in', label: 'CBI Cyber Crime' },
-                { d: 'nfsu.ac.in', label: 'NFSU Forensics' },
-                { d: 'drdo.gov.in', label: 'DRDO' },
-                { d: 'nielit.gov.in', label: 'NIELIT' },
-                { d: 'upsc.gov.in', label: 'UPSC' },
-                { d: 'dfs.nic.in', label: 'DFSS (MHA)' }
-              ].map(s => `
-                <button type="button" class="btn-quick-add-site ${targetDomains.includes(s.d) ? 'added' : ''}" data-domain="${s.d}" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); cursor: pointer;">
-                  <i data-lucide="${targetDomains.includes(s.d) ? 'check' : 'plus'}" class="icon-xs"></i> ${s.label}
-                </button>
-              `).join('')}
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; margin-top: 0.5rem;">
+              <strong style="font-size: 0.74rem; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem;">
+                <i data-lucide="sparkles" class="icon-xs text-blue"></i> Quick Add Known Apex Bodies (1-Click Whitelist):
+              </strong>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.45rem;">
+                ${ProfileSettingsUI.APEX_QUICK_TARGETS.map(s => {
+                  const isAdded = this.isDomainWhitelisted(s.d);
+                  return `
+                    <button type="button" 
+                      class="btn-quick-add-site ${isAdded ? 'added' : ''}" 
+                      data-domain="${s.d}" 
+                      title="${isAdded ? `Click to remove ${s.label} (${s.d})` : `Click to add ${s.label} (${s.d}) to whitelist`}"
+                      style="font-size: 0.74rem; font-weight: 600; padding: 0.32rem 0.7rem; border-radius: var(--radius-pill); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease; ${
+                        isAdded
+                          ? 'background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);'
+                          : 'background: var(--bg-surface-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle);'
+                      }">
+                      <i data-lucide="${isAdded ? 'check' : 'plus'}" class="icon-xs ${isAdded ? 'text-emerald' : ''}"></i>
+                      <span>${s.label}</span>
+                      <span style="font-size: 0.65rem; opacity: 0.75; font-family: var(--font-mono);">(${s.d})</span>
+                      ${isAdded ? `<span style="font-size: 0.6rem; padding: 1px 5px; border-radius: 3px; background: rgba(16, 185, 129, 0.25); color: #6ee7b7; font-weight: 700; text-transform: uppercase;">Active</span>` : ''}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
             </div>
           </div>
         </div>
@@ -674,11 +715,15 @@ export class ProfileSettingsUI {
         const dom = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
         if (this.currentProfile.targetFocus) {
           const tf = this.currentProfile.targetFocus;
+          const filterFn = d => {
+            const nd = String(d || '').toLowerCase().trim().replace(/^https?:\/\//i, '').split('/')[0];
+            return !(nd === dom || nd.endsWith('.' + dom) || dom.endsWith('.' + nd));
+          };
           if (Array.isArray(tf.targetDomains)) {
-            tf.targetDomains = tf.targetDomains.filter(d => d.toLowerCase().trim() !== dom);
+            tf.targetDomains = tf.targetDomains.filter(filterFn);
           }
           if (Array.isArray(tf.websites)) {
-            tf.websites = tf.websites.filter(d => d.toLowerCase().trim() !== dom);
+            tf.websites = tf.websites.filter(filterFn);
           }
           storageService.saveProfile(this.currentProfile);
           if (this.onStateChanged) this.onStateChanged();
@@ -700,15 +745,19 @@ export class ProfileSettingsUI {
         if (!Array.isArray(tf.targetDomains)) tf.targetDomains = [];
         if (!Array.isArray(tf.websites)) tf.websites = [];
         tf.enabled = true;
-        const exists = tf.targetDomains.map(d => d.toLowerCase().trim()).includes(dom) ||
-                       tf.websites.map(d => d.toLowerCase().trim()).includes(dom);
-        if (!exists) {
+
+        const isPresent = this.isDomainWhitelisted(dom);
+        if (!isPresent) {
           tf.targetDomains.push(dom);
           tf.websites.push(dom);
           showConfirmationBanner('Website Whitelisted', `Added "${dom}" to whitelist.`, 'success', 2200);
         } else {
-          tf.targetDomains = tf.targetDomains.filter(d => d.toLowerCase().trim() !== dom);
-          tf.websites = tf.websites.filter(d => d.toLowerCase().trim() !== dom);
+          const filterFn = d => {
+            const nd = String(d || '').toLowerCase().trim().replace(/^https?:\/\//i, '').split('/')[0];
+            return !(nd === dom || nd.endsWith('.' + dom) || dom.endsWith('.' + nd));
+          };
+          tf.targetDomains = tf.targetDomains.filter(filterFn);
+          tf.websites = tf.websites.filter(filterFn);
           showConfirmationBanner('Target Removed', `Removed "${dom}" from whitelist.`, 'info', 1800);
         }
         storageService.saveProfile(this.currentProfile);
@@ -798,23 +847,28 @@ export class ProfileSettingsUI {
     document.getElementById('btnTestProfTelegram')?.addEventListener('click', async () => {
       const btn = document.getElementById('btnTestProfTelegram');
       const statusDiv = document.getElementById('statusProfTgTest');
+      const tgChat = document.getElementById('inputProfTgChat')?.value.trim() || '5451190370';
       btn.disabled = true;
       btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Sending...';
       if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       if (statusDiv) {
         statusDiv.style.display = 'block';
-        statusDiv.innerHTML = `<span style="color: #38bdf8; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Dispatched alert to Telegram...</span>`;
+        statusDiv.innerHTML = `<span style="color: #38bdf8; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="loader-2" class="icon-xs icon-spin text-cyan"></i> Dispatching test alert to Telegram chat ${this.escapeHtml(tgChat)}...</span>`;
         if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
 
       try {
-        const res = await fetch('/api/trigger-deadline-reminders', { method: 'POST' });
+        const res = await fetch('/api/test-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatId: tgChat })
+        });
         const data = await res.json();
-        if (data.success) {
-          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Telegram alert dispatched to chat <strong>5451190370</strong>!</span>`;
-          showConfirmationBanner('Telegram Sent', 'Verified alert sent to your Telegram.', 'success', 3000);
+        if (data.success && data.pingSent) {
+          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Telegram alert delivered to chat <strong>${this.escapeHtml(tgChat)}</strong> via @${data.botUser?.username || 'vacancy_radar1_bot'}!</span>`;
+          showConfirmationBanner('Telegram Delivered', `Test alert delivered to chat ${tgChat}.`, 'success', 3000);
         } else {
-          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Error: ${data.result?.error || 'Failed'}</span>`;
+          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> ${this.escapeHtml(data.error || data.solution || 'Failed to dispatch alert')}</span>`;
         }
         if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       } catch (e) {
@@ -940,5 +994,9 @@ export class ProfileSettingsUI {
 
       if (this.onStateChanged) this.onStateChanged();
     });
+
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons();
+    }
   }
 }

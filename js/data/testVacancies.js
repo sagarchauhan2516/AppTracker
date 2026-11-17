@@ -36,9 +36,9 @@ export const testVacancies = [
       maxAnnualInr: 780000
     },
     dates: {
-      publishedAt: '2026-10-05',
-      applicationOpensAt: '2026-10-06',
-      closingDate: '2026-10-28', // Closing within 13 days
+      publishedAt: '2026-11-05',
+      applicationOpensAt: '2026-11-06',
+      closingDate: '2026-12-10', // Active application window
       isExtended: false
     },
     verification: {
@@ -95,9 +95,9 @@ export const testVacancies = [
       maxAnnualInr: 950000
     },
     dates: {
-      publishedAt: '2026-10-02',
-      applicationOpensAt: '2026-10-03',
-      closingDate: '2026-10-21', // Closing within 6 days!
+      publishedAt: '2026-11-08',
+      applicationOpensAt: '2026-11-09',
+      closingDate: '2026-11-28', // Closing within 11 days
       isExtended: false
     },
     verification: {
@@ -153,9 +153,9 @@ export const testVacancies = [
       maxAnnualInr: 900000
     },
     dates: {
-      publishedAt: '2026-10-10',
-      applicationOpensAt: '2026-10-12',
-      closingDate: '2026-10-31',
+      publishedAt: '2026-11-10',
+      applicationOpensAt: '2026-11-12',
+      closingDate: '2026-12-20',
       isExtended: false
     },
     verification: {
@@ -212,9 +212,9 @@ export const testVacancies = [
       maxAnnualInr: 1350000
     },
     dates: {
-      publishedAt: '2026-09-20',
-      applicationOpensAt: '2026-09-21',
-      closingDate: '2026-10-19', // Closing in 4 days
+      publishedAt: '2026-11-01',
+      applicationOpensAt: '2026-11-02',
+      closingDate: '2026-11-25', // Closing within 8 days
       isExtended: false
     },
     verification: {

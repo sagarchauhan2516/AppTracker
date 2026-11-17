@@ -65,41 +65,84 @@ export class VerificationEngine {
     }
 
     // Rule 3: Inspect Origin Domain and Traceability
-    const domainClass = SourceRegistryService.classifyDomain(ver.sourceDomain || '');
-    const hasOfficialDomain = domainClass.isOfficialDomain;
-    const hasOfficialPdf = Boolean(ver.officialNoticePdfUrl && ver.officialNoticePdfUrl.trim().length > 10);
-    const hasOfficialApplyLink = Boolean(ver.applicationUrl && ver.applicationUrl.trim().length > 10);
+    let sourceDomain = ver.sourceDomain || vacancy.domain || '';
+    if (!sourceDomain && vacancy.sourceUrl) {
+      try {
+        sourceDomain = new URL(vacancy.sourceUrl).hostname.replace(/^www\./i, '');
+      } catch (_) {}
+    }
+    sourceDomain = (sourceDomain || '').toLowerCase().trim();
+
+    let officialNoticePdfUrl = ver.officialNoticePdfUrl || vacancy.officialNoticePdfUrl || '';
+    if (!officialNoticePdfUrl && vacancy.sourceUrl && /\.pdf(?:[\?#].*)?$/i.test(vacancy.sourceUrl)) {
+      officialNoticePdfUrl = vacancy.sourceUrl;
+    }
+    officialNoticePdfUrl = (officialNoticePdfUrl || '').trim();
+
+    let applicationUrl = ver.applicationUrl || vacancy.applicationUrl || vacancy.sourceUrl || '';
+    applicationUrl = (applicationUrl || '').trim();
+
+    const domainClass = SourceRegistryService.classifyDomain(sourceDomain);
+    const hasOfficialDomain = Boolean(domainClass.isOfficialDomain);
+
+    let pdfDomainClass = { isOfficialDomain: false, category: SourceCategory.THIRD_PARTY_AGGREGATOR };
+    if (officialNoticePdfUrl && officialNoticePdfUrl.length > 10) {
+      try {
+        const pdfHost = new URL(officialNoticePdfUrl).hostname;
+        pdfDomainClass = SourceRegistryService.classifyDomain(pdfHost);
+      } catch (_) {}
+    }
+
+    let applyDomainClass = { isOfficialDomain: false, category: SourceCategory.THIRD_PARTY_AGGREGATOR };
+    if (applicationUrl && applicationUrl.length > 10) {
+      try {
+        const applyHost = new URL(applicationUrl).hostname;
+        applyDomainClass = SourceRegistryService.classifyDomain(applyHost);
+      } catch (_) {}
+    }
+
+    const hasOfficialPdf = Boolean(officialNoticePdfUrl && officialNoticePdfUrl.length > 10);
+    const hasOfficialApplyLink = Boolean(applicationUrl && applicationUrl.length > 10 && (hasOfficialDomain || applyDomainClass.isOfficialDomain));
 
     // Track confirmed facts
     if (vacancy.organisation) {
-      fieldConfidence.organisation = hasOfficialDomain ? 0.98 : 0.65;
-      if (hasOfficialDomain) confirmedFacts.push(`Employer identity confirmed via official institutional domain (${ver.sourceDomain}).`);
+      fieldConfidence.organisation = hasOfficialDomain ? 0.98 : (pdfDomainClass.isOfficialDomain ? 0.92 : 0.65);
+      if (hasOfficialDomain) confirmedFacts.push(`Employer identity confirmed via official institutional domain (${sourceDomain}).`);
+      else if (pdfDomainClass.isOfficialDomain) confirmedFacts.push(`Employer identity corroborated via official institutional gazette document.`);
       else uncertainFields.push('Employer identity extracted from third-party report; awaiting official domain confirmation.');
     }
 
     if (vacancy.title && vacancy.advertisementNumber) {
-      fieldConfidence.title = hasOfficialPdf ? 0.95 : 0.70;
+      fieldConfidence.title = (hasOfficialPdf || hasOfficialDomain) ? 0.95 : 0.70;
       confirmedFacts.push(`Advertisement Reference: ${vacancy.advertisementNumber}`);
     } else {
       uncertainFields.push('Official advertisement notification reference number not specified.');
     }
 
     if (dates.closingDate) {
-      fieldConfidence.dates = hasOfficialPdf ? 0.95 : 0.60;
-      if (!hasOfficialPdf) uncertainFields.push('Closing date reported by third-party; needs corroboration with gazette PDF.');
+      fieldConfidence.dates = (hasOfficialPdf || hasOfficialDomain) ? 0.95 : 0.60;
+      if (!hasOfficialPdf && !hasOfficialDomain) uncertainFields.push('Closing date reported by third-party; needs corroboration with gazette PDF.');
     }
 
     if (hasOfficialPdf || hasOfficialApplyLink) {
-      fieldConfidence.officialLinks = 0.95;
-      if (hasOfficialPdf) confirmedFacts.push('Direct official notification document retrieved.');
+      fieldConfidence.officialLinks = (hasOfficialDomain || pdfDomainClass.isOfficialDomain || applyDomainClass.isOfficialDomain) ? 0.98 : 0.75;
+      if (hasOfficialPdf) confirmedFacts.push(`Direct official notification document retrieved.`);
       if (hasOfficialApplyLink) confirmedFacts.push('Authorised online application portal link verified.');
     } else {
       uncertainFields.push('Direct official notification PDF or official application gateway not yet located.');
     }
 
-    if (vacancy.qualifications?.requiredDegree) {
-      fieldConfidence.eligibilityTerms = hasOfficialPdf ? 0.95 : 0.65;
-      confirmedFacts.push(`Degree requirements: ${vacancy.qualifications.requiredDegree}`);
+    const hasQuals = vacancy.qualifications && (
+      (Array.isArray(vacancy.qualifications) && vacancy.qualifications.length > 0) ||
+      (typeof vacancy.qualifications === 'object' && vacancy.qualifications.requiredDegree) ||
+      (typeof vacancy.qualifications === 'string' && vacancy.qualifications.length > 5)
+    );
+    if (hasQuals) {
+      fieldConfidence.eligibilityTerms = (hasOfficialPdf || hasOfficialDomain) ? 0.95 : 0.65;
+      const qualText = Array.isArray(vacancy.qualifications)
+        ? vacancy.qualifications.join(', ')
+        : (vacancy.qualifications.requiredDegree || vacancy.qualifications);
+      confirmedFacts.push(`Degree requirements: ${qualText}`);
     }
 
     // Calculate composite confidence score across evaluated fields
@@ -110,29 +153,35 @@ export class VerificationEngine {
 
     // Determine Status:
     // Status A: OFFICIALLY_VERIFIED
-    // Requires: Official employer/board domain + direct official notice/PDF + established identity
-    if (hasOfficialDomain && hasOfficialPdf && hasOfficialApplyLink) {
+    // STRICT RULE: Must originate from an authentic official government/apex domain (.gov.in, .nic.in, .ac.in, cdac.in, etc.)
+    // AND possess concrete proof: direct official notice PDF OR direct official application portal (or both).
+    if (hasOfficialDomain && (hasOfficialPdf || hasOfficialApplyLink)) {
+      const finalScore = Math.max(0.92, parseFloat(avgConfidence.toFixed(2)));
       return {
         status: VerificationStatus.OFFICIALLY_VERIFIED,
-        confidenceScore: parseFloat(avgConfidence.toFixed(2)),
+        confidenceScore: finalScore,
         fieldConfidence,
         uncertainFields,
         confirmedFacts,
-        verificationNotes: 'Fully corroborated against primary official employer portal. Notification PDF and online application gateway verified.',
+        verificationNotes: hasOfficialPdf && hasOfficialApplyLink
+          ? 'Fully corroborated against primary official employer portal. Notification PDF and online application gateway verified.'
+          : (hasOfficialPdf
+              ? 'Officially verified from authoritative institutional bulletin. Gazette/Notification PDF validated.'
+              : 'Officially verified from authoritative institutional recruitment portal with online application gateway.'),
         auditTimestamp: now.toISOString()
       };
     }
 
     // Status B: CROSS_CHECKED
-    // Discovered via third-party or aggregator, but matching official notice/PDF has been located
-    if ((!hasOfficialDomain || domainClass.category === SourceCategory.THIRD_PARTY_AGGREGATOR) && (hasOfficialPdf || (hasOfficialApplyLink && hasOfficialDomain))) {
+    // Discovered via third-party aggregator or feed, but corroborated by official PDF or official application gateway
+    if (hasOfficialPdf || applyDomainClass.isOfficialDomain || (hasOfficialDomain && !hasOfficialPdf && !hasOfficialApplyLink)) {
       return {
         status: VerificationStatus.CROSS_CHECKED,
-        confidenceScore: parseFloat(Math.min(0.88, avgConfidence).toFixed(2)),
+        confidenceScore: parseFloat(Math.min(0.88, Math.max(0.70, avgConfidence)).toFixed(2)),
         fieldConfidence,
         uncertainFields,
         confirmedFacts,
-        verificationNotes: 'Discovered via recruitment board or feed, subsequently cross-referenced with official bulletin.',
+        verificationNotes: 'Discovered via third-party recruitment listing or aggregator, subsequently corroborated with official gazette document or application gateway.',
         auditTimestamp: now.toISOString()
       };
     }

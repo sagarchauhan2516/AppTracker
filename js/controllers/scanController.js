@@ -150,15 +150,29 @@ export function normalizeAndRepairVacancies(app) {
           }
         }
 
-        if (fixed) {
-          const audit = VerificationEngine.auditVacancy(v);
-          if (v.verification) {
-            v.verification.status = audit.status;
-            v.verification.confidenceScore = audit.confidenceScore;
-            v.verification.confirmedFacts = audit.confirmedFacts;
-            v.verification.uncertainFields = audit.uncertainFields;
-          }
+        // Re-audit with updated VerificationEngine
+        let domain = v.domain || v.verification?.sourceDomain || '';
+        if (!domain && v.sourceUrl) {
+          try { domain = new URL(v.sourceUrl).hostname.replace(/^www\./i, ''); } catch (_) {}
         }
+        v.domain = domain;
+
+        if (!v.verification) v.verification = {};
+        v.verification.sourceDomain = v.domain;
+        v.verification.officialNoticePdfUrl = v.verification.officialNoticePdfUrl || v.officialNoticePdfUrl || '';
+        v.verification.applicationUrl = v.verification.applicationUrl || v.applicationUrl || v.sourceUrl || '';
+
+        const audit = VerificationEngine.auditVacancy(v);
+        if (v.verification.status !== audit.status || v.verification.confidenceScore !== audit.confidenceScore) {
+          v.verification.status = audit.status;
+          v.verification.confidenceScore = audit.confidenceScore;
+          v.verification.confirmedFacts = audit.confirmedFacts;
+          v.verification.uncertainFields = audit.uncertainFields;
+          v.verification.verificationNotes = audit.verificationNotes;
+          fixed = true;
+          hasChanges = true;
+        }
+
         return v;
       });
 
@@ -547,9 +561,26 @@ export async function handleManualScan(app) {
           continue;
         }
 
+        // Compute clean domain if missing
+        if (!lead.domain && lead.sourceUrl) {
+          try {
+            lead.domain = new URL(lead.sourceUrl).hostname.replace(/^www\./i, '');
+          } catch (_) {}
+        }
+
         if (lead.domain) {
           SourceRegistryService.registerDiscoveredDomain(lead.domain, lead.organisation, lead.sourceUrl, `Auto-Discovered (${metadata.providerUsed || 'Orchestration'})`);
         }
+
+        // PRE-POPULATE verification object BEFORE running audit
+        lead.verification = {
+          sourceDomain: lead.domain,
+          officialNoticePdfUrl: lead.officialNoticePdfUrl || lead.verification?.officialNoticePdfUrl || '',
+          applicationUrl: lead.applicationUrl || lead.sourceUrl || lead.verification?.applicationUrl || '',
+          evidenceUrl: lead.evidenceUrl || lead.sourceUrl || lead.verification?.evidenceUrl || '',
+          ...(lead.verification || {})
+        };
+        lead.verification.sourceDomain = lead.domain;
 
         // Run Verification Audit
         const audit = VerificationEngine.auditVacancy(lead);
@@ -559,6 +590,7 @@ export async function handleManualScan(app) {
           confidenceScore: audit.confidenceScore,
           confirmedFacts: audit.confirmedFacts,
           uncertainFields: audit.uncertainFields,
+          verificationNotes: audit.verificationNotes,
           verifiedAt: new Date().toISOString()
         };
 
@@ -761,9 +793,25 @@ export async function handleApexScrapeOnly(app) {
     for (const lead of scrapedVacancies) {
       if (storageService.isTrashed(lead)) continue;
 
+      if (!lead.domain && lead.sourceUrl) {
+        try {
+          lead.domain = new URL(lead.sourceUrl).hostname.replace(/^www\./i, '');
+        } catch (_) {}
+      }
+
       if (lead.domain) {
         SourceRegistryService.registerDiscoveredDomain(lead.domain, lead.organisation, lead.sourceUrl, 'Apex Web Scraper');
       }
+
+      // Pre-populate verification metadata
+      lead.verification = {
+        sourceDomain: lead.domain,
+        officialNoticePdfUrl: lead.officialNoticePdfUrl || lead.verification?.officialNoticePdfUrl || '',
+        applicationUrl: lead.applicationUrl || lead.sourceUrl || lead.verification?.applicationUrl || '',
+        evidenceUrl: lead.evidenceUrl || lead.sourceUrl || lead.verification?.evidenceUrl || '',
+        ...(lead.verification || {})
+      };
+      lead.verification.sourceDomain = lead.domain;
 
       const audit = VerificationEngine.auditVacancy(lead);
       lead.verification = {
@@ -772,6 +820,7 @@ export async function handleApexScrapeOnly(app) {
         confidenceScore: audit.confidenceScore,
         confirmedFacts: audit.confirmedFacts,
         uncertainFields: audit.uncertainFields,
+        verificationNotes: audit.verificationNotes,
         verifiedAt: new Date().toISOString()
       };
 

@@ -23,6 +23,7 @@ import { GovernmentPdfParser } from '../js/engine/pdfExtractionEngine.js';
 import { VacancyLifecycleEngine } from '../js/engine/vacancyLifecycleEngine.js';
 import { TelegramAlertEngine } from '../js/engine/telegramAlertEngine.js';
 import { defaultProfile } from '../js/data/defaultProfile.js';
+import { ApexPortalScraper } from '../server/scrapers/apexPortalScraper.js';
 
 // Relax TLS rejection for Indian National PKI / Government departmental certificates (.gov.in, .nic.in)
 if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
@@ -212,9 +213,22 @@ async function runDailyScraper() {
 
   saveSnapshots(snapshots);
 
+  // 2. Direct Apex Portal Web Scrapers (C-DAC, NFSU, NIELIT, DRDO, UPSC, CERT-In)
+  console.log('\n🕷️ Running Apex Portal Web Scrapers (Direct Discovery)...');
+  try {
+    const apexResult = await ApexPortalScraper.scrapeAllApexPortals({ forceRefresh: false });
+    if (apexResult.success && Array.isArray(apexResult.vacancies)) {
+      console.log(`   ✅ Apex Web Scraper extracted ${apexResult.vacancies.length} live official opportunities.`);
+      allDiscoveredVacancies.push(...apexResult.vacancies);
+    }
+  } catch (apexErr) {
+    console.warn(`   ⚠️ Apex Web Scraper notice: ${apexErr.message}`);
+  }
+
   console.log('\n------------------------------------------------------------');
   console.log(`📊 RUN RESULTS:`);
   console.log(`   Portals Checked: ${runReport.portalsChecked} (Unchanged 304: ${runReport.portalsNotModified})`);
+  console.log(`   Total Discovered Vacancies: ${allDiscoveredVacancies.length}`);
   console.log(`   New Circulars Detected: ${runReport.newCircularsFound}`);
   console.log(`   PDFs Parsed: ${runReport.pdfsParsed}`);
   console.log('------------------------------------------------------------\n');

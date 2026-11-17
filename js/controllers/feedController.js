@@ -387,6 +387,112 @@ export function renderVacancies(app) {
       });
     });
 
+    // Calendar Deadline Reminder Export
+    container.querySelectorAll('.btn-calendar-reminder').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vacId = btn.getAttribute('data-id');
+        const vac = list.find(v => v.id === vacId);
+        if (!vac || !vac.dates?.closingDate) return;
+
+        const title = encodeURIComponent(`[Deadline] ${vac.title} - ${vac.organisation}`);
+        const cleanDate = vac.dates.closingDate.replace(/-/g, '');
+        const dates = `${cleanDate}T090000Z/${cleanDate}T180000Z`;
+        const details = encodeURIComponent(
+          `Application closing deadline for: ${vac.title}\n` +
+          `Employer: ${vac.organisation}\n` +
+          `Advt Ref: ${vac.advertisementNumber || 'N/A'}\n` +
+          `Official Apply Link: ${vac.verification?.applicationUrl || vac.sourceUrl}\n` +
+          `Verification Evidence: ${vac.verification?.evidenceUrl || vac.sourceUrl}`
+        );
+        const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}`;
+        window.open(calUrl, '_blank');
+        showConfirmationBanner('Calendar Reminder', `Opened Google Calendar event for ${vac.dates.closingDate}.`, 'success', 3000);
+      });
+    });
+
+    // 1-Click Telegram Single Vacancy Alert
+    container.querySelectorAll('.btn-telegram-single').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const vacId = btn.getAttribute('data-id');
+        const vac = list.find(v => v.id === vacId);
+        if (!vac) return;
+
+        btn.disabled = true;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<span style="font-size: 0.7rem;">Sending...</span>`;
+
+        try {
+          const res = await fetch('/api/send-telegram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              vacancy: vac,
+              chatId: activeProfile?.scheduleSettings?.telegramChatId || undefined
+            })
+          });
+          const data = await res.json();
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+
+          if (data.success) {
+            showConfirmationBanner('Telegram Alert Sent', `Delivered "${vac.title}" to your Telegram bot!`, 'success', 3000);
+          } else {
+            showConfirmationBanner('Telegram Notice', data.message || 'Check your bot token & chat ID in Profile Settings.', 'warning', 4000);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          showConfirmationBanner('Telegram Failed', err.message, 'warning', 3500);
+        }
+      });
+    });
+
+    // AI Deep Inspect Notice PDF
+    container.querySelectorAll('.btn-inspect-pdf').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const vacId = btn.getAttribute('data-id');
+        const vac = list.find(v => v.id === vacId);
+        const pdfUrl = vac?.verification?.officialNoticePdfUrl || vac?.sourceUrl;
+        if (!vac || !pdfUrl) return;
+
+        btn.disabled = true;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<span style="font-size: 0.7rem;">⏳ Reading PDF...</span>`;
+
+        try {
+          const res = await fetch('/api/extract-pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pdfUrl })
+          });
+          const data = await res.json();
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+
+          if (data.success && data.metadata) {
+            const meta = data.metadata;
+            // Enrich vacancy with extracted metadata
+            if (meta.advertisementNumber && !vac.advertisementNumber) vac.advertisementNumber = meta.advertisementNumber;
+            if (meta.dates?.closingDate) vac.dates.closingDate = meta.dates.closingDate;
+            if (meta.dates?.ageCutOffDate) vac.dates.ageCutOffDate = meta.dates.ageCutOffDate;
+            if (meta.qualifications?.ageLimit) vac.qualifications.ageLimit = meta.qualifications.ageLimit;
+            if (meta.reservationBreakout) vac.reservationBreakout = meta.reservationBreakout;
+            if (meta.selectionProcess) vac.selectionProcess = meta.selectionProcess;
+            storageService.saveVacancy(vac);
+
+            openPdfInspectionModal(app, vac, meta);
+            showConfirmationBanner('PDF Extracted', `Parsed circular: ${meta.advertisementNumber || 'Dates & requirements updated'}`, 'success', 3500);
+          } else {
+            showConfirmationBanner('PDF Notice', data.error || 'Could not parse text from this PDF.', 'warning', 3500);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          showConfirmationBanner('PDF Extract Error', err.message, 'warning', 3500);
+        }
+      });
+    });
+
     container.querySelectorAll('.btn-delete-vacancy').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -626,12 +732,23 @@ export function renderVacancyCard(app, vac, now) {
               <a href="${vac.verification.officialNoticePdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" title="View Official Notification PDF">
                 <i data-lucide="file-text" class="icon-xs"></i> PDF
               </a>
+              <button class="btn btn-outline btn-sm btn-inspect-pdf" data-id="${vac.id}" title="Deep AI Extract from Notice PDF">
+                <i data-lucide="sparkles" class="icon-xs text-amber"></i> AI Inspect
+              </button>
             ` : ''}
             ${vac.verification?.applicationUrl ? `
               <a href="${vac.verification.applicationUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: #60a5fa;" title="Official Application Portal">
                 <i data-lucide="external-link" class="icon-xs"></i> Apply
               </a>
             ` : ''}
+            ${vac.dates?.closingDate && !isClosed ? `
+              <button class="btn btn-outline btn-sm btn-calendar-reminder" data-id="${vac.id}" title="Add application deadline reminder to Google Calendar">
+                <i data-lucide="calendar" class="icon-xs text-cyan"></i> Calendar
+              </button>
+            ` : ''}
+            <button class="btn btn-outline btn-sm btn-telegram-single" data-id="${vac.id}" title="Send alert directly to your Telegram bot">
+              <i data-lucide="send" class="icon-xs text-emerald"></i> Telegram
+            </button>
             ${referenceUrl ? `
               <a href="${referenceUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: ${isClosed ? '#f87171' : '#38bdf8'}; border-color: ${isClosed ? 'rgba(239, 68, 68, 0.45)' : 'rgba(56, 189, 248, 0.45)'}; font-weight: 600;" title="Visit reference source website (${referenceDomain || 'portal'}) to verify details">
                 ${isClosed ? '<i data-lucide="search" class="icon-xs"></i> Check Source Site' : '<i data-lucide="external-link" class="icon-xs"></i> Visit Source Site'}
@@ -812,3 +929,120 @@ export function openEvidenceModal(app, vacId) {
     document.getElementById('evidenceModal').classList.add('active');
     if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
+
+export function openPdfInspectionModal(app, vac, parsedMeta) {
+  const modal = document.getElementById('evidenceModal');
+  const modalBody = document.getElementById('modalBody');
+  if (!modal || !modalBody) return;
+
+  const res = parsedMeta.reservationBreakout || {};
+  const qual = parsedMeta.qualifications || {};
+  const dates = parsedMeta.dates || {};
+
+  modalBody.innerHTML = `
+    <div style="margin-bottom: 1.25rem;">
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem;">
+        <span class="verification-badge badge-OFFICIALLY_VERIFIED"><i data-lucide="shield-check" class="icon-xs"></i> OFFICIAL CIRCULAR INSPECTION</span>
+        <span class="meta-pill" style="font-size: 0.72rem; color: #34d399; border-color: rgba(16, 185, 129, 0.35);">
+          AI &amp; Deterministic PDF Extraction
+        </span>
+      </div>
+      <h2 style="font-family: var(--font-heading); font-size: 1.35rem; color: var(--text-main); margin-bottom: 0.3rem;">
+        ${app.escapeHtml(vac.title)}
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.85rem;">
+        ${app.escapeHtml(vac.organisation)} • Advt Ref: <code style="color: #60a5fa;">${app.escapeHtml(parsedMeta.advertisementNumber || vac.advertisementNumber || 'Official Notice')}</code>
+      </p>
+    </div>
+
+    <!-- Key Crucial Dates & Age Limit -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+      <div style="background: var(--bg-surface-elevated); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Closing Deadline</span>
+        <div style="font-size: 1.05rem; font-weight: 700; color: #f87171; font-family: var(--font-mono); margin-top: 0.2rem;">
+          ${dates.closingDate || vac.dates?.closingDate || 'See Notification'}
+        </div>
+      </div>
+      <div style="background: var(--bg-surface-elevated); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Crucial Age Cut-Off Date</span>
+        <div style="font-size: 1.05rem; font-weight: 700; color: #60a5fa; font-family: var(--font-mono); margin-top: 0.2rem;">
+          ${dates.ageCutOffDate || dates.closingDate || 'As on Closing Date'}
+        </div>
+      </div>
+      <div style="background: var(--bg-surface-elevated); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Upper Age Limit</span>
+        <div style="font-size: 1.05rem; font-weight: 700; color: #34d399; font-family: var(--font-mono); margin-top: 0.2rem;">
+          ${qual.ageLimit ? `${qual.ageLimit} Years` : 'Per Govt Norms'}
+        </div>
+      </div>
+    </div>
+
+    <!-- Category-Wise Vacancy Breakout Table -->
+    ${res.totalposts ? `
+      <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.6rem;">
+          Official Reservation Breakout (Total: ${res.totalposts} Posts)
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; text-align: center;">
+          <div style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px;">
+            <div style="font-size: 0.68rem; color: var(--text-muted);">UR</div>
+            <strong style="color: var(--text-main);">${res.ur || 0}</strong>
+          </div>
+          <div style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px;">
+            <div style="font-size: 0.68rem; color: var(--text-muted);">OBC</div>
+            <strong style="color: #fbbf24;">${res.obc || 0}</strong>
+          </div>
+          <div style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px;">
+            <div style="font-size: 0.68rem; color: var(--text-muted);">SC</div>
+            <strong style="color: #38bdf8;">${res.sc || 0}</strong>
+          </div>
+          <div style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px;">
+            <div style="font-size: 0.68rem; color: var(--text-muted);">ST</div>
+            <strong style="color: #a78bfa;">${res.st || 0}</strong>
+          </div>
+          <div style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px;">
+            <div style="font-size: 0.68rem; color: var(--text-muted);">EWS</div>
+            <strong style="color: #34d399;">${res.ews || 0}</strong>
+          </div>
+          <div style="background: var(--bg-surface); padding: 0.5rem; border-radius: 4px;">
+            <div style="font-size: 0.68rem; color: var(--text-muted);">PwD</div>
+            <strong style="color: #f472b6;">${res.pwd || 0}</strong>
+          </div>
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- Essential Qualifications & Selection Process -->
+    <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+      <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem;">
+        Essential Eligibility &amp; Selection Process
+      </h4>
+      <div style="font-size: 0.84rem; color: var(--text-main); line-height: 1.5; margin-bottom: 0.5rem;">
+        ${parsedMeta.textSnippet ? app.escapeHtml(parsedMeta.textSnippet) : 'Detailed qualifications extracted from circular document.'}
+      </div>
+      ${parsedMeta.selectionProcess && parsedMeta.selectionProcess.length > 0 ? `
+        <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.5rem;">
+          <strong>Selection Stages:</strong> ${app.escapeHtml(parsedMeta.selectionProcess.join(' → '))}
+        </div>
+      ` : ''}
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+      ${vac.verification?.officialNoticePdfUrl ? `
+        <a href="${vac.verification.officialNoticePdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+          <i data-lucide="file-text" class="icon-xs"></i> Open Original PDF
+        </a>
+      ` : ''}
+      <button id="btnClosePdfInspectModal" class="btn btn-primary btn-sm">
+        Close Inspector
+      </button>
+    </div>
+  `;
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  modal.classList.add('active');
+
+  document.getElementById('btnClosePdfInspectModal')?.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+}

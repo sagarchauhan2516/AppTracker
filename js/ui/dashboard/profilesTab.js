@@ -280,29 +280,40 @@ export function renderProfilesTab(profiles, currentProfile) {
 export function renderTargetChipsInDash(ctx) {
   const container = ctx.container || document;
   const currentProfile = ctx.currentProfile;
-  const chipContainer = container.querySelector('#dashTargetChips');
+  const chipContainer = container.querySelector('#dashTargetChipsContainer') || container.querySelector('#dashTargetChips');
   if (!chipContainer || !currentProfile) return;
 
-  const sites = currentProfile.targetFocus?.websites || [];
+  const tf = currentProfile.targetFocus || {};
+  let sites = tf.targetDomains || tf.websites || [];
+  sites = [...new Set(sites.map(s => (s || '').trim().toLowerCase()).filter(Boolean))];
+
   if (sites.length === 0) {
-    chipContainer.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No target websites configured. Add domains below or click 1-click whitelists to restrict searches.</span>`;
-    return;
+    chipContainer.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No target websites configured. Add domains above or click 1-click whitelists to restrict searches.</span>`;
+  } else {
+    chipContainer.innerHTML = sites.map(site => `
+      <span class="target-focus-chip" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+        <i data-lucide="globe" class="icon icon-xs"></i> <strong>${escapeHtml(site)}</strong>
+        <button type="button" class="target-focus-chip-remove btn-dash-remove-domain btn-remove-site" data-domain="${escapeHtml(site)}" title="Remove ${escapeHtml(site)}">&times;</button>
+      </span>
+    `).join('');
   }
 
-  chipContainer.innerHTML = sites.map(site => `
-    <span class="profile-chip" style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem; font-family: monospace;">
-      <i data-lucide="globe" class="icon icon-xs"></i> ${escapeHtml(site)}
-      <button type="button" class="btn-remove-site" data-site="${escapeHtml(site)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1; margin-left: 0.2rem;" title="Remove this target website">&times;</button>
-    </span>
-  `).join('');
+  const countEl = container.querySelector('#dashTargetDomainsCount');
+  if (countEl) countEl.textContent = `Active Whitelisted Websites (${sites.length} active):`;
 
-  chipContainer.querySelectorAll('.btn-remove-site').forEach(btn => {
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+
+  chipContainer.querySelectorAll('.btn-dash-remove-domain, .btn-remove-site').forEach(btn => {
     btn.addEventListener('click', () => {
-      const siteToRemove = btn.getAttribute('data-site');
-      currentProfile.targetFocus.websites = (currentProfile.targetFocus.websites || []).filter(s => s !== siteToRemove);
+      const siteToRemove = (btn.getAttribute('data-domain') || btn.getAttribute('data-site') || '').toLowerCase().trim();
+      if (!siteToRemove) return;
+      if (!currentProfile.targetFocus) currentProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [] };
+      currentProfile.targetFocus.targetDomains = (currentProfile.targetFocus.targetDomains || []).filter(s => s.toLowerCase().trim() !== siteToRemove);
+      currentProfile.targetFocus.websites = (currentProfile.targetFocus.websites || []).filter(s => s.toLowerCase().trim() !== siteToRemove);
       storageService.saveProfile(currentProfile);
       renderTargetChipsInDash(ctx);
       syncAiWebsiteTrayState(ctx);
+      showConfirmationBanner('Target Removed', `Removed "${siteToRemove}" from whitelist.`, 'info', 1800);
       if (ctx.onStateChanged) ctx.onStateChanged();
     });
   });
@@ -311,87 +322,136 @@ export function renderTargetChipsInDash(ctx) {
 export function syncAiWebsiteTrayState(ctx) {
   const container = ctx.container || document;
   const currentProfile = ctx.currentProfile;
-  const tray = container.querySelector('#aiWebsiteTray');
+  const tray = container.querySelector('#dashAiWebsiteSuggestionsTray') || container.querySelector('#aiWebsiteTray');
   if (!tray || !currentProfile) return;
 
-  const activeSites = new Set((currentProfile.targetFocus?.websites || []).map(s => s.toLowerCase()));
-  tray.querySelectorAll('.btn-ai-site-chip').forEach(btn => {
-    const domain = (btn.getAttribute('data-domain') || '').toLowerCase();
+  const tf = currentProfile.targetFocus || {};
+  const activeSites = new Set([...(tf.targetDomains || []), ...(tf.websites || [])].map(s => s.toLowerCase().trim()));
+  tray.querySelectorAll('.btn-dash-add-ai-website, .btn-ai-site-chip').forEach(btn => {
+    const domain = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
     const isAdded = activeSites.has(domain);
     if (isAdded) {
-      btn.style.background = '#0284c7';
-      btn.style.color = '#ffffff';
-      btn.style.borderColor = '#38bdf8';
+      btn.classList.add('added');
+      btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> <strong>${domain}</strong>`;
     } else {
-      btn.style.background = 'rgba(56, 189, 248, 0.08)';
-      btn.style.color = 'var(--text-secondary)';
-      btn.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+      btn.classList.remove('added');
+      btn.innerHTML = `<i data-lucide="plus" class="icon-xs"></i> <strong>${domain}</strong>`;
     }
   });
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 }
 
 export function renderKeywordsInDash(ctx) {
   const container = ctx.container || document;
   const currentProfile = ctx.currentProfile;
-  const posContainer = container.querySelector('#dashPosKeywords');
-  const negContainer = container.querySelector('#dashNegKeywords');
+  const posContainer = container.querySelector('#dashPositiveKeywordsContainer') || container.querySelector('#dashPosKeywords');
+  const negContainer = container.querySelector('#dashNegativeKeywordsContainer') || container.querySelector('#dashNegKeywords');
   if (!currentProfile) return;
 
   if (posContainer) {
-    const pos = currentProfile.keywords?.positive || [];
+    let pos = [];
+    if (Array.isArray(currentProfile.keywords)) {
+      pos = currentProfile.keywords;
+    } else if (currentProfile.keywords?.positive) {
+      pos = currentProfile.keywords.positive;
+    }
     posContainer.innerHTML = pos.map(kw => `
-      <span class="profile-chip" style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(52, 211, 153, 0.12); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
+      <span class="meta-pill" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.75rem;">
         ${escapeHtml(kw)}
-        <button type="button" class="btn-remove-kw" data-type="positive" data-kw="${escapeHtml(kw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1; margin-left: 0.2rem;">&times;</button>
+        <button type="button" class="btn-dash-remove-pos-kw btn-remove-kw" data-kw="${escapeHtml(kw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0 0.2rem; font-size: 0.85rem; line-height: 1;">&times;</button>
       </span>
-    `).join('');
+    `).join('') || `<span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">No technical keywords added yet.</span>`;
 
-    posContainer.querySelectorAll('.btn-remove-kw').forEach(btn => {
+    posContainer.querySelectorAll('.btn-dash-remove-pos-kw, .btn-remove-kw').forEach(btn => {
       btn.addEventListener('click', () => {
         const kw = btn.getAttribute('data-kw');
-        currentProfile.keywords.positive = (currentProfile.keywords.positive || []).filter(k => k !== kw);
+        if (Array.isArray(currentProfile.keywords)) {
+          currentProfile.keywords = currentProfile.keywords.filter(k => k !== kw);
+        } else if (currentProfile.keywords?.positive) {
+          currentProfile.keywords.positive = currentProfile.keywords.positive.filter(k => k !== kw);
+        }
         storageService.saveProfile(currentProfile);
         renderKeywordsInDash(ctx);
+        syncAiKeywordTrayState(ctx);
+        showConfirmationBanner('Keyword Removed', `Removed "${kw}" from keywords.`, 'info', 1800);
         if (ctx.onStateChanged) ctx.onStateChanged();
       });
     });
   }
 
   if (negContainer) {
-    const neg = currentProfile.keywords?.negative || [];
+    let neg = [];
+    if (Array.isArray(currentProfile.negativeKeywords)) {
+      neg = currentProfile.negativeKeywords;
+    } else if (currentProfile.keywords?.negative) {
+      neg = currentProfile.keywords.negative;
+    }
     negContainer.innerHTML = neg.map(kw => `
-      <span class="profile-chip" style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
+      <span class="meta-pill" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">
         <i data-lucide="ban" class="icon icon-xs"></i> ${escapeHtml(kw)}
-        <button type="button" class="btn-remove-kw" data-type="negative" data-kw="${escapeHtml(kw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1; margin-left: 0.2rem;">&times;</button>
+        <button type="button" class="btn-dash-remove-neg-kw btn-remove-kw" data-kw="${escapeHtml(kw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0 0.2rem; font-size: 0.85rem; line-height: 1;">&times;</button>
       </span>
-    `).join('');
+    `).join('') || `<span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">No exclusion filters active.</span>`;
 
-    negContainer.querySelectorAll('.btn-remove-kw').forEach(btn => {
+    negContainer.querySelectorAll('.btn-dash-remove-neg-kw, .btn-remove-kw').forEach(btn => {
       btn.addEventListener('click', () => {
         const kw = btn.getAttribute('data-kw');
-        currentProfile.keywords.negative = (currentProfile.keywords.negative || []).filter(k => k !== kw);
+        if (Array.isArray(currentProfile.negativeKeywords)) {
+          currentProfile.negativeKeywords = currentProfile.negativeKeywords.filter(k => k !== kw);
+        } else if (currentProfile.keywords?.negative) {
+          currentProfile.keywords.negative = currentProfile.keywords.negative.filter(k => k !== kw);
+        }
         storageService.saveProfile(currentProfile);
         renderKeywordsInDash(ctx);
+        showConfirmationBanner('Exclusion Removed', `Removed "${kw}" from negative filters.`, 'info', 1800);
         if (ctx.onStateChanged) ctx.onStateChanged();
       });
     });
   }
+
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+}
+
+export function syncAiKeywordTrayState(ctx) {
+  const container = ctx.container || document;
+  const currentProfile = ctx.currentProfile;
+  const tray = container.querySelector('#dashAiPosKwSuggestionsTray');
+  if (!tray || !currentProfile) return;
+
+  const currentKws = new Set((currentProfile.keywords || []).map(k => k.toLowerCase()));
+  tray.querySelectorAll('.btn-dash-add-ai-pos-kw').forEach(btn => {
+    const kw = btn.getAttribute('data-kw') || '';
+    const isAdded = currentKws.has(kw.toLowerCase());
+    if (isAdded) {
+      btn.classList.add('added');
+      btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> ${escapeHtml(kw)}`;
+    } else {
+      btn.classList.remove('added');
+      btn.innerHTML = `<i data-lucide="plus" class="icon-xs"></i> ${escapeHtml(kw)}`;
+    }
+  });
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
 }
 
 export function bindProfilesTabEvents(container, ctx) {
     if (typeof lucide !== 'undefined' && lucide.createIcons) {
       lucide.createIcons();
     }
+
+    // Initialize chips & trays with active event bindings
+    renderTargetChipsInDash(ctx);
+    renderKeywordsInDash(ctx);
+
     // Toggle Target Focus Checkbox & Mode immediately
     document.getElementById('dashTargetFocusEnabled')?.addEventListener('change', (e) => {
       ctx.currentProfile.targetFocus.enabled = e.target.checked;
       storageService.saveProfile(ctx.currentProfile);
-      if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+      if (ctx.onStateChanged) ctx.onStateChanged();
     });
     document.getElementById('dashTargetFocusMode')?.addEventListener('change', (e) => {
       ctx.currentProfile.targetFocus.mode = e.target.value;
       storageService.saveProfile(ctx.currentProfile);
-      if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+      if (ctx.onStateChanged) ctx.onStateChanged();
     });
 
     // Add Custom Website in Dashboard
@@ -401,6 +461,9 @@ export function bindProfilesTabEvents(container, ctx) {
       if (!raw) return;
       const domain = raw.replace(/^https?:\/\//i, '').split('/')[0].toLowerCase().trim();
       if (!domain) return;
+      if (!ctx.currentProfile.targetFocus) {
+        ctx.currentProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [] };
+      }
       const tf = ctx.currentProfile.targetFocus;
       if (!tf.targetDomains) tf.targetDomains = [];
       tf.enabled = true;
@@ -411,7 +474,7 @@ export function bindProfilesTabEvents(container, ctx) {
         renderTargetChipsInDash(ctx);
         syncAiWebsiteTrayState(ctx);
         showConfirmationBanner('Target Website Added', `Added "${domain}" to target focus whitelist.`, 'success', 2200);
-        if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+        if (ctx.onStateChanged) ctx.onStateChanged();
       } else {
         showConfirmationBanner('Already Added', `"${domain}" is already in your active whitelist.`, 'info', 1800);
       }
@@ -426,12 +489,15 @@ export function bindProfilesTabEvents(container, ctx) {
 
     // Clear All Target Websites
     document.getElementById('btnDashClearAllTargets')?.addEventListener('click', () => {
-      ctx.currentProfile.targetFocus.targetDomains = [];
+      if (ctx.currentProfile.targetFocus) {
+        ctx.currentProfile.targetFocus.targetDomains = [];
+        ctx.currentProfile.targetFocus.websites = [];
+      }
       storageService.saveProfile(ctx.currentProfile);
       renderTargetChipsInDash(ctx);
       syncAiWebsiteTrayState(ctx);
       showConfirmationBanner('Whitelist Cleared', 'All target websites removed from whitelist.', 'info', 2000);
-      if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+      if (ctx.onStateChanged) ctx.onStateChanged();
     });
 
     // 1-Click AI Website Whitelist Chips (Interactive Toggle)
@@ -440,6 +506,9 @@ export function bindProfilesTabEvents(container, ctx) {
         const rawDomain = btn.getAttribute('data-domain') || '';
         const domain = rawDomain.replace(/^https?:\/\//i, '').split('/')[0].toLowerCase().trim();
         if (!domain) return;
+        if (!ctx.currentProfile.targetFocus) {
+          ctx.currentProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [] };
+        }
         const tf = ctx.currentProfile.targetFocus;
         if (!tf.targetDomains) tf.targetDomains = [];
         tf.enabled = true;
@@ -448,6 +517,7 @@ export function bindProfilesTabEvents(container, ctx) {
         if (normalized.includes(domain)) {
           // Toggle off
           tf.targetDomains = tf.targetDomains.filter(d => d.toLowerCase() !== domain);
+          if (tf.websites) tf.websites = tf.websites.filter(d => d.toLowerCase() !== domain);
           storageService.saveProfile(ctx.currentProfile);
           renderTargetChipsInDash(ctx);
           syncAiWebsiteTrayState(ctx);
@@ -460,7 +530,7 @@ export function bindProfilesTabEvents(container, ctx) {
           syncAiWebsiteTrayState(ctx);
           showConfirmationBanner('AI Portal Whitelisted', `Added "${domain}" to whitelist target portals.`, 'success', 2200);
         }
-        if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+        if (ctx.onStateChanged) ctx.onStateChanged();
       });
     });
 
@@ -481,7 +551,7 @@ export function bindProfilesTabEvents(container, ctx) {
             btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> ${escapeHtml(role)}`;
             if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
             showConfirmationBanner('AI Role Added', `Added "${role}" to target designations.`, 'info', 2200);
-            if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+            if (ctx.onStateChanged) ctx.onStateChanged();
           } else {
             showConfirmationBanner('Already Included', `"${role}" is already in your designations.`, 'info', 1800);
           }
@@ -500,8 +570,9 @@ export function bindProfilesTabEvents(container, ctx) {
         storageService.saveProfile(ctx.currentProfile);
         input.value = '';
         renderKeywordsInDash(ctx);
+        syncAiKeywordTrayState(ctx);
         showConfirmationBanner('Keyword Added', `Added "${val}" to search criteria.`, 'info', 2000);
-        if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+        if (ctx.onStateChanged) ctx.onStateChanged();
       } else {
         showConfirmationBanner('Already Added', `"${val}" is already active in keywords.`, 'info', 1800);
       }
@@ -527,8 +598,9 @@ export function bindProfilesTabEvents(container, ctx) {
           btn.innerHTML = `<i data-lucide="check" class="icon-xs"></i> ${escapeHtml(kw)}`;
           if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           renderKeywordsInDash(ctx);
+          syncAiKeywordTrayState(ctx);
           showConfirmationBanner('AI Keyword Added', `Added "${kw}" to technical keywords.`, 'info', 2200);
-          if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+          if (ctx.onStateChanged) ctx.onStateChanged();
         } else {
           showConfirmationBanner('Already Added', `"${kw}" is already active in keywords.`, 'info', 1800);
         }
@@ -547,7 +619,7 @@ export function bindProfilesTabEvents(container, ctx) {
         input.value = '';
         renderKeywordsInDash(ctx);
         showConfirmationBanner('Negative Keyword Added', `Added exclusion filter "${val}".`, 'warning', 2000);
-        if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+        if (ctx.onStateChanged) ctx.onStateChanged();
       } else {
         showConfirmationBanner('Already Excluded', `"${val}" is already in negative filters.`, 'info', 1800);
       }
@@ -574,7 +646,7 @@ export function bindProfilesTabEvents(container, ctx) {
           if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
           renderKeywordsInDash(ctx);
           showConfirmationBanner('AI Negative Filter Added', `Added "${kw}" to exclusion filters.`, 'warning', 2200);
-          if (this.onStateChanged) ctx.onStateChanged && ctx.onStateChanged();
+          if (ctx.onStateChanged) ctx.onStateChanged();
         } else {
           showConfirmationBanner('Already Excluded', `"${kw}" is already in negative filters.`, 'info', 1800);
         }

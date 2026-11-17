@@ -16,6 +16,7 @@ import { escapeHtml } from '../utils/htmlUtils.js';
 
 export class ProfileBuilderUI {
   constructor(containerId, onProfileUpdated) {
+    this.containerId = containerId;
     this.container = document.getElementById(containerId);
     this.onProfileUpdated = onProfileUpdated;
     this.currentProfile = null;
@@ -23,6 +24,9 @@ export class ProfileBuilderUI {
   }
 
   render(forceReload = false) {
+    if (!this.container) {
+      this.container = document.getElementById(this.containerId);
+    }
     if (!this.container) return;
     if (!this.currentProfile || forceReload) {
       this.currentProfile = JSON.parse(JSON.stringify(storageService.getActiveProfile()));
@@ -715,9 +719,9 @@ export class ProfileBuilderUI {
     // Remove Domain from Chips
     this.container.querySelectorAll('.btn-remove-domain').forEach(btn => {
       btn.addEventListener('click', () => {
-        const domain = btn.getAttribute('data-domain');
+        const domain = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
         if (domain && this.currentProfile.targetFocus?.targetDomains) {
-          this.currentProfile.targetFocus.targetDomains = this.currentProfile.targetFocus.targetDomains.filter(d => d !== domain);
+          this.currentProfile.targetFocus.targetDomains = this.currentProfile.targetFocus.targetDomains.filter(d => (d || '').toLowerCase().trim() !== domain);
           this.recomputeAndRerender();
           showConfirmationBanner('Target Removed', `Removed "${domain}" from whitelist.`, 'info');
         }
@@ -877,15 +881,20 @@ export class ProfileBuilderUI {
     // Rebind remove chips
     container.querySelectorAll('.btn-remove-domain').forEach(btn => {
       btn.addEventListener('click', () => {
-        const domain = btn.getAttribute('data-domain');
-        tf.targetDomains = (tf.targetDomains || []).filter(d => d !== domain);
+        const domain = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
+        tf.targetDomains = (tf.targetDomains || []).filter(d => (d || '').toLowerCase().trim() !== domain);
+        storageService.saveProfile(this.currentProfile);
+        if (this.onProfileUpdated) this.onProfileUpdated();
         this.renderTargetChips();
+        showConfirmationBanner('Target Removed', `Removed "${domain}" from whitelist.`, 'info');
       });
     });
     container.querySelectorAll('.btn-remove-org').forEach(btn => {
       btn.addEventListener('click', () => {
         const org = btn.getAttribute('data-org');
         tf.targetOrganisations = (tf.targetOrganisations || []).filter(o => o !== org);
+        storageService.saveProfile(this.currentProfile);
+        if (this.onProfileUpdated) this.onProfileUpdated();
         this.renderTargetChips();
       });
     });

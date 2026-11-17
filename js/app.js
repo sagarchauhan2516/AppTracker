@@ -989,7 +989,7 @@ class App {
         this.refreshAll();
       });
     }
-    this.profileBuilderUI.render();
+    this.profileBuilderUI.render(true);
   }
 
 

@@ -68,8 +68,14 @@ export class ProfileSettingsUI {
     const edu = this.currentProfile.education || {};
     const demo = this.currentProfile.demographics || {};
     const exp = this.currentProfile.experience || {};
-    const tf = this.currentProfile.targetFocus;
-    const targetDomains = tf.targetDomains || [];
+    const tf = this.currentProfile.targetFocus || {};
+    const targetDomains = tf.targetDomains || tf.websites || [];
+    const positiveKeywords = Array.isArray(this.currentProfile.keywords)
+      ? this.currentProfile.keywords
+      : (this.currentProfile.keywords?.positive || []);
+    const negativeKeywords = Array.isArray(this.currentProfile.negativeKeywords)
+      ? this.currentProfile.negativeKeywords
+      : (this.currentProfile.keywords?.negative || []);
 
     this.container.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 1.25rem;">
@@ -119,7 +125,7 @@ export class ProfileSettingsUI {
             <i data-lucide="user" class="icon-xs"></i> Identity &amp; Roles
           </button>
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'keywords' ? 'active' : ''}" data-tab="keywords" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
-            <i data-lucide="tag" class="icon-xs"></i> Technical Keywords (${(this.currentProfile.keywords || []).length})
+            <i data-lucide="tag" class="icon-xs"></i> Technical Keywords (${positiveKeywords.length})
           </button>
           <button type="button" class="nav-tab-btn btn-prof-tab ${this.activeTab === 'websites' ? 'active' : ''}" data-tab="websites" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
             <i data-lucide="crosshair" class="icon-xs"></i> Target Websites &amp; Whitelist (${targetDomains.length})
@@ -196,7 +202,7 @@ export class ProfileSettingsUI {
               <button type="button" id="btnAddPositiveKw" class="btn btn-primary btn-sm" style="font-weight: 600;"><i data-lucide="plus" class="icon-xs"></i> Add Keyword</button>
             </div>
             <div id="profPositiveKwChips" style="display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 40px; background: var(--bg-surface-elevated); padding: 0.6rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-              ${(this.currentProfile.keywords || []).map(kw => `
+              ${positiveKeywords.map(kw => `
                 <span class="meta-pill" style="font-size: 0.78rem; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); display: inline-flex; align-items: center; gap: 0.35rem;">
                   <strong>${this.escapeHtml(kw)}</strong>
                   <button type="button" class="btn-remove-kw" data-kw="${this.escapeHtml(kw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1;">&times;</button>
@@ -212,7 +218,7 @@ export class ProfileSettingsUI {
             </strong>
             <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
               ${['Digital Forensics', 'DFIR', 'EnCase', 'FTK', 'Autopsy', 'Volatility', 'SIEM', 'VAPT', 'Section 65B', 'Deepfake', 'Network Forensics', 'Incident Response', 'Malware Analysis', 'Reverse Engineering', 'C-DAC', 'Cyber Crime'].map(kw => {
-                const isAlready = (this.currentProfile.keywords || []).includes(kw);
+                const isAlready = positiveKeywords.includes(kw);
                 return `
                   <button type="button" class="btn-quick-add-kw ${isAlready ? 'added' : ''}" data-kw="${kw}" style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: var(--radius-pill); border: 1px solid ${isAlready ? 'rgba(16, 185, 129, 0.4)' : 'rgba(168, 85, 247, 0.35)'}; background: ${isAlready ? 'rgba(16, 185, 129, 0.15)' : 'rgba(168, 85, 247, 0.15)'}; color: ${isAlready ? '#34d399' : '#c084fc'}; cursor: pointer;">
                     <i data-lucide="${isAlready ? 'check' : 'plus'}" class="icon-xs"></i> ${kw}
@@ -232,7 +238,7 @@ export class ProfileSettingsUI {
               <button type="button" id="btnAddNegativeKw" class="btn btn-outline btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);"><i data-lucide="plus" class="icon-xs"></i> Add Exclusion</button>
             </div>
             <div id="profNegativeKwChips" style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-              ${(this.currentProfile.negativeKeywords || []).map(nkw => `
+              ${negativeKeywords.map(nkw => `
                 <span class="meta-pill" style="font-size: 0.75rem; background: rgba(239, 68, 68, 0.12); color: #f87171; border-color: rgba(239, 68, 68, 0.3); display: inline-flex; align-items: center; gap: 0.35rem;">
                   <i data-lucide="ban" class="icon-xs"></i> ${this.escapeHtml(nkw)}
                   <button type="button" class="btn-remove-nkw" data-kw="${this.escapeHtml(nkw)}" style="background: none; border: none; color: #f87171; cursor: pointer; padding: 0;">&times;</button>
@@ -498,10 +504,31 @@ export class ProfileSettingsUI {
       const kw = (input?.value || '').trim();
       if (!kw) return;
       if (!this.currentProfile.keywords) this.currentProfile.keywords = [];
-      if (!this.currentProfile.keywords.includes(kw)) {
-        this.currentProfile.keywords.push(kw);
+      let isAlready = false;
+      if (Array.isArray(this.currentProfile.keywords)) {
+        if (!this.currentProfile.keywords.includes(kw)) {
+          this.currentProfile.keywords.push(kw);
+        } else {
+          isAlready = true;
+        }
+      } else if (typeof this.currentProfile.keywords === 'object') {
+        if (!Array.isArray(this.currentProfile.keywords.positive)) {
+          this.currentProfile.keywords.positive = [];
+        }
+        if (!this.currentProfile.keywords.positive.includes(kw)) {
+          this.currentProfile.keywords.positive.push(kw);
+        } else {
+          isAlready = true;
+        }
+      }
+      if (!isAlready) {
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         input.value = '';
         this.render();
+        showConfirmationBanner('Keyword Added', `Added "${kw}" to technical keywords.`, 'success', 2200);
+      } else {
+        showConfirmationBanner('Already Added', `"${kw}" is already active in keywords.`, 'info', 1800);
       }
     };
     document.getElementById('btnAddPositiveKw')?.addEventListener('click', addPosKw);
@@ -513,8 +540,15 @@ export class ProfileSettingsUI {
     this.container.querySelectorAll('.btn-remove-kw').forEach(btn => {
       btn.addEventListener('click', () => {
         const kw = btn.getAttribute('data-kw');
-        this.currentProfile.keywords = (this.currentProfile.keywords || []).filter(k => k !== kw);
+        if (Array.isArray(this.currentProfile.keywords)) {
+          this.currentProfile.keywords = this.currentProfile.keywords.filter(k => k !== kw);
+        } else if (this.currentProfile.keywords?.positive) {
+          this.currentProfile.keywords.positive = this.currentProfile.keywords.positive.filter(k => k !== kw);
+        }
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         this.render();
+        showConfirmationBanner('Keyword Removed', `Removed "${kw}" from keywords.`, 'info', 1800);
       });
     });
 
@@ -524,11 +558,29 @@ export class ProfileSettingsUI {
         const kw = btn.getAttribute('data-kw');
         if (!kw) return;
         if (!this.currentProfile.keywords) this.currentProfile.keywords = [];
-        if (!this.currentProfile.keywords.includes(kw)) {
-          this.currentProfile.keywords.push(kw);
-        } else {
-          this.currentProfile.keywords = this.currentProfile.keywords.filter(k => k !== kw);
+        let isPresent = false;
+        if (Array.isArray(this.currentProfile.keywords)) {
+          isPresent = this.currentProfile.keywords.includes(kw);
+          if (!isPresent) {
+            this.currentProfile.keywords.push(kw);
+            showConfirmationBanner('Keyword Added', `Added "${kw}" to technical keywords.`, 'success', 2200);
+          } else {
+            this.currentProfile.keywords = this.currentProfile.keywords.filter(k => k !== kw);
+            showConfirmationBanner('Keyword Removed', `Removed "${kw}" from keywords.`, 'info', 1800);
+          }
+        } else if (typeof this.currentProfile.keywords === 'object') {
+          if (!Array.isArray(this.currentProfile.keywords.positive)) this.currentProfile.keywords.positive = [];
+          isPresent = this.currentProfile.keywords.positive.includes(kw);
+          if (!isPresent) {
+            this.currentProfile.keywords.positive.push(kw);
+            showConfirmationBanner('Keyword Added', `Added "${kw}" to technical keywords.`, 'success', 2200);
+          } else {
+            this.currentProfile.keywords.positive = this.currentProfile.keywords.positive.filter(k => k !== kw);
+            showConfirmationBanner('Keyword Removed', `Removed "${kw}" from keywords.`, 'info', 1800);
+          }
         }
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         this.render();
       });
     });
@@ -539,20 +591,46 @@ export class ProfileSettingsUI {
       const kw = (input?.value || '').trim();
       if (!kw) return;
       if (!this.currentProfile.negativeKeywords) this.currentProfile.negativeKeywords = [];
-      if (!this.currentProfile.negativeKeywords.includes(kw)) {
-        this.currentProfile.negativeKeywords.push(kw);
+      let isAlready = false;
+      if (Array.isArray(this.currentProfile.negativeKeywords)) {
+        if (!this.currentProfile.negativeKeywords.includes(kw)) {
+          this.currentProfile.negativeKeywords.push(kw);
+        } else {
+          isAlready = true;
+        }
+      }
+      if (this.currentProfile.keywords?.negative && Array.isArray(this.currentProfile.keywords.negative)) {
+        if (!this.currentProfile.keywords.negative.includes(kw)) {
+          this.currentProfile.keywords.negative.push(kw);
+        }
+      }
+      if (!isAlready) {
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         input.value = '';
         this.render();
+        showConfirmationBanner('Exclusion Added', `Added "${kw}" to negative filters.`, 'warning', 2200);
       }
     };
     document.getElementById('btnAddNegativeKw')?.addEventListener('click', addNegKw);
+    document.getElementById('inputAddNegativeKw')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); addNegKw(); }
+    });
 
     // Remove Negative Keyword
     this.container.querySelectorAll('.btn-remove-nkw').forEach(btn => {
       btn.addEventListener('click', () => {
         const kw = btn.getAttribute('data-kw');
-        this.currentProfile.negativeKeywords = (this.currentProfile.negativeKeywords || []).filter(k => k !== kw);
+        if (Array.isArray(this.currentProfile.negativeKeywords)) {
+          this.currentProfile.negativeKeywords = this.currentProfile.negativeKeywords.filter(k => k !== kw);
+        }
+        if (this.currentProfile.keywords?.negative && Array.isArray(this.currentProfile.keywords.negative)) {
+          this.currentProfile.keywords.negative = this.currentProfile.keywords.negative.filter(k => k !== kw);
+        }
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         this.render();
+        showConfirmationBanner('Exclusion Removed', `Removed "${kw}" from negative filters.`, 'info', 1800);
       });
     });
 
@@ -563,13 +641,26 @@ export class ProfileSettingsUI {
       if (!raw) return;
       const domain = raw.replace(/^https?:\/\//i, '').split('/')[0].toLowerCase().trim();
       if (!domain) return;
+      if (!this.currentProfile.targetFocus) {
+        this.currentProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [], websites: [] };
+      }
       const tf = this.currentProfile.targetFocus;
-      if (!tf.targetDomains) tf.targetDomains = [];
+      if (!Array.isArray(tf.targetDomains)) tf.targetDomains = [];
+      if (!Array.isArray(tf.websites)) tf.websites = [];
       tf.enabled = true;
-      if (!tf.targetDomains.map(d => d.toLowerCase()).includes(domain)) {
+      const lowerExisting = tf.targetDomains.map(d => d.toLowerCase().trim());
+      if (!lowerExisting.includes(domain)) {
         tf.targetDomains.push(domain);
+        if (!tf.websites.map(d => d.toLowerCase().trim()).includes(domain)) {
+          tf.websites.push(domain);
+        }
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         input.value = '';
         this.render();
+        showConfirmationBanner('Website Whitelisted', `Added "${domain}" to whitelist.`, 'success', 2200);
+      } else {
+        showConfirmationBanner('Already Added', `"${domain}" is already in your active whitelist.`, 'info', 1800);
       }
     };
     document.getElementById('btnAddWebsite')?.addEventListener('click', addSite);
@@ -580,25 +671,48 @@ export class ProfileSettingsUI {
     // Remove Website
     this.container.querySelectorAll('.btn-remove-site').forEach(btn => {
       btn.addEventListener('click', () => {
-        const dom = btn.getAttribute('data-domain');
-        this.currentProfile.targetFocus.targetDomains = (this.currentProfile.targetFocus.targetDomains || []).filter(d => d.toLowerCase() !== dom.toLowerCase());
-        this.render();
+        const dom = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
+        if (this.currentProfile.targetFocus) {
+          const tf = this.currentProfile.targetFocus;
+          if (Array.isArray(tf.targetDomains)) {
+            tf.targetDomains = tf.targetDomains.filter(d => d.toLowerCase().trim() !== dom);
+          }
+          if (Array.isArray(tf.websites)) {
+            tf.websites = tf.websites.filter(d => d.toLowerCase().trim() !== dom);
+          }
+          storageService.saveProfile(this.currentProfile);
+          if (this.onStateChanged) this.onStateChanged();
+          this.render();
+          showConfirmationBanner('Target Removed', `Removed "${dom}" from whitelist.`, 'info', 1800);
+        }
       });
     });
 
     // Quick Add Site
     this.container.querySelectorAll('.btn-quick-add-site').forEach(btn => {
       btn.addEventListener('click', () => {
-        const dom = btn.getAttribute('data-domain');
+        const dom = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
         if (!dom) return;
-        const tf = this.currentProfile.targetFocus;
-        if (!tf.targetDomains) tf.targetDomains = [];
-        tf.enabled = true;
-        if (!tf.targetDomains.map(d => d.toLowerCase()).includes(dom.toLowerCase())) {
-          tf.targetDomains.push(dom);
-        } else {
-          tf.targetDomains = tf.targetDomains.filter(d => d.toLowerCase() !== dom.toLowerCase());
+        if (!this.currentProfile.targetFocus) {
+          this.currentProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [], websites: [] };
         }
+        const tf = this.currentProfile.targetFocus;
+        if (!Array.isArray(tf.targetDomains)) tf.targetDomains = [];
+        if (!Array.isArray(tf.websites)) tf.websites = [];
+        tf.enabled = true;
+        const exists = tf.targetDomains.map(d => d.toLowerCase().trim()).includes(dom) ||
+                       tf.websites.map(d => d.toLowerCase().trim()).includes(dom);
+        if (!exists) {
+          tf.targetDomains.push(dom);
+          tf.websites.push(dom);
+          showConfirmationBanner('Website Whitelisted', `Added "${dom}" to whitelist.`, 'success', 2200);
+        } else {
+          tf.targetDomains = tf.targetDomains.filter(d => d.toLowerCase().trim() !== dom);
+          tf.websites = tf.websites.filter(d => d.toLowerCase().trim() !== dom);
+          showConfirmationBanner('Target Removed', `Removed "${dom}" from whitelist.`, 'info', 1800);
+        }
+        storageService.saveProfile(this.currentProfile);
+        if (this.onStateChanged) this.onStateChanged();
         this.render();
       });
     });
@@ -745,8 +859,17 @@ export class ProfileSettingsUI {
       };
       this.currentProfile.demographics = { category };
       this.currentProfile.experience = { minYears: expYears };
+      if (!this.currentProfile.targetFocus) {
+        this.currentProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [], websites: [] };
+      }
       this.currentProfile.targetFocus.mode = focusMode;
       this.currentProfile.targetFocus.enabled = true;
+      if (!Array.isArray(this.currentProfile.targetFocus.targetDomains)) {
+        this.currentProfile.targetFocus.targetDomains = [];
+      }
+      if (!Array.isArray(this.currentProfile.targetFocus.websites)) {
+        this.currentProfile.targetFocus.websites = [...this.currentProfile.targetFocus.targetDomains];
+      }
 
       // Extract Custom Fields
       const customFields = [];

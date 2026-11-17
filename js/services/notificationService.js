@@ -9,11 +9,16 @@ import { escapeHtml } from '../utils/htmlUtils.js';
 export function showConfirmationBanner(title, message, type = 'success', durationMs = 3800) {
   let container = document.getElementById('confirmationBannerContainer');
   if (!container) {
-    container = document.createElement('div');
-    container.id = 'confirmationBannerContainer';
-    container.className = 'confirmation-overlay-container';
-    document.body.appendChild(container);
+    if (typeof document?.createElement === 'function') {
+      container = document.createElement('div');
+      container.id = 'confirmationBannerContainer';
+      container.className = 'confirmation-overlay-container';
+      if (document.body?.appendChild) {
+        document.body.appendChild(container);
+      }
+    }
   }
+  if (!container || typeof container.appendChild !== 'function') return;
 
   const banner = document.createElement('div');
   const typeClass = type === 'info' ? 'banner-info' : (type === 'warning' ? 'banner-warning' : (type === 'error' ? 'banner-error' : ''));

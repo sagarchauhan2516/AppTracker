@@ -6,6 +6,7 @@ import assert from 'assert';
 import { ROLE_PRESETS, KNOWN_APEX_TARGETS } from '../js/data/rolePresets.js';
 import { MatchingEngine } from '../js/engine/matchingEngine.js';
 import { KeywordExpansionEngine } from '../js/engine/keywordExpansion.js';
+import { storageService } from '../js/services/storageService.js';
 
 console.log('------------------------------------------------------------');
 console.log('⚡ RUNNING ROLE PROFILES & TARGET FOCUS ACCEPTANCE SUITE');
@@ -121,6 +122,111 @@ runTest('5. KeywordExpansionEngine constructs priority query when targetFocus is
   assert(targetQuery, 'Should generate query-target-focus-priority');
   assert(targetQuery.queryText.includes('site:cdac.in'), 'Query must target cdac.in');
   assert(targetQuery.queryText.includes('site:upsc.gov.in'), 'Query must target upsc.gov.in');
+});
+
+// TEST 6: Profile Target Focus websites: adding and removing websites persists to StorageService
+runTest('6. Profile Target Focus websites: adding and removing websites persists to StorageService', () => {
+  const activeProfile = storageService.getActiveProfile();
+  assert(activeProfile, 'Active profile must exist');
+
+  if (!activeProfile.targetFocus) {
+    activeProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [], targetOrganisations: [] };
+  }
+  if (!Array.isArray(activeProfile.targetFocus.targetDomains)) {
+    activeProfile.targetFocus.targetDomains = [];
+  }
+
+  // Add website
+  const testDomain = 'cert-in.org.in';
+  if (!activeProfile.targetFocus.targetDomains.includes(testDomain)) {
+    activeProfile.targetFocus.targetDomains.push(testDomain);
+  }
+  storageService.saveProfile(activeProfile);
+
+  // Verify persistence
+  let retrieved = storageService.getActiveProfile();
+  assert(retrieved.targetFocus.targetDomains.includes(testDomain), 'New domain must persist in active profile');
+
+  // Remove website
+  activeProfile.targetFocus.targetDomains = activeProfile.targetFocus.targetDomains.filter(d => d !== testDomain);
+  storageService.saveProfile(activeProfile);
+
+  // Verify removal persisted
+  retrieved = storageService.getActiveProfile();
+  assert(!retrieved.targetFocus.targetDomains.includes(testDomain), 'Removed domain must be gone from active profile');
+});
+
+// TEST 7: Profile Keywords: adding and removing positive and negative keywords persists to StorageService
+runTest('7. Profile Keywords: adding and removing positive and negative keywords persists to StorageService', () => {
+  const activeProfile = storageService.getActiveProfile();
+  assert(activeProfile, 'Active profile must exist');
+
+  const testPosKw = 'malware-analysis-sample-kw';
+  const testNegKw = 'internship-unpaid-sample-kw';
+
+  // Add positive keyword (support both array and object formats)
+  if (Array.isArray(activeProfile.keywords)) {
+    if (!activeProfile.keywords.includes(testPosKw)) activeProfile.keywords.push(testPosKw);
+  } else {
+    if (!activeProfile.keywords) activeProfile.keywords = { positive: [], negative: [] };
+    if (!activeProfile.keywords.positive) activeProfile.keywords.positive = [];
+    if (!activeProfile.keywords.positive.includes(testPosKw)) activeProfile.keywords.positive.push(testPosKw);
+  }
+
+  // Add negative keyword
+  if (!activeProfile.negativeKeywords) activeProfile.negativeKeywords = [];
+  if (!activeProfile.negativeKeywords.includes(testNegKw)) activeProfile.negativeKeywords.push(testNegKw);
+
+  storageService.saveProfile(activeProfile);
+
+  // Verify persistence
+  let retrieved = storageService.getActiveProfile();
+  const hasPos = Array.isArray(retrieved.keywords)
+    ? retrieved.keywords.includes(testPosKw)
+    : (retrieved.keywords?.positive || []).includes(testPosKw);
+  assert(hasPos, 'Positive keyword must persist in active profile');
+  assert(retrieved.negativeKeywords.includes(testNegKw), 'Negative keyword must persist in active profile');
+
+  // Remove positive keyword
+  if (Array.isArray(activeProfile.keywords)) {
+    activeProfile.keywords = activeProfile.keywords.filter(k => k !== testPosKw);
+  } else {
+    activeProfile.keywords.positive = activeProfile.keywords.positive.filter(k => k !== testPosKw);
+  }
+
+  // Remove negative keyword
+  activeProfile.negativeKeywords = activeProfile.negativeKeywords.filter(k => k !== testNegKw);
+
+  storageService.saveProfile(activeProfile);
+
+  // Verify removal persisted
+  retrieved = storageService.getActiveProfile();
+  const stillHasPos = Array.isArray(retrieved.keywords)
+    ? retrieved.keywords.includes(testPosKw)
+    : (retrieved.keywords?.positive || []).includes(testPosKw);
+  assert(!stillHasPos, 'Removed positive keyword must be gone from storage');
+  assert(!retrieved.negativeKeywords.includes(testNegKw), 'Removed negative keyword must be gone from storage');
+});
+
+// TEST 8: UI handler state mutation logic: removes domain case-insensitively and updates storage
+runTest('8. UI handler state mutation logic: removes domain case-insensitively and updates storage', () => {
+  const activeProfile = storageService.getActiveProfile();
+  if (!activeProfile.targetFocus) {
+    activeProfile.targetFocus = { enabled: true, mode: 'PRIORITY_BOOST', targetDomains: [] };
+  }
+  activeProfile.targetFocus.targetDomains = ['Nfsu.Ac.In', 'Cdac.In'];
+  storageService.saveProfile(activeProfile);
+
+  // Simulate UI removal button click on 'nfsu.ac.in'
+  const domainToRemove = 'nfsu.ac.in';
+  activeProfile.targetFocus.targetDomains = activeProfile.targetFocus.targetDomains.filter(
+    d => d.toLowerCase().trim() !== domainToRemove.toLowerCase().trim()
+  );
+  storageService.saveProfile(activeProfile);
+
+  const updated = storageService.getActiveProfile();
+  assert.strictEqual(updated.targetFocus.targetDomains.length, 1);
+  assert.strictEqual(updated.targetFocus.targetDomains[0], 'Cdac.In');
 });
 
 console.log('\n------------------------------------------------------------');

@@ -57,7 +57,8 @@ import {
   pullRealVacanciesQuietly, 
   normalizeAndRepairVacancies, 
   openScheduleModal, 
-  handleManualScan 
+  handleManualScan,
+  handleApexScrapeOnly
 } from './controllers/scanController.js';
 
 
@@ -1030,6 +1031,7 @@ class App {
   normalizeAndRepairVacancies() { return normalizeAndRepairVacancies(this); }
   openScheduleModal() { return openScheduleModal(this); }
   handleManualScan() { return handleManualScan(this); }
+  handleApexScrapeOnly() { return handleApexScrapeOnly(this); }
 
   escapeHtml(str) {
     return escapeHtml(str);

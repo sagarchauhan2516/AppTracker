@@ -5,6 +5,7 @@ import { handleAiRoutes } from './aiRoutes.js';
 import { handlePdfRoutes } from './pdfRoutes.js';
 import { handleAlertRoutes } from './alertRoutes.js';
 import { handleApplicationRoutes } from './applicationRoutes.js';
+import { handleScraperRoutes } from './scraperRoutes.js';
 
 /**
  * Main API Route Dispatcher
@@ -19,6 +20,7 @@ import { handleApplicationRoutes } from './applicationRoutes.js';
 export async function handleApiRoute(req, res, reqPath) {
   if (await handleCredentialsRoutes(req, res, reqPath)) return true;
   if (await handleProfileRoutes(req, res, reqPath)) return true;
+  if (await handleScraperRoutes(req, res, reqPath)) return true;
   if (await handleSearchRoutes(req, res, reqPath)) return true;
   if (await handleAiRoutes(req, res, reqPath)) return true;
   if (await handlePdfRoutes(req, res, reqPath)) return true;

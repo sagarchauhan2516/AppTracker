@@ -457,6 +457,49 @@ export async function handleManualScan(app) {
 
       let discoveredLeads = orchestrationResult.results || [];
       const metadata = orchestrationResult.metadata || {};
+      let searchLeadsCount = discoveredLeads.length;
+
+      // 2b. Parallel Stream: Official Apex Web Scrapers (C-DAC, NFSU, NIELIT, DRDO, UPSC, CERT-In + Target Focus Domains)
+      let scrapedApexLeads = [];
+      try {
+        const targetDomains = activeProfile.targetFocus?.enabled ? (activeProfile.targetFocus.targetDomains || []) : [];
+        const scraperRes = await fetch('/api/scrapers/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            targetDomains,
+            profileKeywords: Array.isArray(activeProfile.keywords) ? activeProfile.keywords : (activeProfile.keywords?.positive || []),
+            forceRefresh: true
+          }),
+          signal: AbortSignal.timeout(16000)
+        });
+        if (scraperRes.ok) {
+          const scraperData = await scraperRes.json();
+          if (scraperData.success && Array.isArray(scraperData.vacancies)) {
+            scrapedApexLeads = scraperData.vacancies;
+          }
+        }
+      } catch (_) {}
+
+      // 2c. Parallel Stream: Live Public Feeds (RSS / Sarkari Gazette Feeds)
+      let liveFeedLeads = [];
+      try {
+        const feedRes = await fetch('/api/live-feeds', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: queryText }),
+          signal: AbortSignal.timeout(10000)
+        });
+        if (feedRes.ok) {
+          const feedData = await feedRes.json();
+          if (feedData.success && Array.isArray(feedData.leads)) {
+            liveFeedLeads = feedData.leads;
+          }
+        }
+      } catch (_) {}
+
+      // Combine all discovery streams with Apex Scraped leads prioritized first
+      discoveredLeads = [...scrapedApexLeads, ...discoveredLeads, ...liveFeedLeads];
 
       // Also query live SearXNG metasearch directly to guarantee maximum live web leads
       try {
@@ -666,3 +709,191 @@ export async function handleManualScan(app) {
       document.getElementById('btnCloseScanError')?.addEventListener('click', () => resultModal?.classList.remove('active'));
     }
   }
+
+/**
+ * Executes a targeted scrape across official Apex Indian Portals (₹0.00 cost, zero search queries used)
+ */
+export async function handleApexScrapeOnly(app) {
+  const resultModal = document.getElementById('scanResultModal');
+  const resultBody = document.getElementById('scanResultModalBody');
+  if (!resultModal || !resultBody) return;
+
+  const startTime = Date.now();
+  const activeProfile = storageService.getActiveProfile();
+  const targetDomains = activeProfile?.targetFocus?.enabled ? (activeProfile.targetFocus.targetDomains || []) : [];
+
+  // 1. Show Scraper Animation
+  resultBody.innerHTML = `
+    <div style="text-align: center; padding: 2rem 1rem;">
+      <div style="margin-bottom: 1rem;"><i data-lucide="globe-2" class="icon-xl text-emerald" style="width: 42px; height: 42px;"></i></div>
+      <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.5rem;">Apex Web Scraper In Progress</h3>
+      <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 480px; margin: 0 auto 1rem;">
+        Directly crawling official career pages of <strong>C-DAC, NFSU, NIELIT, DRDO RAC, UPSC, CERT-In</strong> &amp; candidate focus targets at ₹0.00 cost...
+      </p>
+      <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; max-width: 380px; margin: 0 auto 1.5rem;">
+        <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #10b981, #06b6d4);"></div>
+      </div>
+      <span style="font-size: 0.75rem; color: #34d399; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+        100% Free Official HTTP Scraper • Zero API Credits Consumed
+      </span>
+    </div>
+  `;
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+  resultModal.classList.add('active');
+
+  try {
+    const res = await fetch('/api/scrapers/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        targetDomains,
+        profileKeywords: Array.isArray(activeProfile?.keywords) ? activeProfile.keywords : (activeProfile?.keywords?.positive || []),
+        forceRefresh: true
+      }),
+      signal: AbortSignal.timeout(20000)
+    });
+
+    const scrapeData = await res.json();
+    const scrapedVacancies = (scrapeData && Array.isArray(scrapeData.vacancies)) ? scrapeData.vacancies : [];
+    let newCount = 0;
+    let verifiedCount = 0;
+
+    for (const lead of scrapedVacancies) {
+      if (storageService.isTrashed(lead)) continue;
+
+      if (lead.domain) {
+        SourceRegistryService.registerDiscoveredDomain(lead.domain, lead.organisation, lead.sourceUrl, 'Apex Web Scraper');
+      }
+
+      const audit = VerificationEngine.auditVacancy(lead);
+      lead.verification = {
+        ...lead.verification,
+        status: audit.status,
+        confidenceScore: audit.confidenceScore,
+        confirmedFacts: audit.confirmedFacts,
+        uncertainFields: audit.uncertainFields,
+        verifiedAt: new Date().toISOString()
+      };
+
+      lead.matchAnalysis = MatchingEngine.evaluateMatch(activeProfile, lead);
+
+      const existing = storageService.getVacancies().find(v =>
+        (v.advertisementNumber && lead.advertisementNumber && v.advertisementNumber === lead.advertisementNumber) ||
+        (v.title && lead.title && v.title.toLowerCase().trim() === lead.title.toLowerCase().trim() && v.organisation?.toLowerCase() === lead.organisation?.toLowerCase()) ||
+        (v.sourceUrl && lead.sourceUrl && v.sourceUrl === lead.sourceUrl)
+      );
+
+      if (!existing) {
+        lead.id = lead.id || `vac-scraped-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+        lead.isTestData = false;
+        lead.isLiveDiscovered = true;
+        storageService.saveVacancy(lead);
+        newCount++;
+        if (audit.status === 'OFFICIALLY_VERIFIED') verifiedCount++;
+      }
+    }
+
+    const elapsedMs = Date.now() - startTime;
+
+    storageService.addLog({
+      status: 'SUCCESS',
+      type: 'APEX_SCRAPE',
+      message: `Apex Web Scraper finished in ${elapsedMs}ms across official institutions. Found ${newCount} vacancies directly from portals.`,
+      sourcesChecked: Object.keys(scrapeData.portalStatuses || {}).length || 6,
+      newVacanciesFound: newCount
+    });
+
+    // Auto-sync to Google Sheets if configured
+    const providerConfig = storageService.getProviderConfig();
+    const webhookUrl = providerConfig?.googleAppsScriptWebhookUrl?.trim();
+    if (webhookUrl && newCount > 0) {
+      try {
+        const allVacancies = storageService.getVacancies();
+        await fetch('/api/sync-webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: webhookUrl,
+            payload: { action: 'SYNC_VACANCIES', vacancies: allVacancies }
+          })
+        });
+      } catch (_) {}
+    }
+
+    app.refreshAll();
+
+    const portalStatusList = Object.entries(scrapeData.portalStatuses || {}).map(([id, p]) => `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0.6rem; background: var(--bg-surface); border-radius: 4px; font-size: 0.78rem;">
+        <span style="font-weight: 600; color: var(--text-main);">${app.escapeHtml(p.name || id)}</span>
+        <span style="color: ${p.status === 'SUCCESS' ? '#34d399' : '#f87171'}; font-family: var(--font-mono); font-size: 0.72rem;">
+          ${p.status === 'SUCCESS' ? `+${p.count} posts (${p.latencyMs || 0}ms)` : 'Offline'}
+        </span>
+      </div>
+    `).join('');
+
+    resultBody.innerHTML = `
+      <div style="padding: 1.5rem 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <i data-lucide="check-circle-2" class="icon-xl text-emerald" style="width: 32px; height: 32px;"></i>
+          <div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem;">Apex Portal Scrape Complete</h3>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">
+              Engine: <strong style="color: #34d399;">Direct Government Portal Web Scraper</strong> • Duration: ${elapsedMs}ms • Cost: <strong style="color: #34d399;">₹0.00</strong>
+            </span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Portals Scraped</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono);">${Object.keys(scrapeData.portalStatuses || {}).length || 6}</div>
+          </div>
+          <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Vacancies Extracted</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #34d399; font-family: var(--font-mono);">+${newCount}</div>
+          </div>
+          <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Officially Verified</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #60a5fa; font-family: var(--font-mono);">${verifiedCount}</div>
+          </div>
+        </div>
+
+        ${portalStatusList ? `
+          <div style="margin-bottom: 1.25rem;">
+            <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
+              Apex Portal Coverage Status:
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+              ${portalStatusList}
+            </div>
+          </div>
+        ` : ''}
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button id="btnCloseApexScrapeSummary" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            View Extracted Vacancies
+          </button>
+        </div>
+      </div>
+    `;
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+
+    document.getElementById('btnCloseApexScrapeSummary').onclick = () => {
+      resultModal.classList.remove('active');
+      app.switchTab('vacancies');
+    };
+
+  } catch (err) {
+    resultBody.innerHTML = `
+      <div style="padding: 1.5rem; text-align: center;">
+        <div style="margin-bottom: 0.5rem;"><i data-lucide="x-circle" class="icon-xl text-rose" style="width: 40px; height: 40px;"></i></div>
+        <h3 style="font-family: var(--font-heading); color: #f87171;">Scraper Error</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0.5rem 0 1.5rem;">${app.escapeHtml(err.message)}</p>
+        <button id="btnCloseScraperError" class="btn btn-outline" style="width: 100%; justify-content: center;">Dismiss</button>
+      </div>
+    `;
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    document.getElementById('btnCloseScraperError')?.addEventListener('click', () => resultModal?.classList.remove('active'));
+  }
+}
+

@@ -12,7 +12,8 @@ import {
   MIME_TYPES,
   getCorsOrigin,
   setRequestCorsOrigin,
-  sendAutomatedDeadlineReminders
+  sendAutomatedDeadlineReminders,
+  runScheduledApexScrape
 } from './server/context.js';
 import { handleApiRoute } from './server/routes/index.js';
 
@@ -76,12 +77,14 @@ const server = http.createServer(async (req, res) => {
 function startServer(port) {
   server.listen(port, () => {
     console.log(`Vacancy Radar India portal running at: http://localhost:${port}`);
-    // Start automated recurring deadline reminder daemon
+    // Start automated recurring deadline reminder & apex scraper daemon
     setTimeout(() => {
       sendAutomatedDeadlineReminders().catch(err => console.warn('Reminder daemon startup err:', err.message));
-    }, 4000);
+      runScheduledApexScrape().catch(err => console.warn('Scheduled apex scraper daemon startup err:', err.message));
+    }, 5000);
     setInterval(() => {
       sendAutomatedDeadlineReminders().catch(err => console.warn('Scheduled reminder daemon err:', err.message));
+      runScheduledApexScrape().catch(err => console.warn('Scheduled apex scraper daemon interval err:', err.message));
     }, 4 * 60 * 60 * 1000); // Check every 4 hours
   }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {

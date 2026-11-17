@@ -442,6 +442,39 @@ export async function sendAutomatedDeadlineReminders() {
   };
 }
 
+export async function runScheduledApexScrape() {
+  try {
+    const creds = loadStoredCredentials();
+    const webhookUrl = (creds.googleAppsScriptWebhookUrl || '').trim();
+
+    const { ApexPortalScraper } = await import('./scrapers/apexPortalScraper.js');
+    const scrapeResult = await ApexPortalScraper.scrapeAllApexPortals({ forceRefresh: false });
+
+    if (scrapeResult && scrapeResult.success && Array.isArray(scrapeResult.vacancies) && scrapeResult.vacancies.length > 0) {
+      console.log(`[SCHEDULED APEX SCRAPER] Scraped ${scrapeResult.vacancies.length} vacancies from official apex portals.`);
+      
+      // If webhook is configured, sync discovered vacancies
+      if (webhookUrl) {
+        try {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'SYNC_VACANCIES',
+              vacancies: scrapeResult.vacancies
+            }),
+            signal: AbortSignal.timeout(15000)
+          });
+        } catch (_) {}
+      }
+    }
+    return scrapeResult;
+  } catch (err) {
+    console.warn('[SCHEDULED APEX SCRAPER NOTICE]:', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
 export async function extractTextFromPdfBuffer(buffer) {
   const parser = new PDFParse({ data: buffer });
   const result = await parser.getText();

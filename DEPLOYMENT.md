@@ -142,6 +142,35 @@ To overcome this, **Vacancy Radar India** includes a dedicated, cloud-native **G
 
 ---
 
+## 4b. Apex Web Scraper Engine (Direct Official Portal Discovery)
+
+In addition to search providers (Brave, SerpApi, SearXNG), **Vacancy Radar India** features a native, zero-cost **Apex Web Scraper Engine** (`server/scrapers/apexPortalScraper.js`):
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🕷️ APEX WEB SCRAPER ENGINE (100% Zero Cost ₹0.00 HTTP Native Discovery)     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • C-DAC: Direct encrypted API & public current_jobs crawler                 │
+│ • NFSU: Regular & Contractual recruitment table & circular notice extractor │
+│ • NIELIT: Central recruitment notices & Scientist 'B' PDF resolver          │
+│ • DRDO RAC: Recruitment and Assessment Centre notifications & brochures    │
+│ • UPSC: Special scientific officer & cyber specialists recruitment adverts  │
+│ • CERT-In: Apex national cyber security empanelment notices                 │
+│ • Universal Gov Scraper: Auto-parses any candidate-added .gov.in/.nic.in/.ac│
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Workflow Features:
+1. **Hybrid Discovery Pipeline**: When candidate triggers "Scan Now", the system executes a 3-way hybrid scan:
+   - **Apex Web Scrapers** check official portals directly.
+   - **Search Orchestration** queries web search providers (Brave / SerpApi / SearXNG / Google).
+   - **Live Public Feeds** query RSS and government circular feeds.
+2. **Instant Official Verification**: All vacancies discovered via official apex scrapers automatically receive `OFFICIALLY_VERIFIED` badges and 100% confidence scores.
+3. **Dedicated Scraper Trigger**: Candidate can run `Run Apex Scrapers Now` at any time from the **Sources & APIs** tab without consuming search credits.
+4. **Automated 4-Hour Background Scraper**: The local Node.js daemon runs periodic apex portal scrapes every 4 hours, auto-syncing new vacancies to Google Sheets and dispatching Telegram alerts to `5451190370` and HTML email tables to `sagarmc2516@gmail.com`.
+
+---
+
 ## 5. Quotas & Spending Protections
 
 | Service | Free Quota | Application Usage | Cost |
@@ -167,5 +196,5 @@ Run the full automated test suite locally to verify all acceptance suites:
 ```bash
 npm test
 ```
-Expected output: `28 / 28 test suites PASSED (100% SUCCESS)`.
+Expected output: `34 / 34 test suites PASSED (100% SUCCESS)`.
 

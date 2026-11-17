@@ -46,5 +46,37 @@
     "organisation": "Centre for Development of Advanced Computing (C-DAC)",
     "sourceType": "USER_CONTRIBUTED",
     "active": true
+  },
+  {
+    "domain": "nielit.gov.in",
+    "addedAt": "2026-11-17T06:44:05.788Z",
+    "firstDiscoveredFrom": "https://nielit.gov.in/recruitments",
+    "organisation": "National Institute of Electronics and Information Technology (NIELIT)",
+    "sourceType": "USER_CONTRIBUTED",
+    "active": true
+  },
+  {
+    "domain": "rac.gov.in",
+    "addedAt": "2026-11-17T06:44:06.562Z",
+    "firstDiscoveredFrom": "https://rac.gov.in",
+    "organisation": "Defence Research and Development Organisation (DRDO)",
+    "sourceType": "USER_CONTRIBUTED",
+    "active": true
+  },
+  {
+    "domain": "upsc.gov.in",
+    "addedAt": "2026-11-17T06:44:07.484Z",
+    "firstDiscoveredFrom": "https://upsc.gov.in/recruitment/recruitment-advertisement",
+    "organisation": "Union Public Service Commission (UPSC)",
+    "sourceType": "USER_CONTRIBUTED",
+    "active": true
+  },
+  {
+    "domain": "cert-in.org.in",
+    "addedAt": "2026-11-17T06:44:08.986Z",
+    "firstDiscoveredFrom": "https://www.cert-in.org.in",
+    "organisation": "Indian Computer Emergency Response Team (CERT-In)",
+    "sourceType": "USER_CONTRIBUTED",
+    "active": true
   }
 ]

@@ -65,7 +65,12 @@ export function renderSources(app) {
           </div>
           <div class="card-actions">
             <a href="${s.sourceUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 0.78rem; color: var(--accent-primary);">Visit Source</a>
-            <div style="display: flex; gap: 0.4rem;">
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+              ${isOfficial ? `
+                <button class="btn btn-outline btn-sm btn-test-scrape-portal" data-domain="${s.domain}" title="Run direct web scraper against this portal">
+                  <i data-lucide="play" class="icon-xs text-emerald"></i> Scrape
+                </button>
+              ` : ''}
               <button class="btn btn-outline btn-sm btn-toggle-source" data-id="${s.id}">
                 ${s.isEnabled ? 'Disable' : 'Enable'}
               </button>
@@ -75,6 +80,67 @@ export function renderSources(app) {
       `;
     }).join('');
 
+    // Bind Run Apex Scrapers Banner Button
+    const runAllBtn = document.getElementById('btnRunApexScrapers');
+    if (runAllBtn && !runAllBtn._isBound) {
+      runAllBtn._isBound = true;
+      if (runAllBtn.dataset) runAllBtn.dataset.bound = 'true';
+      runAllBtn.addEventListener('click', () => {
+        if (typeof app.handleApexScrapeOnly === 'function') {
+          app.handleApexScrapeOnly();
+        }
+      });
+    }
+
+    // Bind individual Scrape buttons
+    container.querySelectorAll('.btn-test-scrape-portal').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const domain = btn.getAttribute('data-domain');
+        btn.disabled = true;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = `<span style="font-size: 0.7rem;">⏳ Scraping...</span>`;
+
+        try {
+          const res = await fetch('/api/scrapers/test-single', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain })
+          });
+          const data = await res.json();
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+
+          if (data.success && Array.isArray(data.vacancies) && data.vacancies.length > 0) {
+            let addedCount = 0;
+            data.vacancies.forEach(v => {
+              if (!storageService.isTrashed(v)) {
+                storageService.saveVacancy(v);
+                addedCount++;
+              }
+            });
+            app.refreshAll();
+            showConfirmationBanner(
+              'Portal Scrape Complete',
+              `Extracted ${data.vacancies.length} live notices from ${domain} (${addedCount} added to feed).`,
+              'success',
+              4000
+            );
+          } else {
+            showConfirmationBanner(
+              'Portal Scraped',
+              `Scraped ${domain}: No active new vacancies found or page structure was clean.`,
+              'info',
+              3500
+            );
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          showConfirmationBanner('Scraper Notice', `Could not scrape ${domain}: ${err.message}`, 'warning', 3500);
+        }
+      });
+    });
+
     container.querySelectorAll('.btn-toggle-source').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
@@ -83,6 +149,7 @@ export function renderSources(app) {
         app.updateKpis();
       });
     });
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
   }
 
 export async function handleRevalidateSources(app) {

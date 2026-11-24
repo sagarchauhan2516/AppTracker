@@ -380,6 +380,61 @@ export function saveTrackedApplications(apps) {
   }
 }
 
+function escapeTgHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+export async function dispatchTelegramMessageSafe(botToken, chatIdRaw, htmlText, disablePreview = true) {
+  if (!botToken || !chatIdRaw) return { sentCount: 0, errors: ['Missing bot token or chat ID'] };
+  const rawChatIds = String(chatIdRaw).split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
+  let sentCount = 0;
+  const errors = [];
+
+  for (const targetId of rawChatIds) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: targetId,
+          text: htmlText,
+          parse_mode: 'HTML',
+          disable_web_page_preview: disablePreview
+        }),
+        signal: AbortSignal.timeout(12000)
+      });
+      const data = await res.json();
+      if (data.ok) {
+        sentCount++;
+      } else if (/parse|entities/i.test(data.description || '')) {
+        // Automatic fallback to plain text so unescaped brackets/symbols never drop an alert
+        const plainText = htmlText.replace(/<[^>]+>/g, '');
+        const retryRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: targetId,
+            text: plainText,
+            disable_web_page_preview: disablePreview
+          }),
+          signal: AbortSignal.timeout(12000)
+        });
+        const retryData = await retryRes.json();
+        if (retryData.ok) sentCount++;
+        else errors.push(`${targetId}: ${retryData.description || 'Telegram retry failed'}`);
+      } else {
+        errors.push(`${targetId}: ${data.description || 'Telegram sendMessage failed'}`);
+      }
+    } catch (err) {
+      errors.push(`${targetId}: ${err.message}`);
+    }
+  }
+  return { sentCount, errors };
+}
+
 export async function sendAutomatedDeadlineReminders() {
   const creds = loadStoredCredentials();
   const botToken = (creds.telegramBotToken || '').trim();
@@ -404,60 +459,51 @@ export async function sendAutomatedDeadlineReminders() {
 
   if (urgentApps.length === 0) return { success: true, count: 0, message: 'No upcoming deadlines within 7 days' };
 
-  let msg = `🚨 *URGENT APPLICATION DEADLINE REMINDER*\n\nYou have *${urgentApps.length} tracked vacancies* with closing dates in 7 days or less:\n\n`;
+  let msg = `🚨 <b>URGENT APPLICATION DEADLINE REMINDER</b>\n\nYou have <b>${urgentApps.length} tracked vacancies</b> closing in 7 days or less:\n\n`;
   urgentApps.forEach((u, i) => {
-    msg += `*${i + 1}. ${u.vacancyTitle || u.title}*\n`;
-    msg += `🏢 ${u.organisation}\n`;
-    msg += `⏳ *Deadline: ${u.deadline}* (${u.diffDays === 0 ? 'CLOSES TODAY!' : `${u.diffDays} day${u.diffDays === 1 ? '' : 's'} left`})\n`;
-    msg += `📋 Stage: ${u.status || 'PREPARING'}\n`;
-    if (u.sourceUrl) msg += `🔗 [Official Apply Link](${u.sourceUrl})\n`;
+    msg += `<b>${i + 1}. ${escapeTgHtml(u.vacancyTitle || u.title)}</b>\n`;
+    msg += `🏢 ${escapeTgHtml(u.organisation)}\n`;
+    msg += `⏳ <b>Deadline: ${escapeTgHtml(u.deadline)}</b> (${u.diffDays === 0 ? 'CLOSES TODAY!' : `${u.diffDays} day${u.diffDays === 1 ? '' : 's'} left`})\n`;
+    msg += `📋 Stage: ${escapeTgHtml(u.status || 'PREPARING')}\n`;
+    if (u.sourceUrl) msg += `🔗 <a href="${escapeTgHtml(u.sourceUrl)}">Official Apply Link</a>\n`;
     msg += `\n`;
   });
-  msg += `👉 Open your tracker to submit: http://localhost:3001`;
+  msg += `👉 Open your tracker: http://localhost:3001`;
 
   let telegramSentCount = 0;
   if (botToken && chatId) {
-    const rawChatIds = chatId.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
-    for (const targetId of rawChatIds) {
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: targetId,
-            text: msg,
-            parse_mode: 'Markdown',
-            disable_web_page_preview: true
-          }),
-          signal: AbortSignal.timeout(12000)
-        });
-        const data = await res.json();
-        if (data.ok) telegramSentCount++;
-        console.log(`[DEADLINE REMINDER] Dispatched alert for ${urgentApps.length} vacancies to Telegram chat ${targetId}`);
-      } catch (e) {
-        console.warn(`[DEADLINE REMINDER] Failed to send Telegram alert:`, e.message);
-      }
+    const tgRes = await dispatchTelegramMessageSafe(botToken, chatId, msg, true);
+    telegramSentCount = tgRes.sentCount;
+    if (tgRes.sentCount > 0) {
+      console.log(`[DEADLINE REMINDER] Dispatched Telegram alert for ${urgentApps.length} vacancies (${tgRes.sentCount} chat(s)).`);
+    }
+    if (tgRes.errors.length > 0) {
+      console.warn(`[DEADLINE REMINDER] Telegram delivery warnings:`, tgRes.errors.join(' | '));
     }
   }
 
   let emailDispatched = false;
   if (webhookUrl && recipientEmail && recipientEmail.includes('@')) {
     try {
+      const payload = {
+        action: 'TEST_EMAIL',
+        recipient: recipientEmail,
+        email: recipientEmail,
+        notes: `Automated Deadline Reminder for ${urgentApps.length} tracked vacancies closing within 7 days.`
+      };
+      if (creds.webhookSecretToken) payload.secretToken = creds.webhookSecretToken;
       const emailRes = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'TEST_EMAIL',
-          recipient: recipientEmail,
-          email: recipientEmail,
-          notes: `Automated Deadline Reminder for ${urgentApps.length} tracked vacancies closing within 7 days.`
-        }),
+        body: JSON.stringify(payload),
         signal: AbortSignal.timeout(15000)
       });
       const emailData = await emailRes.json().catch(() => null);
       if (emailData && emailData.status === 'SUCCESS') {
         emailDispatched = true;
         console.log(`[DEADLINE REMINDER] Dispatched email digest to ${recipientEmail} via Google Apps Script`);
+      } else {
+        console.warn(`[DEADLINE REMINDER] Apps Script email webhook non-SUCCESS response`);
       }
     } catch (e) {
       console.warn(`[DEADLINE REMINDER] Failed to send email alert via webhook:`, e.message);
@@ -488,43 +534,34 @@ export async function runScheduledApexScrape() {
       console.log(`[SCHEDULED APEX SCRAPER] Scraped ${scrapeResult.vacancies.length} vacancies from official apex portals.`);
       saveStoredLiveVacancies(scrapeResult.vacancies);
 
-      // 1. Dispatch Telegram Alert to Candidate
+      // 1. Dispatch Telegram Alert to Candidate (safe HTML mode + plain-text fallback)
       if (botToken && chatId) {
         try {
-          const rawChatIds = chatId.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
           const activeOpenings = scrapeResult.vacancies.filter(v => {
             const cd = v.dates?.closingDate ? new Date(v.dates.closingDate) : null;
             return !cd || cd >= new Date();
           });
           const topSamples = (activeOpenings.length > 0 ? activeOpenings : scrapeResult.vacancies).slice(0, 5);
-          const sampleLines = topSamples.map((v, i) => 
-            `*${i + 1}. ${v.organisation}*\n` +
-            `📋 *${v.title}*\n` +
-            `📅 Deadline: \`${v.dates?.closingDate || 'Open/Continuous'}\`\n` +
-            `🔗 [Official Portal Link](${v.sourceUrl})`
+          const sampleLines = topSamples.map((v, i) =>
+            `<b>${i + 1}. ${escapeTgHtml(v.organisation)}</b>\n` +
+            `📋 <b>${escapeTgHtml(v.title)}</b>\n` +
+            `📅 Deadline: <code>${escapeTgHtml(v.dates?.closingDate || 'Open/Continuous')}</code>\n` +
+            `🔗 <a href="${escapeTgHtml(v.sourceUrl)}">Official Portal Link</a>`
           ).join('\n\n');
 
-          const alertMsg = `🛰️ *Vacancy Radar India — Scheduled Apex Scan Report*\n\n` +
-                           `Discovered *${scrapeResult.vacancies.length} total vacancies* across C-DAC, NFSU, NIELIT, DRDO RAC, UPSC & CERT-In.\n` +
-                           `Active Live Opportunities: *${activeOpenings.length}*\n\n` +
-                           `*Top Verified Openings:*\n\n` +
+          const alertMsg = `🛰️ <b>Vacancy Radar India — Scheduled Apex Scan</b>\n\n` +
+                           `Discovered <b>${scrapeResult.vacancies.length} live vacancies</b> across monitored official portals.\n\n` +
+                           `<b>Top Verified Openings:</b>\n\n` +
                            `${sampleLines}\n\n` +
-                           `🌐 *Explore Full List:* http://localhost:3001`;
+                           `🌐 <b>Portal:</b> http://localhost:3001`;
 
-          for (const targetId of rawChatIds) {
-            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                chat_id: targetId,
-                text: alertMsg,
-                parse_mode: 'Markdown',
-                disable_web_page_preview: true
-              }),
-              signal: AbortSignal.timeout(10000)
-            });
+          const tgRes = await dispatchTelegramMessageSafe(botToken, chatId, alertMsg, true);
+          if (tgRes.sentCount > 0) {
+            console.log(`[SCHEDULED APEX SCRAPER] Telegram alert delivered to ${tgRes.sentCount} target(s).`);
           }
-          console.log(`[SCHEDULED APEX SCRAPER] Telegram alert dispatched to ${rawChatIds.join(', ')}.`);
+          if (tgRes.errors.length > 0) {
+            console.warn('[SCHEDULED APEX SCRAPER] Telegram delivery warning:', tgRes.errors.join(' | '));
+          }
         } catch (tgErr) {
           console.warn('[SCHEDULED APEX SCRAPER] Telegram dispatch notice:', tgErr.message);
         }
@@ -533,18 +570,29 @@ export async function runScheduledApexScrape() {
       // 2. Dispatch to Google Apps Script Webhook (for Google Sheets & Gmail alerts)
       if (webhookUrl) {
         try {
-          await fetch(webhookUrl, {
+          const syncPayload = {
+            action: 'SYNC_VACANCIES',
+            vacancies: scrapeResult.vacancies,
+            email: creds.notificationEmail || 'sagarmc2516@gmail.com'
+          };
+          if (creds.webhookSecretToken) syncPayload.secretToken = creds.webhookSecretToken;
+          const hookRes = await fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: 'SYNC_VACANCIES',
-              vacancies: scrapeResult.vacancies,
-              email: creds.notificationEmail || 'sagarmc2516@gmail.com'
-            }),
+            body: JSON.stringify(syncPayload),
             signal: AbortSignal.timeout(15000)
           });
-          console.log('[SCHEDULED APEX SCRAPER] Synced vacancies to Google Sheets webhook.');
-        } catch (_) {}
+          const hookText = await hookRes.text();
+          let hookData = null;
+          try { hookData = JSON.parse(hookText); } catch (_) {}
+          if (hookRes.ok && hookData?.status === 'SUCCESS') {
+            console.log(`[SCHEDULED APEX SCRAPER] Synced ${hookData.syncedCount ?? 0} new vacancies to Google Sheets webhook.`);
+          } else {
+            console.warn('[SCHEDULED APEX SCRAPER] Google Sheets webhook returned non-SUCCESS status:', hookRes.status);
+          }
+        } catch (hookErr) {
+          console.warn('[SCHEDULED APEX SCRAPER] Google Sheets webhook error:', hookErr.message);
+        }
       }
     }
     return scrapeResult;

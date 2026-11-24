@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vacancy Radar India — Technical Vacancy Discovery &amp; Verification</title>
-  <meta name="description" content="Discover, verify, and track public and private sector technical job vacancies across India with transparent verification badges and eligibility matching.">
-  <link rel="stylesheet" href="css/style.css?v=3.0">
+  <title>Vacancy Radar India — Government &amp; Apex Technical Recruitment</title>
+  <meta name="description" content="Discover, verify, and track official government and apex technical vacancies across India with transparent notice verification and eligibility matching.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=4.0">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
   <script src="js/vendor/lucide.min.js"></script>
@@ -15,8 +18,6 @@
   <!-- Global Form Confirmation Overlay Banner Container -->
   <div id="confirmationBannerContainer" class="confirmation-overlay-container"></div>
 
-  <div class="ambient-glow"></div>
-
   <div class="app-wrapper">
     <!-- Top Bar -->
     <header class="top-header">
@@ -24,14 +25,14 @@
         <div class="radar-logo" title="Vacancy Radar India">
           <i data-lucide="radio" class="icon icon-md"></i>
         </div>
-        <div>
+        <div class="brand-copy">
           <div class="brand-title-wrap">
             <h1 class="brand-title">Vacancy Radar</h1>
             <span class="brand-live-pill" id="headerStatusPill">
-              <i data-lucide="radio" class="icon icon-xs"></i> Live Sync
+              <span class="live-dot" aria-hidden="true"></span> Live Sync
             </span>
           </div>
-          <p class="brand-subtitle">Apex Technical &amp; Scientific Vacancies &mdash; Official Portals &amp; Direct Feeds</p>
+          <p class="brand-subtitle">Official Indian Govt &amp; PSU Recruitment</p>
         </div>
       </div>
 
@@ -46,9 +47,9 @@
         </div>
 
         <!-- Dark / Bright Mode Switcher -->
-        <button id="btnThemeToggle" class="btn-theme-toggle" title="Switch between Dark and Bright mode" aria-label="Toggle theme">
-          <i data-lucide="sun" id="themeIcon" class="icon"></i>
-          <span class="theme-text" id="themeText">Bright</span>
+        <button id="btnThemeToggle" class="btn-theme-toggle" title="Switch between Bright and Dark mode" aria-label="Toggle theme">
+          <i data-lucide="moon" id="themeIcon" class="icon"></i>
+          <span class="theme-text" id="themeText">Dark</span>
         </button>
 
         <!-- Google Sheets 1-Click Sync -->
@@ -58,18 +59,18 @@
         </button>
 
         <!-- Scan Now Action -->
-        <button id="btnManualScan" class="btn btn-primary" title="Trigger scan across registered public sources">
+        <button id="btnManualScan" class="btn btn-primary" title="Trigger scan across registered official sources">
           <i data-lucide="refresh-cw" class="icon"></i>
           <span>Scan Now</span>
         </button>
 
         <!-- Separate Settings Triggers: Profile Settings vs Main Settings -->
-        <button id="btnHeaderProfileSettings" class="btn btn-outline font-semibold" title="Edit candidate details, keywords, whitelist sites, alert email & telegram for this profile">
-          <i data-lucide="user" class="icon"></i>
+        <button id="btnHeaderProfileSettings" class="btn btn-outline" title="Edit candidate details, keywords, whitelist sites, alert email &amp; Telegram for this profile">
+          <i data-lucide="user-cog" class="icon"></i>
           <span>Profile Settings</span>
         </button>
 
-        <button id="btnHeaderMainSettings" class="btn btn-outline font-semibold" title="Global search APIs, Gemini key, Google Sheets webhook, bot token & database">
+        <button id="btnHeaderMainSettings" class="btn btn-outline" title="Global search APIs, Gemini key, Google Sheets webhook, bot token &amp; database">
           <i data-lucide="settings" class="icon"></i>
           <span>Main Settings</span>
         </button>
@@ -264,7 +265,7 @@
           </div>
           <div>
             <div class="segregation-title-row">
-              <span class="segregation-label">Active Profile Feed:</span>
+              <span class="segregation-label">Active profile</span>
               <strong id="segregatedProfileName" class="segregation-profile-name">
                 Cyber Crime Investigation &amp; DFIR
               </strong>
@@ -273,7 +274,7 @@
               </span>
             </div>
             <p class="segregation-desc">
-              Filtered strictly by this profile's designated roles, technical keywords, and target official websites.
+              Switch between opportunities matching your profile criteria or inspect every verified live opening.
             </p>
           </div>
         </div>
@@ -281,11 +282,11 @@
         <div class="segregation-bar-right">
           <!-- Segmented Toggle: Profile Relevant vs All Global -->
           <div class="segregation-toggle-group">
-            <button type="button" id="btnFeedProfileOnly" class="btn btn-sm btn-primary segregation-toggle-btn">
+            <button type="button" id="btnFeedProfileOnly" class="btn btn-sm seg-btn">
               <i data-lucide="crosshair" class="icon"></i>
               <span>Profile Matches (<span id="countProfileOnly">0</span>)</span>
             </button>
-            <button type="button" id="btnFeedAllGlobal" class="btn btn-sm btn-ghost segregation-toggle-btn">
+            <button type="button" id="btnFeedAllGlobal" class="btn btn-sm seg-btn active">
               <i data-lucide="globe" class="icon"></i>
               <span>All Discovered (<span id="countAllGlobal">0</span>)</span>
             </button>

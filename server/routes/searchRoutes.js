@@ -7,51 +7,170 @@ import {
   PUBLIC_SEARXNG_MIRRORS
 } from '../context.js';
 
-export function parseJobDates(title, snippet, pubDateStr) {
-  const text = `${title || ''} ${snippet || ''}`;
+const MONTH_MAP = {
+  jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3,
+  apr: 4, april: 4, may: 5, jun: 6, june: 6, jul: 7, july: 7,
+  aug: 8, august: 8, sep: 9, sept: 9, september: 9,
+  oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
+};
+
+export function parseIndianDate(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  const s = raw.trim();
+
+  // 1. YYYY-MM-DD / YYYY/MM/DD
+  let m = s.match(/\b(20[1-3]\d)[-\/\.](\d{1,2})[-\/\.](\d{1,2})\b/);
+  if (m) {
+    const y = parseInt(m[1], 10), mo = parseInt(m[2], 10), d = parseInt(m[3], 10);
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31) {
+      return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+  }
+
+  // 2. DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (Indian convention: day first!)
+  m = s.match(/\b(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{2,4})\b/);
+  if (m) {
+    let d = parseInt(m[1], 10), mo = parseInt(m[2], 10), y = parseInt(m[3], 10);
+    if (y < 100) y += 2000;
+    if (mo >= 1 && mo <= 12 && d >= 1 && d <= 31 && y >= 2015 && y <= 2035) {
+      return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+  }
+
+  // 3. DD Month YYYY or DD-MMM-YYYY (e.g. "21st December 2026", "25 Nov 2026")
+  m = s.match(/\b(\d{1,2})(?:st|nd|rd|th)?[\s\-\/,]+([A-Za-z]{3,9})[\s\-\/,]+(20[1-3]\d)\b/i);
+  if (m) {
+    const d = parseInt(m[1], 10), mo = MONTH_MAP[m[2].toLowerCase()], y = parseInt(m[3], 10);
+    if (mo && d >= 1 && d <= 31) {
+      return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+  }
+
+  // 4. Month DD, YYYY (e.g. "June 14, 2026")
+  m = s.match(/\b([A-Za-z]{3,9})[\s\.]+(\d{1,2})(?:st|nd|rd|th)?[\s,]+(20[1-3]\d)\b/i);
+  if (m) {
+    const mo = MONTH_MAP[m[1].toLowerCase()], d = parseInt(m[2], 10), y = parseInt(m[3], 10);
+    if (mo && d >= 1 && d <= 31) {
+      return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+  }
+
+  return '';
+}
+
+export function parseJobDates(title, snippet, pubDateStr, options = {}) {
+  const text = `${title || ''} ${snippet || ''}`.replace(/\s+/g, ' ');
+  // Strip age/experience/salary revision cut-off phrases so they are not mistaken for vacancy dates
+  const cleanedTextForDates = text
+    .replace(/(?:due\s+for\s+revision\s+w\.?e\.?f\.?|revision\s+w\.?e\.?f\.?|upper\s+age\s+limit\s+(?:as\s+on)?|age\s+as\s+on|experience\s+as\s+on|crucial\s+date|issued\s+on\s+or\s+after|valid\s+till\s+\d+\s+years)[^\)\.\n;]{0,45}/gi, ' ');
+
   let publishedAt = '';
   try {
     if (pubDateStr) {
-      const d = new Date(pubDateStr);
-      if (!isNaN(d.getTime())) {
-        publishedAt = d.toISOString().slice(0, 10);
+      const indianPub = parseIndianDate(String(pubDateStr));
+      if (indianPub) {
+        publishedAt = indianPub;
+      } else {
+        const d = new Date(pubDateStr);
+        if (!isNaN(d.getTime())) {
+          publishedAt = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
       }
     }
   } catch (_) {}
+
+  // Check explicit updated/dated markers in header text if pubDateStr wasn't supplied
   if (!publishedAt) {
-    publishedAt = new Date().toISOString().slice(0, 10);
-  }
-
-  let closingDate = '';
-  const datePatterns = [
-    /(?:last\s*date|closing\s*date|apply\s*before|deadline|end\s*date|till|upto)[\s:–—]+(\d{1,2}[-/\.](?:[0-9]{1,2}|[A-Za-z]{3,9})[-/\.]\d{2,4})/i,
-    /(?:last\s*date|closing\s*date|apply\s*before|deadline|end\s*date)[\s:–—]+(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4})/i
-  ];
-
-  for (const pat of datePatterns) {
-    const match = text.match(pat);
-    if (match && match[1]) {
-      try {
-        const parsed = new Date(match[1]);
-        if (!isNaN(parsed.getTime())) {
-          closingDate = parsed.toISOString().slice(0, 10);
+    const pubMarkers = [
+      /(?:last\s*updated|uploaded\s*on|published(?:\s*on)?|dated|advt[^\.]{0,40}\bdate)\s*[:–—]*\s*([^\)\n\r;]{6,32})/i
+    ];
+    for (const pm of pubMarkers) {
+      const m = cleanedTextForDates.match(pm);
+      if (m && m[1]) {
+        const parsed = parseIndianDate(m[1]);
+        if (parsed) {
+          publishedAt = parsed;
           break;
         }
-      } catch (_) {}
+      }
     }
   }
 
-  if (!closingDate) {
-    try {
-      const pub = new Date(publishedAt);
-      const estClose = new Date(pub.getTime() + 28 * 24 * 60 * 60 * 1000);
+  // Extract explicit deadline / interview date markers (skip "as on" age/experience cutoffs)
+  let closingDate = '';
+  const deadlinePatterns = [
+    /(?:last\s*date(?:\s+(?:for|of)\s+(?:receipt|submission|online|application|applying)[^:–—\d]{0,35})?|closing\s*date|apply\s*(?:on\s*or\s*)?before|deadline(?:\s+for\s+application\s+submission)?|end\s*date|extended\s*till|valid\s*till|on\s*or\s*before|walk[\s\-]*in[\s\-]*interview\s*date|intervie[w]?\s*date|scheduled\s*(?:for|on)|upto|till)\s*[:–—\(\-,]*\s*([^\)\n\r;]{4,55})/gi
+  ];
+
+  const candidateClosings = [];
+  for (const pat of deadlinePatterns) {
+    for (const match of cleanedTextForDates.matchAll(pat)) {
+      const fragment = match[1] || '';
+      const rangeSplit = fragment.split(/\bto\b/i);
+      const targetPart = rangeSplit.length > 1 ? rangeSplit[rangeSplit.length - 1] : fragment;
+      const parsed = parseIndianDate(targetPart) || parseIndianDate(fragment);
+      if (parsed) candidateClosings.push(parsed);
+    }
+  }
+
+  if (candidateClosings.length > 0) {
+    candidateClosings.sort();
+    closingDate = candidateClosings[candidateClosings.length - 1];
+  }
+
+  const isRolling = /\b(rolling\s*advertisement|throughout\s*the\s*year|adjunct\s*(?:engineer|scientist)|continuous\s*intake)\b/i.test(text);
+  let isArchived = false;
+
+  // Check if all referenced dates/years in the text are older than 35 days without a later closing date
+  if (!closingDate && !isRolling) {
+    const allDates = [];
+    const dateTokenRe = /\b(\d{1,2}[-\/\.]\d{1,2}[-\/\.]20[1-3]\d|\d{1,2}(?:st|nd|rd|th)?[\s\-,]+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*[\s\-,]+20[1-3]\d|20[1-3]\d[-\/\.]\d{1,2}[-\/\.]\d{1,2})\b/gi;
+    for (const dm of cleanedTextForDates.slice(0, 1500).matchAll(dateTokenRe)) {
+      const p = parseIndianDate(dm[1]);
+      if (p) allDates.push(p);
+    }
+    if (allDates.length > 0) {
+      allDates.sort();
+      const latestMentioned = allDates[allDates.length - 1];
+      const latestMs = new Date(latestMentioned).getTime();
+      const daysOld = (Date.now() - latestMs) / 86400000;
+      if (daysOld > 35) {
+        if (!publishedAt) publishedAt = latestMentioned;
+        closingDate = latestMentioned;
+        isArchived = true;
+      } else if (!publishedAt) {
+        publishedAt = latestMentioned;
+      }
+    } else {
+      const years = (cleanedTextForDates.match(/\b(20[1-2]\d)\b/g) || []).map(Number);
+      const currentYear = new Date().getFullYear();
+      if (years.length > 0 && Math.max(...years) < currentYear) {
+        const latestYr = Math.max(...years);
+        closingDate = `${latestYr}-12-31`;
+        if (!publishedAt) publishedAt = `${latestYr}-12-01`;
+        isArchived = true;
+      }
+    }
+  }
+
+  if (!closingDate && !isRolling && options.estimateFromFreshPubDate && pubDateStr && publishedAt) {
+    const pubMs = new Date(publishedAt).getTime();
+    if (!isNaN(pubMs) && (Date.now() - pubMs) <= 21 * 86400000) {
+      const estClose = new Date(pubMs + 28 * 86400000);
       closingDate = estClose.toISOString().slice(0, 10);
-    } catch (_) {
-      closingDate = '2026-11-20';
+    } else if (!isNaN(pubMs) && (Date.now() - pubMs) > 35 * 86400000) {
+      closingDate = publishedAt;
+      isArchived = true;
     }
   }
 
-  return { publishedAt, closingDate };
+  const now = new Date();
+  const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  if (!publishedAt || (!isArchived && publishedAt > todayIso)) {
+    publishedAt = todayIso;
+  }
+
+  return { publishedAt, closingDate, isRolling, isArchived };
 }
 
 export async function handleSearchRoutes(req, res, reqPath) {
@@ -465,7 +584,7 @@ export async function handleSearchRoutes(req, res, reqPath) {
 
                   const orgMatch = title.match(/^([A-Za-z0-9\s]{3,25}?)(?:\s+Recruitment|\s+Notification|\s+Exam|\s+Result|\s+–|\s+-)/i);
                   const organisation = orgMatch ? orgMatch[1].trim() : 'Public Recruitment Authority';
-                  const jobDates = parseJobDates(title, snippet, pubDate);
+                  const jobDates = parseJobDates(title, snippet, pubDate, { estimateFromFreshPubDate: true });
 
                   allLeads.push({
                     title,
@@ -542,7 +661,7 @@ export async function handleSearchRoutes(req, res, reqPath) {
             try { hostname = new URL(r.url).hostname.replace(/^www\./i, ''); } catch (_) { hostname = 'enterprise.com'; }
             const isGov = hostname.endsWith('.gov.in') || hostname.endsWith('.nic.in') || hostname.endsWith('.ac.in');
             const isBig4 = /deloitte|pwc|ey\.com|kpmg|kroll|bdo|grantthornton/i.test(hostname);
-            const jobDates = parseJobDates(r.title, r.content, r.publishedDate);
+            const jobDates = parseJobDates(r.title, r.content, r.publishedDate, { estimateFromFreshPubDate: true });
 
             return {
               title: r.title || 'Recruitment Opening',
@@ -606,7 +725,7 @@ export async function handleSearchRoutes(req, res, reqPath) {
           try { hostname = new URL(r.url).hostname.replace(/^www\./i, ''); } catch (_) { hostname = 'official.gov.in'; }
           const isGov = hostname.endsWith('.gov.in') || hostname.endsWith('.nic.in') || hostname.endsWith('.ac.in');
           const isBig4 = /deloitte|pwc|ey\.com|kpmg|kroll|bdo|grantthornton/i.test(hostname);
-          const jobDates = parseJobDates(r.title, r.description, r.page_age || r.published_date);
+          const jobDates = parseJobDates(r.title, r.description, r.page_age || r.published_date, { estimateFromFreshPubDate: true });
 
           return {
             title: r.title || 'Recruitment Opening',
@@ -637,7 +756,7 @@ export async function handleSearchRoutes(req, res, reqPath) {
         }
 
         const jobs = (data.jobs_results || []).map(j => {
-          const jobDates = parseJobDates(j.title, j.description, j.detected_extensions?.posted_at);
+          const jobDates = parseJobDates(j.title, j.description, j.detected_extensions?.posted_at, { estimateFromFreshPubDate: true });
           return {
             title: j.title || 'Specialist Officer',
             organisation: j.company_name || 'Public Organisation',

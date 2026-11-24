@@ -247,23 +247,53 @@ export async function handleAlertRoutes(req, res, reqPath) {
         return true;
       }
 
-      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text,
-          parse_mode: body.parseMode || 'Markdown',
-          disable_web_page_preview: false
-        }),
-        signal: AbortSignal.timeout(12000)
-      });
-      const data = await response.json();
+      const rawChatIds = chatId.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
+      let anySuccess = false;
+      let lastMessageId = null;
+      let lastError = null;
+      const parseMode = body.parseMode || 'Markdown';
+
+      for (const targetId of rawChatIds) {
+        let response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: targetId,
+            text,
+            parse_mode: parseMode,
+            disable_web_page_preview: false
+          }),
+          signal: AbortSignal.timeout(12000)
+        });
+        let data = await response.json();
+
+        // Fallback to plain text if dynamic vacancy titles contain unescaped Markdown/HTML symbols like [] or _
+        if (!data.ok && /parse|entities/i.test(data.description || '')) {
+          response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: targetId,
+              text: text.replace(/<[^>]+>/g, ''),
+              disable_web_page_preview: false
+            }),
+            signal: AbortSignal.timeout(12000)
+          });
+          data = await response.json();
+        }
+
+        if (data.ok) {
+          anySuccess = true;
+          lastMessageId = data.result?.message_id || lastMessageId;
+        } else {
+          lastError = data.description;
+        }
+      }
 
       sendJson(res, 200, {
-        success: Boolean(data.ok),
-        messageId: data.result?.message_id,
-        error: data.ok ? null : data.description
+        success: anySuccess,
+        messageId: lastMessageId,
+        error: anySuccess ? null : lastError
       });
     } catch (err) {
       sendJson(res, 500, { success: false, error: err.message });
@@ -291,7 +321,7 @@ export async function handleAlertRoutes(req, res, reqPath) {
           const rawChatIds = chatId.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
           for (const targetId of rawChatIds) {
             try {
-              const sendRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+              let sendRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -301,7 +331,19 @@ export async function handleAlertRoutes(req, res, reqPath) {
                 }),
                 signal: AbortSignal.timeout(12000)
               });
-              const sendData = await sendRes.json();
+              let sendData = await sendRes.json();
+              if (!sendData.ok && /parse|entities/i.test(sendData.description || '')) {
+                sendRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    chat_id: targetId,
+                    text: digestText
+                  }),
+                  signal: AbortSignal.timeout(12000)
+                });
+                sendData = await sendRes.json();
+              }
               if (sendData.ok) telegramSent = true;
               else telegramError = sendData.description;
             } catch (tErr) {

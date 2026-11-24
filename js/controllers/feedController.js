@@ -71,7 +71,15 @@ export function renderVacancies(app) {
     if (!container) return;
 
     try {
-      let list = storageService.getVacancies();
+      const includeExpired = app.filterState.verificationStatus === VerificationStatus.EXPIRED_CLOSED;
+      let list;
+      let alreadyDeduplicated = false;
+      if (typeof app.getCanonicalVacancies === 'function') {
+        list = app.getCanonicalVacancies({ includeExpired }).vacancies;
+        alreadyDeduplicated = true;
+      } else {
+        list = storageService.getVacancies();
+      }
     const activeProfile = storageService.getActiveProfile();
     const now = new Date();
 
@@ -95,12 +103,23 @@ export function renderVacancies(app) {
 
     // Helper to test if a vacancy matches candidate profile relevance
     const isProfileMatch = (v) => {
-      // 1. Target focus whitelist match (e.g. C-DAC, NFSU, DRDO, CBI, CERT-In)
-      if (v.isTargetFocusMatch) return true;
-
       const titleLower = (v.title || '').toLowerCase();
       const descLower = (v.description || '').toLowerCase() + ' ' + (v.qualifications?.branchRequired || '').toLowerCase() + ' ' + (v.extractedSnippet || '').toLowerCase();
       const fullText = `${titleLower} ${descLower}`;
+
+      // Guard: exclude clearly unrelated clinical/clerical/accounts roles unless targeted by active profile
+      const profileText = [
+        ...(activeProfile.roles || []),
+        ...(activeProfile.keywords || []),
+        ...(activeProfile.positiveKeywords || [])
+      ].join(' ').toLowerCase();
+      const isNonTechClinicalOrClerical = /\b(medical\s+officer|medical\s+consultant|pharmacist|staff\s+nurse|nursing|ayurvedic|homeopathy|dental|radiographer|physiotherapist|hindi\s+translator|rajbhasha|watch\s*&?\s*ward|driver|peon|mts|cook|sanitary|gardener|accounts?\s+officer|finance\s+officer|chartered\s+accountant)\b/i.test(titleLower);
+      if (isNonTechClinicalOrClerical && !/\b(medical|pharma|nurse|account|finance|hindi|driver)\b/.test(profileText)) {
+        return false;
+      }
+
+      // 1. Target focus whitelist match (e.g. C-DAC, NFSU, DRDO, CBI, CERT-In)
+      if (v.isTargetFocusMatch) return true;
 
       // 2. Direct alignment with candidate's target roles
       const hasRole = (activeProfile.roles || []).some(r => r && titleLower.includes(r.toLowerCase()));
@@ -115,13 +134,12 @@ export function renderVacancies(app) {
       const hasKeyword = allKeywords.some(k => k && fullText.includes(k.toLowerCase()));
       if (hasKeyword) return true;
 
-      // 4. Broad technical government posts suitable for Computer Engineering / IT graduates:
-      // (Project Engineer, Scientist B, Technical Officer, Scientific Officer, IT Officer, Software Engineer, Assistant Professor, etc.)
-      const isGovtTechnical = /(?:project\s*engineer|scientist\s*['"]?[bcdef]?|scientific\s*officer|technical\s*officer|assistant\s*professor|systems?\s*engineer|software|programmer|it\s*officer|technical\s*assistant|analyst|cyber|forensic|information\s*technology|computer|developer)/i.test(fullText);
+      // 4. Broad technical government posts suitable for Computer Engineering / IT graduates
+      const isGovtTechnical = /(?:project\s*engineer|scientist\s*['"]?[bcdef]?|scientific\s*officer|technical\s*officer|systems?\s*engineer|software|programmer|it\s*officer|technical\s*assistant|cyber\s*security|digital\s*forensic|information\s*technology|computer\s*science|developer)/i.test(fullText);
       if (isGovtTechnical) return true;
 
-      // 5. Strong overall score (>= 55) with at least 1 verified technical or target role match
-      if ((v.matchAnalysis?.overallScore || 0) >= 55) {
+      // 5. Strong overall score (>= 60)
+      if ((v.matchAnalysis?.overallScore || 0) >= 60) {
         return true;
       }
 
@@ -158,23 +176,10 @@ export function renderVacancies(app) {
     const btnFeedProfileOnly = document.getElementById('btnFeedProfileOnly');
     const btnFeedAllGlobal = document.getElementById('btnFeedAllGlobal');
     if (btnFeedProfileOnly && btnFeedAllGlobal) {
-      if (app.profileFeedOnly) {
-        btnFeedProfileOnly.className = 'btn btn-sm btn-primary';
-        btnFeedProfileOnly.style.fontWeight = '700';
-        btnFeedProfileOnly.style.boxShadow = '0 2px 8px rgba(56, 189, 248, 0.3)';
-        btnFeedAllGlobal.className = 'btn btn-sm btn-ghost';
-        btnFeedAllGlobal.style.fontWeight = '600';
-        btnFeedAllGlobal.style.color = 'var(--text-secondary)';
-        btnFeedAllGlobal.style.boxShadow = 'none';
-      } else {
-        btnFeedProfileOnly.className = 'btn btn-sm btn-ghost';
-        btnFeedProfileOnly.style.fontWeight = '600';
-        btnFeedProfileOnly.style.color = 'var(--text-secondary)';
-        btnFeedProfileOnly.style.boxShadow = 'none';
-        btnFeedAllGlobal.className = 'btn btn-sm btn-primary';
-        btnFeedAllGlobal.style.fontWeight = '700';
-        btnFeedAllGlobal.style.boxShadow = '0 2px 8px rgba(56, 189, 248, 0.3)';
-      }
+      btnFeedProfileOnly.className = app.profileFeedOnly ? 'btn btn-sm seg-btn active' : 'btn btn-sm seg-btn';
+      btnFeedAllGlobal.className = app.profileFeedOnly ? 'btn btn-sm seg-btn' : 'btn btn-sm seg-btn active';
+      if (typeof btnFeedProfileOnly.removeAttribute === 'function') btnFeedProfileOnly.removeAttribute('style');
+      if (typeof btnFeedAllGlobal.removeAttribute === 'function') btnFeedAllGlobal.removeAttribute('style');
     }
 
     // Segregate list: if profileFeedOnly is active, show only profile matches
@@ -198,23 +203,23 @@ export function renderVacancies(app) {
 
         bannerContainer.innerHTML = `
           <div class="target-focus-banner">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="target-focus-meta">
               <i data-lucide="crosshair" class="icon-lg text-emerald"></i>
               <div>
-                <strong style="color: #34d399; font-size: 0.95rem;">
-                  Target Focus Active: Focusing on ${targetsList}${targetsCount > 4 ? ` +${targetsCount - 4} more` : ''}
+                <strong class="target-focus-title">
+                  Target focus active: ${app.escapeHtml(targetsList)}${targetsCount > 4 ? ` +${targetsCount - 4} more` : ''}
                 </strong>
-                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.15rem;">
-                  Mode: <strong style="color: var(--text-main);">${isStrict ? 'Strict Whitelist Filter (Only whitelisted portals)' : 'Priority Boost Mode (+15% score bonus & focus badge)'}</strong>
+                <div class="target-focus-sub">
+                  Mode: <strong>${isStrict ? 'Strict whitelist (only target portals)' : 'Priority boost (+15% relevance score)'}</strong>
                 </div>
               </div>
             </div>
-            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-              <button id="btnBannerEditFocus" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">
-                <i data-lucide="sliders" class="icon-xs"></i> Adjust Targets
+            <div class="target-focus-actions">
+              <button id="btnBannerEditFocus" class="btn btn-outline btn-sm">
+                <i data-lucide="sliders" class="icon-xs"></i> Adjust targets
               </button>
-              <button id="btnBannerToggleMode" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">
-                ${isStrict ? 'Switch to Boost Mode' : 'Switch to Strict Filter'}
+              <button id="btnBannerToggleMode" class="btn btn-outline btn-sm">
+                ${isStrict ? 'Switch to boost' : 'Switch to strict'}
               </button>
             </div>
           </div>
@@ -246,8 +251,9 @@ export function renderVacancies(app) {
     // Filter by tab if "closing"
     if (app.currentTab === 'closing') {
       list = list.filter(v => {
-        if (!v.dates?.closingDate) return false;
-        const d = new Date(v.dates.closingDate);
+        const closeStr = String(v.dates?.closingDate || '').slice(0, 10);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(closeStr)) return false;
+        const d = new Date(`${closeStr}T23:59:59`);
         const diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
         return diff >= 0 && diff <= 7;
       });
@@ -292,8 +298,8 @@ export function renderVacancies(app) {
       );
     }
 
-    // Duplicate detection and suppression
-    if (app.filterState.deduplicate) {
+    // Duplicate detection and suppression (skipped if already applied by getCanonicalVacancies)
+    if (!alreadyDeduplicated && app.filterState.deduplicate) {
       const dedupResult = DuplicateDetector.processDuplicates(list);
       list = dedupResult.canonicalVacancies;
     }
@@ -639,126 +645,166 @@ export function renderPagination(app, totalItems, totalPages, startIndex, endInd
     });
   }
 
+function formatHumanDate(dateStr) {
+  if (!dateStr) return '';
+  const m = String(dateStr).slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return String(dateStr);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const idx = parseInt(m[2], 10) - 1;
+  return `${parseInt(m[3], 10)} ${months[idx] || m[2]} ${m[1]}`;
+}
+
 export function renderVacancyCard(app, vac, now) {
     const status = vac.verification?.status || VerificationStatus.UNVERIFIED_LEAD;
     const badgeLabel = app.formatVerificationBadge(status);
-    
-    // Deadline calculation & Reference Source URL
-    let deadlineHtml = '';
+
     const referenceUrl = vac.verification?.evidenceUrl || vac.verification?.sourceUrl || vac.sourceUrl || vac.verification?.officialNoticePdfUrl || '';
     let referenceDomain = vac.verification?.sourceDomain || vac.domain || '';
     if (!referenceDomain && referenceUrl) {
       try { referenceDomain = new URL(referenceUrl).hostname.replace(/^www\./i, ''); } catch (_) {}
     }
-    let isClosed = false;
 
-    if (vac.dates?.closingDate) {
-      const close = new Date(vac.dates.closingDate);
+    let isClosed = false;
+    let deadlineHtml = '';
+    const closeStr = String(vac.dates?.closingDate || '').slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(closeStr)) {
+      const close = new Date(`${closeStr}T23:59:59`);
       const diffDays = Math.ceil((close - now) / (1000 * 60 * 60 * 24));
+      const prettyClose = formatHumanDate(closeStr);
       if (diffDays < 0) {
         isClosed = true;
-        deadlineHtml = `<span class="deadline-indicator" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); font-weight: 600;"><i data-lucide="clock" class="icon-xs"></i> Closed on ${vac.dates.closingDate}</span>`;
+        deadlineHtml = `<span class="deadline-indicator closed"><i data-lucide="clock" class="icon-xs"></i> Closed ${prettyClose}</span>`;
+      } else if (diffDays === 0) {
+        deadlineHtml = `<span class="deadline-indicator urgent"><i data-lucide="alert-circle" class="icon-xs"></i> Closes today (${prettyClose})</span>`;
       } else if (diffDays <= 7) {
-        deadlineHtml = `<span class="deadline-indicator urgent"><i data-lucide="alert-triangle" class="icon-xs"></i> Closes in ${diffDays} day${diffDays === 1 ? '' : 's'} (${vac.dates.closingDate})</span>`;
+        deadlineHtml = `<span class="deadline-indicator urgent"><i data-lucide="clock" class="icon-xs"></i> ${diffDays}d left &middot; ${prettyClose}</span>`;
       } else {
-        deadlineHtml = `<span class="deadline-indicator">Closes: ${vac.dates.closingDate} (${diffDays} days left)</span>`;
+        deadlineHtml = `<span class="deadline-indicator">Closes ${prettyClose} (${diffDays}d left)</span>`;
       }
+    } else if (vac.isRolling || /rolling|open\s+year/i.test(`${vac.title || ''} ${vac.dates?.dateText || ''}`)) {
+      deadlineHtml = `<span class="deadline-indicator">Rolling &middot; Open Year-Round</span>`;
+    } else {
+      deadlineHtml = `<span class="deadline-indicator">See official circular</span>`;
     }
 
-    const testFlagHtml = vac.isTestData ? `<span class="badge-test-flag">[TEST DATA]</span>` : '';
-    const liveFlagHtml = vac.isLiveDiscovered ? `<span class="meta-pill" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;"><i data-lucide="radio" class="icon-xs"></i> LIVE DISCOVERED</span>` : '';
-    const locationText = vac.location ? `${vac.location.city || ''}, ${vac.location.state || ''} ${vac.location.isRemote ? '• Remote' : ''}` : 'Location Unspecified';
-    const matchScore = vac.matchAnalysis?.overallScore || 0;
+    const testFlagHtml = vac.isTestData ? `<span class="badge-test-flag">[Test Data]</span>` : '';
+    const locParts = [vac.location?.city, vac.location?.state].filter(Boolean);
+    const locationText = locParts.length
+      ? `${locParts.join(', ')}${vac.location?.isRemote ? ' &middot; Remote' : ''}`
+      : (vac.location?.isRemote ? 'Remote' : 'India');
+
+    const matchScore = Math.max(0, Math.min(100, vac.matchAnalysis?.overallScore || 0));
+    const matchTone = matchScore >= 70 ? 'high' : (matchScore >= 45 ? 'mid' : 'low');
     const matchLabel = app.formatEligibilityLabel(vac.matchAnalysis?.eligibilityStatus);
-    const topReason = vac.matchAnalysis?.reasons?.[0] || 'Keyword and qualification requirements evaluated.';
-    const duplicateBadge = vac.hasDuplicatesMerged ? `<span class="meta-pill" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);"><i data-lucide="copy" class="icon-xs"></i> Duplicate Merged</span>` : '';
-    const targetFocusBadge = vac.isTargetFocusMatch ? `<span class="meta-pill" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;"><i data-lucide="crosshair" class="icon-xs"></i> TARGET FOCUS</span>` : '';
-    const corrigendumBadge = vac.isCorrigendum ? `<span class="meta-pill" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.45); font-weight: 700;"><i data-lucide="file-text" class="icon-xs"></i> CORRIGENDUM</span>` : '';
-    const extensionBadge = vac.isExtension ? `<span class="meta-pill" style="color: #34d399; border-color: rgba(16, 185, 129, 0.45); font-weight: 700;"><i data-lucide="clock" class="icon-xs"></i> DATE EXTENDED</span>` : '';
+    const topReason = vac.matchAnalysis?.reasons?.[0] || 'Evaluated against active qualification profile.';
+
+    const targetFocusBadge = vac.isTargetFocusMatch ? `<span class="meta-pill pill-focus"><i data-lucide="crosshair" class="icon-xs"></i> Target Focus</span>` : '';
+    const corrigendumBadge = vac.isCorrigendum ? `<span class="meta-pill pill-warn">Corrigendum</span>` : '';
+    const extensionBadge = vac.isExtension ? `<span class="meta-pill pill-focus">Date Extended</span>` : '';
+
+    const sublineParts = [];
+    if (vac.advertisementNumber && !/not\s*stated|n\/a/i.test(vac.advertisementNumber)) {
+      sublineParts.push(`Ref ${app.escapeHtml(vac.advertisementNumber)}`);
+    }
+    if (vac.numberOfPosts) {
+      sublineParts.push(`${app.escapeHtml(String(vac.numberOfPosts))} posts`);
+    }
+    if (vac.dates?.publishedAt) {
+      sublineParts.push(`Published ${formatHumanDate(vac.dates.publishedAt)}`);
+    }
+    const sublineHtml = sublineParts.length
+      ? `<div class="advt-ref">${sublineParts.join(' &middot; ')}</div>`
+      : '';
+
+    const pdfUrl = vac.verification?.officialNoticePdfUrl || '';
+    const applyUrl = vac.verification?.applicationUrl || '';
+    const fallbackUrl = !applyUrl && !pdfUrl && referenceUrl ? referenceUrl : (!applyUrl && referenceUrl && referenceUrl !== pdfUrl ? referenceUrl : '');
 
     return `
       <article class="vacancy-card" id="card-${vac.id}">
-        <div>
+        <div class="vacancy-card-body">
           <div class="card-top">
             <span class="org-name">${app.escapeHtml(vac.organisation)}</span>
-            <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
-              ${liveFlagHtml}
+            <div class="card-badges">
               ${targetFocusBadge}
-              ${corrigendumBadge}
               ${extensionBadge}
+              ${corrigendumBadge}
               ${testFlagHtml}
-              ${duplicateBadge}
               <span class="verification-badge badge-${status}">${badgeLabel}</span>
             </div>
           </div>
 
           <h2 class="job-title">${app.escapeHtml(vac.title)}</h2>
-          <div class="advt-ref">
-            Advt: ${app.escapeHtml(vac.advertisementNumber || 'Notice Ref Not Stated')} • ${vac.numberOfPosts ? vac.numberOfPosts + ' Posts' : 'Posts TBA'}
-            ${vac.dates?.publishedAt ? ` • Published: ${vac.dates.publishedAt}` : ''}
-          </div>
+          ${sublineHtml}
 
           <div class="meta-pills">
-            <span class="meta-pill"><i data-lucide="building-2" class="icon-xs"></i> <strong>${app.escapeHtml(vac.sector || 'Public')}</strong></span>
-            <span class="meta-pill"><i data-lucide="briefcase" class="icon-xs"></i> <strong>${app.escapeHtml(vac.employmentType || 'Full-time')}</strong></span>
-            <span class="meta-pill"><i data-lucide="map-pin" class="icon-xs"></i> ${app.escapeHtml(locationText)}</span>
+            <span class="meta-pill"><i data-lucide="building-2" class="icon-xs"></i> ${app.escapeHtml(vac.sector || 'Public')}</span>
+            <span class="meta-pill"><i data-lucide="briefcase" class="icon-xs"></i> ${app.escapeHtml(vac.employmentType || 'Full-time')}</span>
+            <span class="meta-pill"><i data-lucide="map-pin" class="icon-xs"></i> ${locationText}</span>
             ${vac.remuneration?.amountText ? `<span class="meta-pill"><i data-lucide="indian-rupee" class="icon-xs"></i> ${app.escapeHtml(vac.remuneration.amountText)}</span>` : ''}
           </div>
 
-          <div class="match-box">
+          <div class="match-row">
             <div class="match-header">
-              <span style="font-weight: 600;">Match Assessment: ${matchLabel}</span>
-              <span class="match-score-badge">${matchScore}% Match</span>
+              <span class="match-elig">${matchLabel}</span>
+              <span class="match-score-badge tone-${matchTone}">${matchScore}% match</span>
+            </div>
+            <div class="match-bar" aria-hidden="true">
+              <div class="match-bar-fill tone-${matchTone}" style="width: ${matchScore}%;"></div>
             </div>
             <p class="match-reason">${app.escapeHtml(topReason)}</p>
-            ${vac.matchAnalysis?.whyMatchedSnippet ? `
-              <div class="match-audit-snippet" style="margin-top: 0.35rem; font-size: 0.76rem; font-family: monospace; background: rgba(59, 130, 246, 0.08); padding: 0.3rem 0.6rem; border-radius: 4px; border-left: 3px solid ${matchScore >= 70 ? '#10b981' : (matchScore >= 45 ? '#f59e0b' : '#ef4444')}; color: var(--text-primary); word-break: break-word;">
-                ${app.escapeHtml(vac.matchAnalysis.whyMatchedSnippet)}
-              </div>
-            ` : ''}
           </div>
         </div>
 
-        <div class="card-actions" style="flex-wrap: wrap; gap: 0.6rem; justify-content: space-between; align-items: center;">
-          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <div class="card-actions">
+          <div class="card-deadline-row">
             ${deadlineHtml}
-            ${referenceDomain ? `
-              <span class="meta-pill" style="font-size: 0.74rem; background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.25);">
-                Source: <strong style="color: #60a5fa;">${app.escapeHtml(referenceDomain)}</strong>
-              </span>
-            ` : ''}
+            ${referenceDomain ? (referenceUrl
+              ? `<a href="${referenceUrl}" target="_blank" rel="noopener noreferrer" class="source-domain-link" title="Open official portal">${app.escapeHtml(referenceDomain)}</a>`
+              : `<span class="source-domain-link">${app.escapeHtml(referenceDomain)}</span>`) : ''}
           </div>
 
-          <div class="action-buttons" style="flex-wrap: wrap; align-items: center; gap: 0.4rem;">
-            ${vac.verification?.officialNoticePdfUrl ? `
-              <a href="${vac.verification.officialNoticePdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" title="View Official Notification PDF">
-                <i data-lucide="file-text" class="icon-xs"></i> PDF
-              </a>
-              <button class="btn btn-outline btn-sm btn-inspect-pdf" data-id="${vac.id}" title="Deep AI Extract from Notice PDF">
-                <i data-lucide="sparkles" class="icon-xs text-amber"></i> AI Inspect
+          <div class="action-buttons">
+            <div class="action-primary-group">
+              <button class="btn btn-primary btn-sm btn-track" data-id="${vac.id}">Track</button>
+              ${applyUrl ? `
+                <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" title="Official application portal">
+                  Apply <i data-lucide="arrow-up-right" class="icon-xs"></i>
+                </a>
+              ` : ''}
+              ${pdfUrl ? `
+                <a href="${pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" title="View official notification PDF">
+                  <i data-lucide="file-text" class="icon-xs"></i> Notice PDF
+                </a>
+              ` : ''}
+              ${fallbackUrl ? `
+                <a href="${fallbackUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" title="Visit official portal (${app.escapeHtml(referenceDomain || 'portal')})">
+                  Source <i data-lucide="arrow-up-right" class="icon-xs"></i>
+                </a>
+              ` : ''}
+            </div>
+
+            <div class="action-utility-group">
+              <button class="btn-icon btn-evidence" data-id="${vac.id}" title="Verification evidence" aria-label="Verification evidence">
+                <i data-lucide="shield-check" class="icon-xs"></i>
               </button>
-            ` : ''}
-            ${vac.verification?.applicationUrl ? `
-              <a href="${vac.verification.applicationUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: #60a5fa;" title="Official Application Portal">
-                <i data-lucide="external-link" class="icon-xs"></i> Apply
-              </a>
-            ` : ''}
-            ${vac.dates?.closingDate && !isClosed ? `
-              <button class="btn btn-outline btn-sm btn-calendar-reminder" data-id="${vac.id}" title="Add application deadline reminder to Google Calendar">
-                <i data-lucide="calendar" class="icon-xs text-cyan"></i> Calendar
+              ${pdfUrl ? `
+                <button class="btn-icon btn-inspect-pdf" data-id="${vac.id}" title="Extract PDF details" aria-label="Extract PDF details">
+                  <i data-lucide="file-search" class="icon-xs"></i>
+                </button>
+              ` : ''}
+              <button class="btn-icon btn-telegram-single" data-id="${vac.id}" title="Send to Telegram" aria-label="Send to Telegram">
+                <i data-lucide="send" class="icon-xs"></i>
               </button>
-            ` : ''}
-            <button class="btn btn-outline btn-sm btn-telegram-single" data-id="${vac.id}" title="Send alert directly to your Telegram bot">
-              <i data-lucide="send" class="icon-xs text-emerald"></i> Telegram
-            </button>
-            ${referenceUrl ? `
-              <a href="${referenceUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: ${isClosed ? '#f87171' : '#38bdf8'}; border-color: ${isClosed ? 'rgba(239, 68, 68, 0.45)' : 'rgba(56, 189, 248, 0.45)'}; font-weight: 600;" title="Visit reference source website (${referenceDomain || 'portal'}) to verify details">
-                ${isClosed ? '<i data-lucide="search" class="icon-xs"></i> Check Source Site' : '<i data-lucide="external-link" class="icon-xs"></i> Visit Source Site'}
-              </a>
-            ` : ''}
-            <button class="btn btn-outline btn-sm btn-evidence" data-id="${vac.id}">Evidence</button>
-            <button class="btn btn-primary btn-sm btn-track" data-id="${vac.id}">Track</button>
-            <button class="btn btn-outline btn-sm btn-delete-vacancy" data-id="${vac.id}" title="Move to Trash (Suppresses from future searches)" style="color: #f87171; border-color: rgba(239, 68, 68, 0.35);"><i data-lucide="trash-2" class="icon-xs"></i> Delete</button>
+              ${vac.dates?.closingDate && !isClosed ? `
+                <button class="btn-icon btn-calendar-reminder" data-id="${vac.id}" title="Add deadline to Google Calendar" aria-label="Add deadline to Google Calendar">
+                  <i data-lucide="calendar-plus" class="icon-xs"></i>
+                </button>
+              ` : ''}
+              <button class="btn-icon btn-icon-danger btn-delete-vacancy" data-id="${vac.id}" title="Move to trash" aria-label="Move to trash">
+                <i data-lucide="trash-2" class="icon-xs"></i>
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -768,15 +814,15 @@ export function renderVacancyCard(app, vac, now) {
 export function formatVerificationBadge(status) {
     switch (status) {
       case VerificationStatus.OFFICIALLY_VERIFIED:
-        return '<i data-lucide="shield-check" class="icon-xs"></i> OFFICIALLY VERIFIED';
+        return '<i data-lucide="shield-check" class="icon-xs"></i> Verified';
       case VerificationStatus.CROSS_CHECKED:
-        return '<i data-lucide="link" class="icon-xs"></i> CROSS-CHECKED';
+        return '<i data-lucide="link" class="icon-xs"></i> Cross-Checked';
       case VerificationStatus.UNVERIFIED_LEAD:
-        return '<i data-lucide="alert-triangle" class="icon-xs"></i> UNVERIFIED LEAD';
+        return '<i data-lucide="alert-triangle" class="icon-xs"></i> Unverified Lead';
       case VerificationStatus.VERIFICATION_FAILED:
-        return '<i data-lucide="x-circle" class="icon-xs"></i> VERIFICATION FAILED';
+        return '<i data-lucide="x-circle" class="icon-xs"></i> Failed Check';
       case VerificationStatus.EXPIRED_CLOSED:
-        return '<i data-lucide="clock" class="icon-xs"></i> EXPIRED / CLOSED';
+        return '<i data-lucide="clock" class="icon-xs"></i> Expired';
       default:
         return status;
     }
@@ -785,13 +831,13 @@ export function formatVerificationBadge(status) {
 export function formatEligibilityLabel(status) {
     switch (status) {
       case 'LIKELY_ELIGIBLE':
-        return '<span style="color: #34d399;">Likely Eligible</span>';
+        return '<span class="elig-status elig-high">Likely Eligible</span>';
       case 'POTENTIAL_MATCH':
-        return '<span style="color: #fbbf24;">Potential Match (Verify Terms)</span>';
+        return '<span class="elig-status elig-mid">Potential Match</span>';
       case 'APPEARS_INELIGIBLE':
-        return '<span style="color: #f87171;">Appears Ineligible</span>';
+        return '<span class="elig-status elig-low">Appears Ineligible</span>';
       default:
-        return '<span style="color: #94a3b8;">Insufficient Info</span>';
+        return '<span class="elig-status elig-neutral">Review Criteria</span>';
     }
   }
 

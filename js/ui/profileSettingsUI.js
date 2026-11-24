@@ -816,12 +816,20 @@ export class ProfileSettingsUI {
           })
         });
         const data = await res.json();
-        const payloadData = data.data || {};
-        if (data.success && (payloadData.status === 'SUCCESS' || !data.error)) {
-          statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Test email dispatched successfully to <strong>${email}</strong>!</span>`;
+        const payloadData = typeof data.data === 'object' && data.data !== null ? data.data : {};
+        const confirmedOk = Boolean(
+          data.success && (
+            payloadData.status === 'SUCCESS' ||
+            payloadData.success === true ||
+            (typeof data.data === 'string' && /success|dispatched|email sent/i.test(data.data) && !/<html|<!doctype|Sign in/i.test(data.data))
+          )
+        );
+        if (confirmedOk) {
+          statusDiv.innerHTML = `<span style="color: var(--tone-success, #34d399); font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Test email dispatched successfully to <strong>${this.escapeHtml(email)}</strong>!</span>`;
           showConfirmationBanner('Email Dispatched', `Sample alert sent to ${email}.`, 'success', 3000);
         } else {
-          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Delivery notice: ${payloadData.message || data.error || 'Check Google Apps Script quota'}</span>`;
+          const rawNotice = payloadData.message || payloadData.error || data.error || (typeof data.data === 'string' && /Sign in|Accounts|Authorization/i.test(data.data) ? 'Apps Script Web App needs re-deployment with Access: Anyone' : 'Check Google Apps Script deployment & quota');
+          statusDiv.innerHTML = `<span style="color: var(--tone-danger, #f87171); font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Delivery notice: ${this.escapeHtml(rawNotice)}</span>`;
         }
         if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       } catch (err) {

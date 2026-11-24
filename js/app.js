@@ -188,15 +188,27 @@ class App {
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.vacancies) && data.vacancies.length > 0) {
-          const current = storageService.getVacancies();
+          const current = storageService.getVacancies() || [];
+          const trackedIds = new Set((storageService.getApplications() || []).map(a => a.vacancyId));
+          const currentServerSig = current
+            .filter(v => v && !v.isTestData && !v.isCustomFinding && !trackedIds.has(v.id))
+            .map(v => `${v.id}:${v.dates?.closingDate || ''}`)
+            .sort()
+            .join('|');
+          const nextServerSig = data.vacancies
+            .map(v => `${v.id}:${v.dates?.closingDate || ''}`)
+            .sort()
+            .join('|');
           const hasOnlyTestData = current.length === 0 || current.every(v => v.isTestData);
-          if (hasOnlyTestData || current.length < data.vacancies.length) {
+
+          if (hasOnlyTestData || currentServerSig !== nextServerSig) {
             storageService.purgeTestData();
             const mergedMap = new Map();
             data.vacancies.forEach(v => mergedMap.set(v.id, v));
             current.forEach(v => {
-              if (!v.isTestData && (v.status || v.isApplied || v.notes)) {
-                mergedMap.set(v.id, v);
+              if (v && !v.isTestData && (v.isCustomFinding || trackedIds.has(v.id) || v.status || v.isApplied || v.notes)) {
+                const serverCopy = mergedMap.get(v.id);
+                mergedMap.set(v.id, serverCopy ? { ...serverCopy, status: v.status || serverCopy.status, isApplied: v.isApplied ?? serverCopy.isApplied, notes: v.notes || serverCopy.notes } : v);
               }
             });
             storageService.saveAllVacancies(Array.from(mergedMap.values()));
@@ -325,6 +337,7 @@ class App {
       chkDeduplicate.addEventListener('change', (e) => {
         this.filterState.deduplicate = e.target.checked;
         this.currentPage = 1;
+        this.updateKpis();
         this.renderVacancies();
       });
     }
@@ -969,44 +982,74 @@ class App {
     `).join('');
   }
 
-  updateKpis() {
-    const vacancies = storageService.getVacancies();
-    const sources = storageService.getSources();
-    const apps = storageService.getApplications();
-    const trash = storageService.getTrashVacancies ? storageService.getTrashVacancies() : [];
-
-    const verified = vacancies.filter(v => v.verification?.status === VerificationStatus.OFFICIALLY_VERIFIED);
-    
-    // Check closing <= 7 days
+  getLocalTodayIso() {
     const now = new Date();
-    const closingSoon = vacancies.filter(v => {
-      if (!v.dates?.closingDate) return false;
-      const closeDate = new Date(v.dates.closingDate);
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  }
+
+  getCanonicalVacancies({ includeExpired = false } = {}) {
+    const raw = storageService.getVacancies() || [];
+    const localTodayIso = this.getLocalTodayIso();
+    let list = includeExpired
+      ? [...raw]
+      : raw.filter(v => {
+          if (!v) return false;
+          if (v.verification?.status === VerificationStatus.EXPIRED_CLOSED) return false;
+          const closeStr = String(v.dates?.closingDate || '').slice(0, 10);
+          if (/^\d{4}-\d{2}-\d{2}$/.test(closeStr) && closeStr < localTodayIso) return false;
+          return true;
+        });
+
+    if (this.filterState?.deduplicate !== false) {
+      const dedupResult = DuplicateDetector.processDuplicates(list);
+      list = dedupResult.canonicalVacancies;
+    }
+
+    const now = new Date();
+    const verified = list.filter(v => v.verification?.status === VerificationStatus.OFFICIALLY_VERIFIED);
+    const closingSoon = list.filter(v => {
+      const closeStr = String(v.dates?.closingDate || '').slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(closeStr)) return false;
+      const closeDate = new Date(`${closeStr}T23:59:59`);
       const diffDays = Math.ceil((closeDate - now) / (1000 * 60 * 60 * 24));
       return diffDays >= 0 && diffDays <= 7;
     });
 
+    return {
+      vacancies: list,
+      totalCount: list.length,
+      verifiedCount: verified.length,
+      closingSoonCount: closingSoon.length
+    };
+  }
+
+  updateKpis() {
+    const { totalCount, verifiedCount, closingSoonCount } = this.getCanonicalVacancies();
+    const sources = storageService.getSources();
+    const apps = storageService.getApplications();
+    const trash = storageService.getTrashVacancies ? storageService.getTrashVacancies() : [];
+
     const activeSources = sources.filter(s => s.isEnabled).length;
 
-    // KPI Summary
+    // KPI Summary (guaranteed 1-to-1 with deduplicated active feed)
     const elTotal = document.getElementById('kpiTotalVacancies');
-    if (elTotal) elTotal.textContent = vacancies.length;
+    if (elTotal) elTotal.textContent = totalCount;
     const elSources = document.getElementById('kpiActiveSources');
     if (elSources) elSources.textContent = `${activeSources} Active Sources`;
     const elVerified = document.getElementById('kpiVerifiedCount');
-    if (elVerified) elVerified.textContent = verified.length;
+    if (elVerified) elVerified.textContent = verifiedCount;
     const elClosing = document.getElementById('kpiClosingSoonCount');
-    if (elClosing) elClosing.textContent = closingSoon.length;
+    if (elClosing) elClosing.textContent = closingSoonCount;
     const elApplied = document.getElementById('kpiAppliedCount');
     if (elApplied) elApplied.textContent = apps.length;
 
-    // Nav Bar Badges
+    // Nav Bar Badges (guaranteed 1-to-1 with deduplicated active feed)
     const navTotal = document.getElementById('navCountTotal');
-    if (navTotal) navTotal.textContent = vacancies.length;
+    if (navTotal) navTotal.textContent = totalCount;
     const navVerified = document.getElementById('navCountVerified');
-    if (navVerified) navVerified.textContent = verified.length;
+    if (navVerified) navVerified.textContent = verifiedCount;
     const navClosing = document.getElementById('navCountClosing');
-    if (navClosing) navClosing.textContent = closingSoon.length;
+    if (navClosing) navClosing.textContent = closingSoonCount;
     const navApplied = document.getElementById('navCountApplied');
     if (navApplied) navApplied.textContent = apps.length;
     const navTrash = document.getElementById('navCountTrash');

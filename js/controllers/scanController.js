@@ -129,33 +129,17 @@ export function normalizeAndRepairVacancies(app) {
     try {
       const list = storageService.getVacancies();
       let hasChanges = false;
-      const now = new Date();
 
       const repaired = list.map(v => {
-        let fixed = false;
-        // Fix bug where closingDate was mapped to publishedAt or set to the day before today for live discovered items
-        if (v.isLiveDiscovered && v.dates) {
-          const pubStr = v.dates.publishedAt || v.dates.closingDate;
-          const pubDate = pubStr ? new Date(pubStr) : now;
-          const closeDate = v.dates.closingDate ? new Date(v.dates.closingDate) : null;
-
-          // If closingDate was identical to publishedAt or within 48h of publishedAt and marked as elapsed
-          if (!closeDate || isNaN(closeDate.getTime()) || v.dates.closingDate === v.dates.publishedAt || (closeDate < now && Math.abs(closeDate - pubDate) < 48 * 60 * 60 * 1000)) {
-            // Establish genuine 28-day application window from publishedAt
-            const newClose = new Date(pubDate.getTime() + 28 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-            v.dates.closingDate = newClose;
-            v.dates.publishedAt = pubDate.toISOString().slice(0, 10);
-            fixed = true;
-            hasChanges = true;
-          }
-        }
-
-        // Re-audit with updated VerificationEngine
+        // Never invent or extend expired closing dates; only normalize domain and re-audit verification status
         let domain = v.domain || v.verification?.sourceDomain || '';
         if (!domain && v.sourceUrl) {
           try { domain = new URL(v.sourceUrl).hostname.replace(/^www\./i, ''); } catch (_) {}
         }
-        v.domain = domain;
+        if (v.domain !== domain) {
+          v.domain = domain;
+          hasChanges = true;
+        }
 
         if (!v.verification) v.verification = {};
         v.verification.sourceDomain = v.domain;
@@ -169,7 +153,6 @@ export function normalizeAndRepairVacancies(app) {
           v.verification.confirmedFacts = audit.confirmedFacts;
           v.verification.uncertainFields = audit.uncertainFields;
           v.verification.verificationNotes = audit.verificationNotes;
-          fixed = true;
           hasChanges = true;
         }
 

@@ -45,9 +45,10 @@ export class MatchingEngine {
       score += 25;
       reasons.push(`Target role alignment: "${matchedRole}" closely aligns with advertised post.`);
     } else {
-      // Partial title match
-      const relatedTokens = ['forensic', 'cyber', 'evidence', 'incident', 'investigation', 'security', 'analyst', 'engineer'];
-      const hasToken = relatedTokens.some(t => titleLower.includes(t));
+      // Partial title match (guard physical security guard / driver / watch & ward roles from matching IT "security")
+      const isPhysicalSecurityOrClerical = /\b(security\s+(?:officer|assistant|guard|supervisor)|watch\s*&?\s*ward|hindi\s+translator|driver|mts)\b/i.test(titleLower) && !/\b(cyber|information|network|digital|infosec|forensic|software)\b/i.test(titleLower);
+      const relatedTokens = ['forensic', 'cyber', 'evidence', 'incident', 'investigation', 'analyst', 'engineer'];
+      const hasToken = !isPhysicalSecurityOrClerical && (relatedTokens.some(t => titleLower.includes(t)) || (/\bsecurity\b/i.test(titleLower) && /\b(cyber|information|network|it|digital|cloud|application|soc|infosec)\b/i.test(titleLower)));
       if (hasToken) {
         score += 15;
         reasons.push(`Allied role domain: Advertised title matches technical specialization area.`);

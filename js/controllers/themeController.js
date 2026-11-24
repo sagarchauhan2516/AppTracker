@@ -6,12 +6,13 @@
 import { eventBus, EVENTS } from '../services/eventBus.js';
 
 export function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
+  const savedTheme = localStorage.getItem('vacancy_radar_theme_v2') || 'light';
   setTheme(savedTheme);
 }
 
 export function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('vacancy_radar_theme_v2', theme);
   localStorage.setItem('theme', theme);
   const icon = document.getElementById('themeToggleIcon') || document.getElementById('themeIcon');
   const label = document.getElementById('themeToggleLabel') || document.getElementById('themeText');
@@ -22,13 +23,13 @@ export function setTheme(theme) {
     }
   }
   if (label) {
-    label.textContent = theme === 'dark' ? 'Bright' : 'Dark';
+    label.textContent = theme === 'dark' ? 'Light' : 'Dark';
   }
   eventBus.publish(EVENTS.THEME_CHANGED, theme);
 }
 
 export function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   setTheme(newTheme);
 }

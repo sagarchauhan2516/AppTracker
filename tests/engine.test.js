@@ -95,12 +95,14 @@ runTest('Domain Classification distinguishes Official domains from Third-Party A
 
 // TEST 4: Verification Engine 5-Tier Evaluation
 runTest('Verification Engine enforces strict evidence rules for verification badges', () => {
+  const futureClosing = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+
   // Test A: Officially Verified Vacancy
   const verifiedVac = {
     title: 'Project Engineer',
     organisation: 'C-DAC',
     advertisementNumber: 'CDAC/2026/01',
-    dates: { closingDate: '2026-11-20' },
+    dates: { closingDate: futureClosing },
     verification: {
       sourceDomain: 'cdac.in',
       officialNoticePdfUrl: 'https://cdac.in/advt.pdf',
@@ -116,7 +118,7 @@ runTest('Verification Engine enforces strict evidence rules for verification bad
   const leadVac = {
     title: 'Forensic Assistant',
     organisation: 'State Cyber Cell',
-    dates: { closingDate: '2026-11-20' },
+    dates: { closingDate: futureClosing },
     verification: {
       sourceDomain: 'jobalert-india.com',
       officialNoticePdfUrl: null,

@@ -1722,7 +1722,13 @@ function testSendSampleEmail(customRecipient = null) {
     } catch (_) {}
   }
 
-  const sampleNew = [
+  // Try pulling recent real active vacancies from database first
+  let livePosts = [];
+  try {
+    livePosts = getActiveVacancies(4);
+  } catch (_) {}
+
+  const sampleNew = (Array.isArray(livePosts) && livePosts.length > 0) ? livePosts : [
     {
       id: 'sample-cdac-1',
       title: 'Project Engineer (Cyber Security & Digital Forensics)',
@@ -1736,7 +1742,7 @@ function testSendSampleEmail(customRecipient = null) {
         officialNoticePdfUrl: 'https://www.cdac.in/careers/advt_software_2026.pdf',
         applicationUrl: 'https://www.cdac.in'
       },
-      dates: { closingDate: '2026-11-15' }
+      dates: { closingDate: Utilities.formatDate(new Date(Date.now() + 25 * 86400000), CONFIG.DEFAULT_TIMEZONE, 'yyyy-MM-dd') }
     },
     {
       id: 'sample-nfsu-1',
@@ -1751,7 +1757,7 @@ function testSendSampleEmail(customRecipient = null) {
         officialNoticePdfUrl: 'https://nfsu.ac.in/career/advt_cyber_examiner_2026.pdf',
         applicationUrl: 'https://nfsu.ac.in/career'
       },
-      dates: { closingDate: '2026-11-20' }
+      dates: { closingDate: Utilities.formatDate(new Date(Date.now() + 35 * 86400000), CONFIG.DEFAULT_TIMEZONE, 'yyyy-MM-dd') }
     }
   ];
 

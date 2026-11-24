@@ -122,20 +122,52 @@ export function checkRateLimit(key, maxRequests = 60, windowMs = 60000) {
 }
 
 export const CREDENTIALS_FILE = path.join(ROOT_DIR, 'data', 'credentials.json');
+export const LIVE_VACANCIES_FILE = path.join(ROOT_DIR, 'data', 'live_vacancies.json');
 
-export function loadStoredCredentials() {
+export function loadStoredLiveVacancies() {
   try {
-    if (fs.existsSync(CREDENTIALS_FILE)) {
-      const creds = JSON.parse(fs.readFileSync(CREDENTIALS_FILE, 'utf8') || '{}');
-      if (!creds.notificationEmail) creds.notificationEmail = 'sagarmc2516@gmail.com';
-      if (!creds.telegramChatId) creds.telegramChatId = '5451190370';
-      return creds;
+    if (fs.existsSync(LIVE_VACANCIES_FILE)) {
+      return JSON.parse(fs.readFileSync(LIVE_VACANCIES_FILE, 'utf8') || '[]');
     }
   } catch (_) {}
-  return {
-    notificationEmail: 'sagarmc2516@gmail.com',
-    telegramChatId: '5451190370'
-  };
+  return [];
+}
+
+export function saveStoredLiveVacancies(vacancies) {
+  try {
+    const dir = path.dirname(LIVE_VACANCIES_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(LIVE_VACANCIES_FILE, JSON.stringify(vacancies, null, 2), 'utf8');
+    return true;
+  } catch (err) {
+    console.error('Error saving live vacancies:', err.message);
+    return false;
+  }
+}
+
+export function loadStoredCredentials() {
+  let creds = {};
+  try {
+    if (fs.existsSync(CREDENTIALS_FILE)) {
+      creds = JSON.parse(fs.readFileSync(CREDENTIALS_FILE, 'utf8') || '{}');
+    }
+  } catch (_) {}
+  if (!creds.telegramBotToken && process.env.TELEGRAM_BOT_TOKEN) {
+    creds.telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
+  }
+  if (!creds.telegramChatId) {
+    creds.telegramChatId = process.env.TELEGRAM_CHAT_ID || '5451190370';
+  }
+  if (!creds.notificationEmail) {
+    creds.notificationEmail = process.env.NOTIFICATION_EMAIL || 'sagarmc2516@gmail.com';
+  }
+  if (!creds.googleAppsScriptWebhookUrl && process.env.GOOGLE_APPS_SCRIPT_WEBAPP_URL) {
+    creds.googleAppsScriptWebhookUrl = process.env.GOOGLE_APPS_SCRIPT_WEBAPP_URL;
+  }
+  if (!creds.geminiApiKey && process.env.GEMINI_API_KEY) {
+    creds.geminiApiKey = process.env.GEMINI_API_KEY;
+  }
+  return creds;
 }
 
 export function saveStoredCredentials(creds) {
@@ -446,14 +478,59 @@ export async function runScheduledApexScrape() {
   try {
     const creds = loadStoredCredentials();
     const webhookUrl = (creds.googleAppsScriptWebhookUrl || '').trim();
+    const botToken = (creds.telegramBotToken || '8846559143:AAEqSPXMqF6ZY-pUM4NpgT9zT8KmMlf-adg').trim();
+    const chatId = (creds.telegramChatId || '5451190370').trim();
 
     const { ApexPortalScraper } = await import('./scrapers/apexPortalScraper.js');
     const scrapeResult = await ApexPortalScraper.scrapeAllApexPortals({ forceRefresh: false });
 
     if (scrapeResult && scrapeResult.success && Array.isArray(scrapeResult.vacancies) && scrapeResult.vacancies.length > 0) {
       console.log(`[SCHEDULED APEX SCRAPER] Scraped ${scrapeResult.vacancies.length} vacancies from official apex portals.`);
-      
-      // If webhook is configured, sync discovered vacancies
+      saveStoredLiveVacancies(scrapeResult.vacancies);
+
+      // 1. Dispatch Telegram Alert to Candidate
+      if (botToken && chatId) {
+        try {
+          const rawChatIds = chatId.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
+          const activeOpenings = scrapeResult.vacancies.filter(v => {
+            const cd = v.dates?.closingDate ? new Date(v.dates.closingDate) : null;
+            return !cd || cd >= new Date();
+          });
+          const topSamples = (activeOpenings.length > 0 ? activeOpenings : scrapeResult.vacancies).slice(0, 5);
+          const sampleLines = topSamples.map((v, i) => 
+            `*${i + 1}. ${v.organisation}*\n` +
+            `📋 *${v.title}*\n` +
+            `📅 Deadline: \`${v.dates?.closingDate || 'Open/Continuous'}\`\n` +
+            `🔗 [Official Portal Link](${v.sourceUrl})`
+          ).join('\n\n');
+
+          const alertMsg = `🛰️ *Vacancy Radar India — Scheduled Apex Scan Report*\n\n` +
+                           `Discovered *${scrapeResult.vacancies.length} total vacancies* across C-DAC, NFSU, NIELIT, DRDO RAC, UPSC & CERT-In.\n` +
+                           `Active Live Opportunities: *${activeOpenings.length}*\n\n` +
+                           `*Top Verified Openings:*\n\n` +
+                           `${sampleLines}\n\n` +
+                           `🌐 *Explore Full List:* http://localhost:3001`;
+
+          for (const targetId of rawChatIds) {
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: targetId,
+                text: alertMsg,
+                parse_mode: 'Markdown',
+                disable_web_page_preview: true
+              }),
+              signal: AbortSignal.timeout(10000)
+            });
+          }
+          console.log(`[SCHEDULED APEX SCRAPER] Telegram alert dispatched to ${rawChatIds.join(', ')}.`);
+        } catch (tgErr) {
+          console.warn('[SCHEDULED APEX SCRAPER] Telegram dispatch notice:', tgErr.message);
+        }
+      }
+
+      // 2. Dispatch to Google Apps Script Webhook (for Google Sheets & Gmail alerts)
       if (webhookUrl) {
         try {
           await fetch(webhookUrl, {
@@ -461,10 +538,12 @@ export async function runScheduledApexScrape() {
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               action: 'SYNC_VACANCIES',
-              vacancies: scrapeResult.vacancies
+              vacancies: scrapeResult.vacancies,
+              email: creds.notificationEmail || 'sagarmc2516@gmail.com'
             }),
             signal: AbortSignal.timeout(15000)
           });
+          console.log('[SCHEDULED APEX SCRAPER] Synced vacancies to Google Sheets webhook.');
         } catch (_) {}
       }
     }

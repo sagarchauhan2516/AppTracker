@@ -8,7 +8,9 @@ import {
   sendJson,
   readRequestBody,
   checkRateLimit,
-  loadStoredProfiles
+  loadStoredProfiles,
+  loadStoredLiveVacancies,
+  saveStoredLiveVacancies
 } from '../context.js';
 import {
   ApexPortalScraper,
@@ -16,6 +18,28 @@ import {
 } from '../scrapers/apexPortalScraper.js';
 
 export async function handleScraperRoutes(req, res, reqPath) {
+  // 1a. Get Cached Live Apex Vacancies
+  if (reqPath === '/api/scrapers/live-vacancies' && req.method === 'GET') {
+    try {
+      let vacancies = loadStoredLiveVacancies();
+      // If none cached on disk yet, scrape now
+      if (!Array.isArray(vacancies) || vacancies.length === 0) {
+        const scrapeRes = await ApexPortalScraper.scrapeAllApexPortals({ forceRefresh: false });
+        vacancies = scrapeRes.vacancies || [];
+        if (vacancies.length > 0) saveStoredLiveVacancies(vacancies);
+      }
+      sendJson(res, 200, {
+        success: true,
+        count: vacancies.length,
+        vacancies,
+        timestamp: new Date().toISOString()
+      });
+    } catch (err) {
+      sendJson(res, 500, { success: false, error: err.message });
+    }
+    return true;
+  }
+
   // 1. List Monitored Apex Scrapers & Status
   if (reqPath === '/api/scrapers/list' && req.method === 'GET') {
     try {

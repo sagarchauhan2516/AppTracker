@@ -656,6 +656,40 @@ export async function handleManualScan(app) {
         } catch (_) {}
       }
 
+      // 4c. Auto-dispatch Telegram alert on newly discovered live vacancies
+      if (newCount > 0) {
+        try {
+          const tgToken = providerConfig?.telegramBotToken || '8846559143:AAEqSPXMqF6ZY-pUM4NpgT9zT8KmMlf-adg';
+          const tgChat = activeProfile.scheduleSettings?.telegramChatId || providerConfig?.telegramChatId || '5451190370';
+          if (tgChat) {
+            const topSamples = discoveredLeads.slice(0, 4);
+            const sampleLines = topSamples.map((v, i) =>
+              `*${i + 1}. ${v.organisation || 'Government Apex Body'}*\n` +
+              `📋 *${v.title}*\n` +
+              `📅 Deadline: \`${v.dates?.closingDate || 'Open'}\`\n` +
+              `🔗 [Official Source](${v.sourceUrl})`
+            ).join('\n\n');
+
+            const alertMsg = `🛰️ *Vacancy Radar India — Live Scan Discovery*\n\n` +
+                             `✅ Discovered *+${newCount} new government opportunities*!\n` +
+                             `🛡️ Verified: *${verifiedCount}*\n\n` +
+                             `*Top Openings:*\n\n` +
+                             `${sampleLines}\n\n` +
+                             `🌐 *View Portal:* http://localhost:3001`;
+
+            await fetch('/api/send-telegram', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                botToken: tgToken,
+                chatId: tgChat,
+                message: alertMsg
+              })
+            });
+          }
+        } catch (_) {}
+      }
+
       // 5. Refresh UI
       app.refreshAll();
 
@@ -852,7 +886,7 @@ export async function handleApexScrapeOnly(app) {
       newVacanciesFound: newCount
     });
 
-    // Auto-sync to Google Sheets if configured
+    // Auto-sync to Google Sheets & Telegram if configured
     const providerConfig = storageService.getProviderConfig();
     const webhookUrl = providerConfig?.googleAppsScriptWebhookUrl?.trim();
     if (webhookUrl && newCount > 0) {
@@ -863,9 +897,47 @@ export async function handleApexScrapeOnly(app) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             url: webhookUrl,
-            payload: { action: 'SYNC_VACANCIES', vacancies: allVacancies }
+            payload: { 
+              action: 'SYNC_VACANCIES', 
+              vacancies: allVacancies,
+              email: activeProfile.scheduleSettings?.emailAddress || 'sagarmc2516@gmail.com'
+            }
           })
         });
+      } catch (_) {}
+    }
+
+    // Auto-dispatch Telegram alert on newly discovered live vacancies
+    if (newCount > 0) {
+      try {
+        const tgToken = providerConfig?.telegramBotToken || '8846559143:AAEqSPXMqF6ZY-pUM4NpgT9zT8KmMlf-adg';
+        const tgChat = activeProfile.scheduleSettings?.telegramChatId || providerConfig?.telegramChatId || '5451190370';
+        if (tgChat) {
+          const topSamples = scrapedVacancies.slice(0, 4);
+          const sampleLines = topSamples.map((v, i) =>
+            `*${i + 1}. ${v.organisation}*\n` +
+            `📋 *${v.title}*\n` +
+            `📅 Deadline: \`${v.dates?.closingDate || 'Open'}\`\n` +
+            `🔗 [Official Portal](${v.sourceUrl})`
+          ).join('\n\n');
+
+          const alertMsg = `🛰️ *Vacancy Radar India — Apex Scraper Live Alert*\n\n` +
+                           `✅ Discovered *+${newCount} newly verified government vacancies*!\n` +
+                           `🛡️ Officially Verified: *${verifiedCount}*\n\n` +
+                           `*Top Recent Openings:*\n\n` +
+                           `${sampleLines}\n\n` +
+                           `🌐 *View All:* http://localhost:3001`;
+
+          await fetch('/api/send-telegram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              botToken: tgToken,
+              chatId: tgChat,
+              message: alertMsg
+            })
+          });
+        }
       } catch (_) {}
     }
 

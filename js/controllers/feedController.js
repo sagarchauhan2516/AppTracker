@@ -99,7 +99,7 @@ export function renderVacancies(app) {
       if (v.isTargetFocusMatch) return true;
 
       const titleLower = (v.title || '').toLowerCase();
-      const descLower = (v.description || '').toLowerCase() + ' ' + (v.qualifications?.branchRequired || '').toLowerCase();
+      const descLower = (v.description || '').toLowerCase() + ' ' + (v.qualifications?.branchRequired || '').toLowerCase() + ' ' + (v.extractedSnippet || '').toLowerCase();
       const fullText = `${titleLower} ${descLower}`;
 
       // 2. Direct alignment with candidate's target roles
@@ -115,11 +115,13 @@ export function renderVacancies(app) {
       const hasKeyword = allKeywords.some(k => k && fullText.includes(k.toLowerCase()));
       if (hasKeyword) return true;
 
-      // 4. Strong overall score (>= 65) with at least 1 verified forensic, cyber or target role match
-      if ((v.matchAnalysis?.overallScore || 0) >= 65 && (v.matchAnalysis?.reasons || []).some(r => {
-        const lr = r.toLowerCase();
-        return lr.includes('forensic') || lr.includes('cyber') || lr.includes('target role');
-      })) {
+      // 4. Broad technical government posts suitable for Computer Engineering / IT graduates:
+      // (Project Engineer, Scientist B, Technical Officer, Scientific Officer, IT Officer, Software Engineer, Assistant Professor, etc.)
+      const isGovtTechnical = /(?:project\s*engineer|scientist\s*['"]?[bcdef]?|scientific\s*officer|technical\s*officer|assistant\s*professor|systems?\s*engineer|software|programmer|it\s*officer|technical\s*assistant|analyst|cyber|forensic|information\s*technology|computer|developer)/i.test(fullText);
+      if (isGovtTechnical) return true;
+
+      // 5. Strong overall score (>= 55) with at least 1 verified technical or target role match
+      if ((v.matchAnalysis?.overallScore || 0) >= 55) {
         return true;
       }
 

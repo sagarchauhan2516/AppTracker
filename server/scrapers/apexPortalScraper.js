@@ -625,14 +625,33 @@ export class ApexPortalScraper {
       const advtNo = extractAdvertisementNumber(rowPlainText) || extractAdvertisementNumber(title);
       let dates = parseJobDates(title, rowPlainText, null);
 
-      // If parseJobDates fell back to estimated 28-day window, check for explicit date pattern in table cells
+      // Distinguish explicit deadline markers from circular upload / notification dates
+      const hasDeadlineMarker = /(?:last\s*date|closing\s*date|apply\s*before|deadline|end\s*date|till|upto)[\s:–—]*(\d{1,2}[-/\.](?:[0-9]{1,2}|[A-Za-z]{3,9})[-/\.]\d{2,4})/i.test(rowPlainText);
       const standaloneDateMatch = rowPlainText.match(/\b(\d{1,2})[-/\.](\d{1,2})[-/\.](\d{4})\b/);
-      if (standaloneDateMatch) {
+
+      if (hasDeadlineMarker && standaloneDateMatch) {
         const d = parseInt(standaloneDateMatch[1], 10);
         const m = parseInt(standaloneDateMatch[2], 10);
         const y = parseInt(standaloneDateMatch[3], 10);
         if (m >= 1 && m <= 12 && d >= 1 && d <= 31 && y >= 2024 && y <= 2030) {
           dates.closingDate = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        }
+      } else if (standaloneDateMatch) {
+        const d = parseInt(standaloneDateMatch[1], 10);
+        const m = parseInt(standaloneDateMatch[2], 10);
+        const y = parseInt(standaloneDateMatch[3], 10);
+        if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+          const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          const dateMs = new Date(dateStr).getTime();
+          // If the date is current/future (or late 2026/2027), treat as closing date
+          if (y > 2026 || (y === 2026 && dateMs >= new Date('2026-11-01').getTime())) {
+            dates.closingDate = dateStr;
+          } else {
+            // Otherwise it is an older notification issue date (e.g. 2024/early 2025)
+            dates.publishedAt = dateStr;
+            const estClose = new Date(Date.now() + 28 * 24 * 60 * 60 * 1000);
+            dates.closingDate = estClose.toISOString().slice(0, 10);
+          }
         }
       }
 

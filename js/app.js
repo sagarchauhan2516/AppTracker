@@ -65,7 +65,7 @@ import {
 class App {
   constructor() {
     this.currentTab = 'vacancies';
-    this.profileFeedOnly = true; // Segregated profile feed active by default
+    this.profileFeedOnly = false; // Show all discovered live government vacancies by default so candidate never misses openings
     this.filterState = {
       searchQuery: '',
       sector: 'ALL',
@@ -166,6 +166,11 @@ class App {
       deadlineTimer.unref();
     }
 
+    // Auto-sync real live vacancies from the server on startup
+    try {
+      await this.syncLiveVacanciesFromServer();
+    } catch (_) {}
+
     // If database contains only test data and webhook is configured, quietly pull real vacancies from Google Sheets
     try {
       const vacancies = storageService.getVacancies();
@@ -173,6 +178,31 @@ class App {
       const webhookUrl = storageService.getProviderConfig()?.googleAppsScriptWebhookUrl?.trim();
       if (hasOnlyTestData && webhookUrl) {
         this.pullRealVacanciesQuietly(webhookUrl);
+      }
+    } catch (_) {}
+  }
+
+  async syncLiveVacanciesFromServer() {
+    try {
+      const res = await fetch('/api/scrapers/live-vacancies');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.vacancies) && data.vacancies.length > 0) {
+          const current = storageService.getVacancies();
+          const hasOnlyTestData = current.length === 0 || current.every(v => v.isTestData);
+          if (hasOnlyTestData || current.length < data.vacancies.length) {
+            storageService.purgeTestData();
+            const mergedMap = new Map();
+            data.vacancies.forEach(v => mergedMap.set(v.id, v));
+            current.forEach(v => {
+              if (!v.isTestData && (v.status || v.isApplied || v.notes)) {
+                mergedMap.set(v.id, v);
+              }
+            });
+            storageService.saveAllVacancies(Array.from(mergedMap.values()));
+            this.refreshAll();
+          }
+        }
       }
     } catch (_) {}
   }
@@ -1040,22 +1070,26 @@ class App {
 
 
 
-const app = new App();
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => app.init());
-} else {
-  app.init();
+export const app = new App();
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => app.init());
+  } else {
+    app.init();
+  }
 }
 
 // Global Error Boundaries for graceful recovery and user-friendly error banners
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('[VacancyRadar Global Unhandled Rejection]', event.reason);
-  const msg = event.reason?.message || 'An unexpected background error occurred.';
-  if (typeof showConfirmationBanner === 'function') {
-    showConfirmationBanner('Operational Notice', msg, 'warning', 4500);
-  }
-});
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('[VacancyRadar Global Unhandled Rejection]', event.reason);
+    const msg = event.reason?.message || 'An unexpected background error occurred.';
+    if (typeof showConfirmationBanner === 'function') {
+      showConfirmationBanner('Operational Notice', msg, 'warning', 4500);
+    }
+  });
 
-window.addEventListener('error', (event) => {
-  console.error('[VacancyRadar Global Error]', event.error || event.message);
-});
+  window.addEventListener('error', (event) => {
+    console.error('[VacancyRadar Global Error]', event.error || event.message);
+  });
+}

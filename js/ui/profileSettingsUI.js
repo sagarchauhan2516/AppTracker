@@ -317,25 +317,25 @@ export class ProfileSettingsUI {
             <!-- Quick Add Apex Portals -->
             <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; margin-top: 0.5rem;">
               <strong style="font-size: 0.74rem; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem;">
-                <i data-lucide="sparkles" class="icon-xs text-blue"></i> Quick Add Known Apex Bodies (1-Click Whitelist):
+                <i data-lucide="sparkles" class="icon-xs text-blue"></i> Quick Add Known Apex Bodies (1-Click Add / Remove):
               </strong>
               <div style="display: flex; flex-wrap: wrap; gap: 0.45rem;">
                 ${ProfileSettingsUI.APEX_QUICK_TARGETS.map(s => {
                   const isAdded = this.isDomainWhitelisted(s.d);
                   return `
                     <button type="button" 
-                      class="btn-quick-add-site ${isAdded ? 'added' : ''}" 
+                      class="btn-quick-add-site ${isAdded ? 'added active' : ''}" 
                       data-domain="${s.d}" 
-                      title="${isAdded ? `Click to remove ${s.label} (${s.d})` : `Click to add ${s.label} (${s.d}) to whitelist`}"
+                      title="${isAdded ? `Click to remove ${s.label} (${s.d}) from whitelist` : `Click to add ${s.label} (${s.d}) into whitelisted portals list`}"
                       style="font-size: 0.74rem; font-weight: 600; padding: 0.32rem 0.7rem; border-radius: var(--radius-pill); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease; ${
                         isAdded
                           ? 'background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);'
                           : 'background: var(--bg-surface-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle);'
                       }">
-                      <i data-lucide="${isAdded ? 'check' : 'plus'}" class="icon-xs ${isAdded ? 'text-emerald' : ''}"></i>
+                      <i data-lucide="${isAdded ? 'check' : 'plus'}" class="icon-xs ${isAdded ? 'text-emerald' : 'text-blue'}"></i>
                       <span>${s.label}</span>
                       <span style="font-size: 0.65rem; opacity: 0.75; font-family: var(--font-mono);">(${s.d})</span>
-                      ${isAdded ? `<span style="font-size: 0.6rem; padding: 1px 5px; border-radius: 3px; background: rgba(16, 185, 129, 0.25); color: #6ee7b7; font-weight: 700; text-transform: uppercase;">Active</span>` : ''}
+                      ${isAdded ? `<span style="font-size: 0.6rem; padding: 1px 5px; border-radius: 3px; background: rgba(16, 185, 129, 0.25); color: #6ee7b7; font-weight: 700; text-transform: uppercase;">Whitelisted</span>` : ''}
                     </button>
                   `;
                 }).join('')}
@@ -728,12 +728,12 @@ export class ProfileSettingsUI {
           storageService.saveProfile(this.currentProfile);
           if (this.onStateChanged) this.onStateChanged();
           this.render();
-          showConfirmationBanner('Target Removed', `Removed "${dom}" from whitelist.`, 'info', 1800);
+          showConfirmationBanner('Target Removed', `Removed "${dom}" from whitelist. Returned to Quick Add suggestions below.`, 'info', 1800);
         }
       });
     });
 
-    // Quick Add Site
+    // Quick Add Site (Clicks move site from suggestions into active whitelist)
     this.container.querySelectorAll('.btn-quick-add-site').forEach(btn => {
       btn.addEventListener('click', () => {
         const dom = (btn.getAttribute('data-domain') || '').toLowerCase().trim();
@@ -750,7 +750,7 @@ export class ProfileSettingsUI {
         if (!isPresent) {
           tf.targetDomains.push(dom);
           tf.websites.push(dom);
-          showConfirmationBanner('Website Whitelisted', `Added "${dom}" to whitelist.`, 'success', 2200);
+          showConfirmationBanner('Website Whitelisted', `Added "${dom}" to your whitelist.`, 'success', 2200);
         } else {
           const filterFn = d => {
             const nd = String(d || '').toLowerCase().trim().replace(/^https?:\/\//i, '').split('/')[0];
@@ -795,16 +795,7 @@ export class ProfileSettingsUI {
       const btn = document.getElementById('btnTestProfEmail');
       const statusDiv = document.getElementById('statusProfEmailTest');
       const email = document.getElementById('inputProfEmail')?.value.trim() || 'sagarmc2516@gmail.com';
-      const webhookUrl = storageService.getProviderConfig()?.googleAppsScriptWebhookUrl?.trim();
-
-      if (!webhookUrl) {
-        if (statusDiv) {
-          statusDiv.style.display = 'block';
-          statusDiv.innerHTML = `<span style="color: #f87171; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="alert-triangle" class="icon-xs text-amber"></i> Please configure Google Apps Script Webhook URL in Main Settings first.</span>`;
-          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-        }
-        return;
-      }
+      const webhookUrl = storageService.getProviderConfig()?.googleAppsScriptWebhookUrl?.trim() || '';
 
       btn.disabled = true;
       btn.innerHTML = '<i data-lucide="loader-2" class="icon-xs icon-spin"></i> Sending...';
@@ -820,13 +811,13 @@ export class ProfileSettingsUI {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            url: webhookUrl,
+            url: webhookUrl || undefined,
             payload: { action: 'TEST_EMAIL', recipient: email, email }
           })
         });
         const data = await res.json();
         const payloadData = data.data || {};
-        if (data.success && payloadData.status === 'SUCCESS') {
+        if (data.success && (payloadData.status === 'SUCCESS' || !data.error)) {
           statusDiv.innerHTML = `<span style="color: #34d399; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;"><i data-lucide="check-circle-2" class="icon-xs text-emerald"></i> Test email dispatched successfully to <strong>${email}</strong>!</span>`;
           showConfirmationBanner('Email Dispatched', `Sample alert sent to ${email}.`, 'success', 3000);
         } else {
